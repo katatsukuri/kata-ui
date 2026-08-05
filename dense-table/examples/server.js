@@ -29,13 +29,55 @@ const MIME_TYPES = {
 
 const NORMALIZED_ROOT = path.normalize(ROOT);
 
+const ALL_ROWS = [
+  { name: 'Yoshua Nakashima', role: 'Maintainer' },
+  { name: 'Kata UI', role: 'Prototype' },
+  { name: 'Alice', role: 'Developer' },
+  { name: 'Bob', role: 'Designer' },
+  { name: 'Charlie', role: 'Tester' },
+];
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function rowsToHtml(rows) {
+  return rows
+    .map(r => `<tr><td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.role)}</td></tr>`)
+    .join('\n');
+}
+
 const server = http.createServer((req, res) => {
   let urlPath;
+  let queryString = '';
   try {
-    urlPath = decodeURIComponent(req.url.split('?')[0]);
+    const parts = req.url.split('?');
+    urlPath = decodeURIComponent(parts[0]);
+    queryString = parts[1] || '';
   } catch {
     res.writeHead(400);
     res.end('Bad Request');
+    return;
+  }
+
+  if (urlPath === '/api/rows') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(rowsToHtml(ALL_ROWS));
+    return;
+  }
+
+  if (urlPath === '/api/search') {
+    const params = new URLSearchParams(queryString);
+    const q = (params.get('q') || '').toLowerCase();
+    const filtered = ALL_ROWS.filter(
+      r => r.name.toLowerCase().includes(q) || r.role.toLowerCase().includes(q),
+    );
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(rowsToHtml(filtered));
     return;
   }
 

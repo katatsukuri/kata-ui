@@ -20,20 +20,43 @@
               <th scope="col">Role</th>
             </tr>
           </thead>
-          <tbody hx-target="this" hx-swap="innerHTML">
-            <tr>
-              <td>Yoshua Nakashima</td>
-              <td>Maintainer</td>
-            </tr>
-            <tr>
-              <td>Kata UI</td>
-              <td>Prototype</td>
-            </tr>
-          </tbody>
+          <tbody></tbody>
         </table>
       </template>
 
+      <div style="display:flex;gap:0.5rem;margin-bottom:1rem;align-items:center;">
+        <button id="btn-fetch" type="button">データ取得</button>
+        <input id="search-input" type="search" placeholder="検索キーワード" style="flex:1;margin:0;">
+        <button id="btn-search" type="button">検索</button>
+      </div>
+
       <dense-table></dense-table>
+
+      <script type="module">
+        async function loadRows(url) {
+          const tbody = document.querySelector('dense-table tbody');
+          if (!tbody) return;
+          const res = await fetch(url);
+          if (!res.ok) {
+            tbody.innerHTML = '<tr><td colspan="2">エラーが発生しました</td></tr>';
+            return;
+          }
+          tbody.innerHTML = await res.text();
+        }
+
+        document.getElementById('btn-fetch').addEventListener('click', () => {
+          loadRows('/api/rows');
+        });
+
+        document.getElementById('btn-search').addEventListener('click', () => {
+          const q = encodeURIComponent(document.getElementById('search-input').value);
+          loadRows(`/api/search?q=${q}`);
+        });
+
+        document.getElementById('search-input').addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') document.getElementById('btn-search').click();
+        });
+      </script>
     </main>
   </body>
 </html>
