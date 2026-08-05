@@ -169,3 +169,5 @@ dist/
 build/
 .cache/
 *.tmp
+
+settings.json
