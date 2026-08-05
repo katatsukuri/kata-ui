@@ -168,4 +168,10 @@ Thumbs.db
 dist/
 build/
 .cache/
+<<<<<<< HEAD
 *.tmp
+=======
+*.tmp
+
+settings.json
+>>>>>>> de73c28 (modify gitignore)
