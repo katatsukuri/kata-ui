@@ -1,0 +1,19 @@
+dense-table {
+  display: block;
+}
+
+dense-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+dense-table th,
+dense-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--pico-muted-border-color, #dfe3e6);
+}
+
+dense-table tbody tr:last-child td {
+  border-bottom: 0;
+}
