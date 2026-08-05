@@ -7,13 +7,24 @@ dense-table table {
   border-collapse: collapse;
 }
 
-dense-table th,
+dense-table th {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  background-color: var(--dense-table-header-bg, transparent);
+  border-bottom: 2px solid var(--dense-table-border-color, #dfe3e6);
+  font-weight: 600;
+}
+
 dense-table td {
   padding: 0.5rem 0.75rem;
   text-align: left;
-  border-bottom: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-bottom: 1px solid var(--dense-table-border-color, #dfe3e6);
 }
 
 dense-table tbody tr:last-child td {
   border-bottom: 0;
+}
+
+dense-table tbody tr:hover td {
+  background-color: var(--dense-table-hover-bg, #f5f5f5);
 }

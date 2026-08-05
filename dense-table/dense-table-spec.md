@@ -6,9 +6,15 @@
 
 1. 画面内に `id="dense-table-template"` を持つ `<template>` が1つ存在すること
 2. `<template>` の内容は、少なくとも1つの `<tbody>` を含む `<table>` 構造であること
-3. サーバーは `<dense-table>` の展開後に生成される `<tbody>` へ行HTML（`<tr>...</tr>`）を返すこと
+3. サーバーは `<dense-table>` の展開後に生成される `<tbody>` へ行 HTML（`<tr>...</tr>`）を返すこと
 
-## 例
+## 属性
+
+| 属性名     | 必須 | デフォルト値             | 説明                                   |
+| ---------- | ---- | ------------------------ | -------------------------------------- |
+| `template` | 任意 | `dense-table-template`   | 使用する `<template>` 要素の `id` 値   |
+
+## 基本的な使い方
 
 ```html
 <template id="dense-table-template">
@@ -19,14 +25,68 @@
         <th scope="col">Role</th>
       </tr>
     </thead>
-    <tbody hx-target="this" hx-swap="innerHTML"></tbody>
+    <tbody></tbody>
   </table>
 </template>
 
 <dense-table></dense-table>
 ```
 
+## HTMX との組み合わせ
+
+`hx-get` / `hx-target` / `hx-swap` を `<tbody>` に付与することで、ページロード時に行データを自動取得できます。
+
+```html
+<template id="dense-table-template">
+  <table class="dense-table">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Role</th>
+      </tr>
+    </thead>
+    <tbody hx-get="/api/rows" hx-target="this" hx-swap="innerHTML" hx-trigger="load"></tbody>
+  </table>
+</template>
+
+<dense-table></dense-table>
+```
+
+## 複数テーブルを同一ページで使う
+
+`template` 属性で別の `<template>` を指定することで、1 ページに複数の独立したテーブルを配置できます。
+
+```html
+<template id="users-table-template"> … </template>
+<template id="orders-table-template"> … </template>
+
+<dense-table template="users-table-template"></dense-table>
+<dense-table template="orders-table-template"></dense-table>
+```
+
+## サーバーサイドテンプレートの利用例
+
+各フレームワークのテンプレートエンジンで `<template>` と `<dense-table>` を出力する例を  
+`examples/` フォルダーに用意しています。
+
+| フォルダー          | フレームワーク              |
+| ------------------- | --------------------------- |
+| `examples/static/`  | 静的 HTML（バニラ JS）      |
+| `examples/razor/`   | ASP.NET Core Razor Pages    |
+| `examples/ejs/`     | Express + EJS               |
+| `examples/django/`  | Django テンプレート          |
+
 ## エラー条件
 
 - 対応する `<template>` が見つからない場合、初期化時にエラーを送出する
 - デフォルト骨格へのフォールバックは提供しない
+
+## CSS カスタマイズ
+
+`dense-table.css` が提供するスタイルは CSS カスタムプロパティで上書きできます。
+
+| カスタムプロパティ                 | デフォルト値  | 説明                         |
+| ---------------------------------- | ------------- | ---------------------------- |
+| `--dense-table-border-color`       | `#dfe3e6`     | セル下境界線の色             |
+| `--dense-table-header-bg`          | `transparent` | ヘッダー行の背景色           |
+| `--dense-table-hover-bg`           | `#f5f5f5`     | 行ホバー時の背景色           |
