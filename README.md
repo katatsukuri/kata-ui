@@ -3,8 +3,6 @@
 **ビルドレス・フレームワークレスなWebコンポーネント集。**
 HTMX + Alpine.js + Pico.css だけで動く、契約ベースの独自要素（Custom Elements）を提供します。
 
-更新時利用モデル: GPT-5.3-Codex (GitHub Copilot)
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 ---
