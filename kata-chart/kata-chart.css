@@ -1,0 +1,9 @@
+kata-chart {
+  display: block;
+  position: relative;
+}
+
+kata-chart canvas {
+  display: block;
+  max-width: 100%;
+}
