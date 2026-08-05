@@ -6,6 +6,7 @@ on:
 permissions:
   issues: write
   contents: read
+  projects: write
 
 jobs:
   setup:
@@ -167,34 +168,41 @@ jobs:
           script: |
             // GraphQL でプロジェクト（Projects v2）を作成
             const owner = context.repo.owner;
+            const repo = context.repo.repo;
 
-            // オーナーのIDを取得
-            const { user } = await github.graphql(`
-              query($login: String!) {
-                user(login: $login) { id }
-              }
-            `, { login: owner });
-
-            // プロジェクトを作成
-            const { createProjectV2 } = await github.graphql(`
-              mutation($ownerId: ID!, $title: String!) {
-                createProjectV2(input: { ownerId: $ownerId, title: $title }) {
-                  projectV2 { id number url }
+            let projectId;
+            try {
+              // リポジトリのIDを取得
+              const { repository } = await github.graphql(`
+                query($owner: String!, $repo: String!) {
+                  repository(owner: $owner, name: $repo) { id }
                 }
-              }
-            `, { ownerId: user.id, title: 'kata-ui コンポーネント実装トラッキング' });
+              `, { owner, repo });
 
-            console.log(`Created project: ${createProjectV2.projectV2.url}`);
+              // プロジェクトをリポジトリに紐付けて作成
+              const { createProjectV2 } = await github.graphql(`
+                mutation($ownerId: ID!, $title: String!) {
+                  createProjectV2(input: { ownerId: $ownerId, title: $title }) {
+                    projectV2 { id number url }
+                  }
+                }
+              `, { ownerId: repository.id, title: 'kata-ui コンポーネント実装トラッキング' });
+
+              console.log(`Created project: ${createProjectV2.projectV2.url}`);
+              projectId = createProjectV2.projectV2.id;
+            } catch (e) {
+              console.error(`Failed to create project: ${e.message}`);
+              console.log('Skipping project creation. You can create the project manually from the repository Projects tab.');
+              return;
+            }
 
             // リポジトリの全Issueをプロジェクトに追加
             const issues = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner,
+              repo,
               state: 'open',
               per_page: 100,
             });
-
-            const projectId = createProjectV2.projectV2.id;
 
             for (const issue of issues.data) {
               try {
