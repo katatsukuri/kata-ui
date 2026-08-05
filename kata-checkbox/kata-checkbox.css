@@ -1,0 +1,28 @@
+kata-checkbox {
+  display: block;
+}
+
+kata-checkbox label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+kata-checkbox input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: var(--pico-primary-background, #1d4ed8);
+}
+
+kata-checkbox input[type="checkbox"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+kata-checkbox input[type="checkbox"]:disabled + * {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
