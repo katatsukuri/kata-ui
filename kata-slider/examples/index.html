@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-slider example</title>
+  <link rel="stylesheet" href="../../kata-slider/kata-slider.css">
+</head>
+<body>
+  <h1>kata-slider examples</h1>
+
+  <template id="kata-slider-template">
+    <label for="volume-slider">音量</label>
+    <input id="volume-slider" type="range" name="volume" min="0" max="100" value="50">
+  </template>
+
+  <template id="kata-brightness-template">
+    <label for="brightness-slider">明るさ</label>
+    <input id="brightness-slider" type="range" name="brightness" min="0" max="100" value="80" step="10">
+  </template>
+
+  <p><kata-slider></kata-slider></p>
+  <p><kata-slider template="kata-brightness-template"></kata-slider></p>
+
+  <script type="module" src="../../kata-slider/kata-slider.js"></script>
+</body>
+</html>
