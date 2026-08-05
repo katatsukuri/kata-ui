@@ -74,20 +74,43 @@ kata-ui/
 │   ├── dense-table.js
 │   ├── dense-table.css
 │   └── examples/
-│       ├── razor/
-│       ├── ejs/
-│       └── django/
+├── kata-button/
+│   ├── kata-button-spec.md
+│   ├── kata-button.js
+│   ├── kata-button.css
+│   └── examples/
+├── kata-input/
+├── kata-card/
+├── kata-accordion/
+├── kata-badge/
+├── kata-tabs/
+├── kata-dialog/
+├── kata-breadcrumb/
+├── kata-pagination/
 └── ...
 ```
 
 ## コンポーネント一覧
 
-### 実装済み / 実装予定（プレーンなHTML構造で完結するもの）
+### 実装済み（プレーンなHTML構造で完結するもの）
 
-- Button / Toggle / Toggle Group
-- Input / Textarea / Checkbox / Radio Group / Switch / Select / Slider
-- Card / Table（`dense-table`）/ Accordion / Avatar / Badge / Tabs
-- Dropdown Menu / Breadcrumb / Pagination
+| コンポーネント | ディレクトリ | 状態 |
+|---|---|---|
+| Button | `kata-button/` | ✅ 実装済み |
+| Input / Textarea | `kata-input/` | ✅ 実装済み |
+| Card | `kata-card/` | ✅ 実装済み |
+| Table | `dense-table/` | ✅ 実装済み |
+| Accordion | `kata-accordion/` | ✅ 実装済み |
+| Badge | `kata-badge/` | ✅ 実装済み |
+| Tabs | `kata-tabs/` | ✅ 実装済み |
+| Breadcrumb | `kata-breadcrumb/` | ✅ 実装済み |
+| Pagination | `kata-pagination/` | ✅ 実装済み |
+
+### 実装予定（プレーンなHTML構造で完結するもの）
+
+- Toggle / Toggle Group
+- Checkbox / Radio Group / Switch / Select / Slider
+- Avatar / Dropdown Menu
 
 ### アクセシビリティ拡張が必要なもの（Alpine公式プラグイン併用）
 

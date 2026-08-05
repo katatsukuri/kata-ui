@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-tabs example</title>
+  <link rel="stylesheet" href="../../kata-tabs/kata-tabs.css">
+</head>
+<body>
+  <h1>kata-tabs examples</h1>
+
+  <template id="kata-tabs-template">
+    <div role="tablist" aria-label="設定">
+      <button type="button" role="tab" data-tabs-trigger
+              aria-selected="true" aria-controls="tab-account" data-active>アカウント</button>
+      <button type="button" role="tab" data-tabs-trigger
+              aria-selected="false" aria-controls="tab-password">パスワード</button>
+      <button type="button" role="tab" data-tabs-trigger
+              aria-selected="false" aria-controls="tab-notify">通知</button>
+    </div>
+    <div id="tab-account" role="tabpanel" data-tabs-panel>
+      <p>アカウント情報の設定内容がここに表示されます。</p>
+    </div>
+    <div id="tab-password" role="tabpanel" data-tabs-panel hidden>
+      <p>パスワード変更フォームがここに表示されます。</p>
+    </div>
+    <div id="tab-notify" role="tabpanel" data-tabs-panel hidden>
+      <p>通知設定の内容がここに表示されます。</p>
+    </div>
+  </template>
+
+  <kata-tabs></kata-tabs>
+
+  <script type="module" src="../../kata-tabs/kata-tabs.js"></script>
+</body>
+</html>

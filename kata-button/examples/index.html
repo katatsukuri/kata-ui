@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-button example</title>
+  <link rel="stylesheet" href="../../kata-button/kata-button.css">
+</head>
+<body>
+  <h1>kata-button examples</h1>
+
+  <template id="kata-button-template">
+    <button type="button">保存</button>
+  </template>
+
+  <template id="kata-button-secondary-template">
+    <button type="button" data-variant="secondary">キャンセル</button>
+  </template>
+
+  <template id="kata-button-destructive-template">
+    <button type="button" data-variant="destructive">削除</button>
+  </template>
+
+  <template id="kata-button-disabled-template">
+    <button type="button" disabled>送信（無効）</button>
+  </template>
+
+  <p>
+    <kata-button></kata-button>
+    <kata-button template="kata-button-secondary-template"></kata-button>
+    <kata-button template="kata-button-destructive-template"></kata-button>
+    <kata-button template="kata-button-disabled-template"></kata-button>
+  </p>
+
+  <script type="module" src="../../kata-button/kata-button.js"></script>
+</body>
+</html>
