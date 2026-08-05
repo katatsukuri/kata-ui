@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-switch example</title>
+  <link rel="stylesheet" href="../../kata-switch/kata-switch.css">
+</head>
+<body>
+  <h1>kata-switch examples</h1>
+
+  <template id="kata-switch-template">
+    <label for="notify-switch">通知</label>
+    <input id="notify-switch" type="checkbox" role="switch" name="notify">
+  </template>
+
+  <template id="kata-switch-checked-template">
+    <label for="dark-switch">ダークモード</label>
+    <input id="dark-switch" type="checkbox" role="switch" name="dark" checked>
+  </template>
+
+  <template id="kata-switch-disabled-template">
+    <label for="disabled-switch">無効（変更不可）</label>
+    <input id="disabled-switch" type="checkbox" role="switch" name="disabled" disabled>
+  </template>
+
+  <p><kata-switch></kata-switch></p>
+  <p><kata-switch template="kata-switch-checked-template"></kata-switch></p>
+  <p><kata-switch template="kata-switch-disabled-template"></kata-switch></p>
+
+  <script type="module" src="../../kata-switch/kata-switch.js"></script>
+</body>
+</html>
