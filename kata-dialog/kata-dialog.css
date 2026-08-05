@@ -1,0 +1,44 @@
+kata-dialog {
+  display: contents;
+}
+
+kata-dialog dialog {
+  border: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-radius: 0.5rem;
+  padding: 0;
+  min-width: 20rem;
+  max-width: 90vw;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+kata-dialog dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+kata-dialog .dialog-header {
+  padding: 1.25rem 1.5rem 0;
+}
+
+kata-dialog .dialog-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+
+kata-dialog .dialog-description {
+  font-size: 0.875rem;
+  color: var(--pico-muted-color, #6b7280);
+  margin: 0;
+}
+
+kata-dialog .dialog-content {
+  padding: 1.25rem 1.5rem;
+  font-size: 0.875rem;
+}
+
+kata-dialog .dialog-footer {
+  padding: 0 1.5rem 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

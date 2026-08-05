@@ -1,0 +1,35 @@
+kata-tabs {
+  display: block;
+}
+
+kata-tabs [role="tablist"] {
+  display: flex;
+  border-bottom: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  gap: 0;
+}
+
+kata-tabs [data-tabs-trigger] {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  color: var(--pico-muted-color, #6b7280);
+  margin-bottom: -1px;
+}
+
+kata-tabs [data-tabs-trigger]:hover {
+  color: var(--pico-contrast, #0f172a);
+}
+
+kata-tabs [data-tabs-trigger][aria-selected="true"] {
+  color: var(--pico-primary-background, #1d4ed8);
+  border-bottom-color: var(--pico-primary-background, #1d4ed8);
+}
+
+kata-tabs [data-tabs-panel] {
+  padding: 1rem 0;
+  font-size: 0.875rem;
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-dialog example</title>
+  <link rel="stylesheet" href="../../kata-dialog/kata-dialog.css">
+</head>
+<body>
+  <h1>kata-dialog examples</h1>
+
+  <template id="kata-dialog-template">
+    <button type="button" data-dialog-trigger>ダイアログを開く</button>
+    <dialog aria-labelledby="dialog-title" aria-describedby="dialog-desc">
+      <div class="dialog-header">
+        <h2 id="dialog-title" class="dialog-title">確認</h2>
+        <p id="dialog-desc" class="dialog-description">この操作は元に戻せません。本当に続けますか？</p>
+      </div>
+      <div class="dialog-content">
+        <p>削除するとすべてのデータが失われます。</p>
+      </div>
+      <div class="dialog-footer">
+        <button type="button" data-dialog-close>キャンセル</button>
+        <button type="button" data-dialog-close>削除する</button>
+      </div>
+    </dialog>
+  </template>
+
+  <kata-dialog></kata-dialog>
+
+  <script type="module" src="../../kata-dialog/kata-dialog.js"></script>
+</body>
+</html>

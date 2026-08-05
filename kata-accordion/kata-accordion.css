@@ -1,0 +1,37 @@
+kata-accordion {
+  display: block;
+  border: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+kata-accordion [data-accordion-item] {
+  border-bottom: 1px solid var(--pico-muted-border-color, #dfe3e6);
+}
+
+kata-accordion [data-accordion-item]:last-child {
+  border-bottom: none;
+}
+
+kata-accordion [data-accordion-trigger] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+kata-accordion [data-accordion-trigger]:hover {
+  background-color: var(--pico-muted-background-color, #f8fafc);
+}
+
+kata-accordion [data-accordion-content] {
+  padding: 0 1rem 1rem;
+  font-size: 0.875rem;
+}

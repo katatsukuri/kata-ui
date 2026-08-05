@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-input example</title>
+  <link rel="stylesheet" href="../../kata-input/kata-input.css">
+</head>
+<body>
+  <h1>kata-input examples</h1>
+
+  <template id="kata-input-template">
+    <label for="name-field">名前</label>
+    <input id="name-field" type="text" name="name" placeholder="山田太郎">
+  </template>
+
+  <template id="kata-textarea-template">
+    <label for="bio-field">自己紹介</label>
+    <textarea id="bio-field" name="bio" rows="4" placeholder="自己紹介を入力してください"></textarea>
+  </template>
+
+  <p><kata-input></kata-input></p>
+  <p><kata-input template="kata-textarea-template"></kata-input></p>
+
+  <script type="module" src="../../kata-input/kata-input.js"></script>
+</body>
+</html>
