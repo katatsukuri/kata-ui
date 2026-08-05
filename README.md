@@ -1,2 +1,125 @@
 # kata-ui
-ビルドレス・フレームワークレスなWebコンポーネント集。 HTMX + Alpine.js + Pico.css だけで動く、契約ベースの独自要素（Custom Elements）を提供します。
+
+**ビルドレス・フレームワークレスなWebコンポーネント集。**
+HTMX + Alpine.js + Pico.css だけで動く、契約ベースの独自要素（Custom Elements）を提供します。
+
+更新時利用モデル: GPT-5.3-Codex (GitHub Copilot)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+---
+
+## これは何か
+
+`kata-ui` は、shadcn/ui・Radix UI が持つ「UIパターンの網羅性」を、React やビルドツールチェーンに依存せずに再現することを目指すコンポーネント集です。
+
+- `<script>` タグを読み込むだけで動作します。npm・Webpack・Vite は不要です。
+- バックエンドは問いません。契約（HTML構造の仕様）さえ満たせば、Razor Pages・EJS・Django・Go テンプレートなど、どのサーバーサイド環境からでも利用できます。
+- 既存のサーバーサイドレンダリング主体のアプリケーションに、画面全体を書き換えることなく1コンポーネントずつ追加導入できます。
+
+## なぜ作ったか
+
+React 前提のコンポーネント集は、アクセシビリティ配慮や一貫した見た目など実務上の価値が大きい一方、そのままでは非React環境に持ち込めません。`kata-ui` は、ブラウザの標準機能（Custom Elements・`<template>`）と軽量ライブラリ（Alpine.js・HTMX）だけで同等のUIパターンを再現し、以下を実現します。
+
+- **バックエンド非依存**：どのテンプレートエンジンでも同じフロント資産をそのまま使い回せる
+- **ビルドレス**：導入・保守のコストを下げる
+- **段階的導入**：既存アプリへの部分導入がしやすい
+
+## 設計思想
+
+1. **骨格とデータを分離する**：コンポーネントの構造（`<table>` の枠組みなど）は `<template>` 要素として静的に定義し、動的なデータ部分（行データなど）のみをサーバーが返す
+2. **Shadow DOM は使わない**：Alpine.js の自動初期化・HTMX のセレクタ探索・CSS のスタイル継承は、いずれも Light DOM を前提に動作するため
+3. **契約（Contract）でバックエンドと疎結合にする**：各コンポーネントは `{component}-spec.md` として「サーバーが返すべきHTML構造」を明文化する。この契約さえ満たせば、実装言語やフレームワークは問わない
+4. **骨格の記述は利用側の必須作業とする**：デフォルト骨格へのフォールバックは持たない。未定義時は明示的なエラー表示で早期に気づける設計にしている
+
+```html
+<!-- 1. 骨格を定義する（画面内に1回だけ） -->
+<template id="dense-table-template">
+	<table class="dense-table">
+		<thead><tr class="header-row"><!-- カラム見出し --></tr></thead>
+		<tbody hx-target="this" hx-swap="innerHTML"></tbody>
+	</table>
+</template>
+
+<!-- 2. 独自要素を配置する -->
+<dense-table>
+	<!-- 行データはサーバーがここに直接出力する -->
+</dense-table>
+```
+
+## Non-Goals（対象外とする範囲）
+
+`kata-ui` は「プレーンなフロントエンド・最小限の学習コスト」を最優先します。以下は意図的にスコープ外としています。
+
+- **複雑なインタラクション**：ドラッグ&ドロップの並び替え、仮想スクロール、Undo/Redo など、高度な状態管理を要するUIは対象としません。必要な場合は専用ライブラリの併用を推奨します
+- **リッチなアニメーション・視覚効果**：装飾的なエフェクト（パララックス、パーティクル演出等）は本コンポーネント集の対象外です。CSSまたは個別のライブラリでの実装を推奨します
+- **クライアント側の複雑な状態管理**：Redux 相当の集中管理は持ちません。状態はできる限りサーバー（Single Source of Truth）に置き、クライアントは疎結合なイベント伝播（`$dispatch`）または最小限の `Alpine.store()` に留めます
+
+これらを許容することで、学習コストと実装の見通しやすさを優先しています。複雑な要件がある画面では、他のライブラリと部分的に組み合わせる使い方を想定しています。
+
+## 導入方法
+
+```html
+<link rel="stylesheet" href="https://cdn.example.com/kata-ui/dense-table/dense-table.css">
+<script src="https://cdn.example.com/kata-ui/loader/template-loader.js"></script>
+<script src="https://cdn.example.com/kata-ui/dense-table/dense-table.js"></script>
+```
+
+各コンポーネントは `{component}/` ディレクトリ配下に、契約（`-spec.md`）・実装（`.js` / `.css`）・利用例（`examples/`）を1セットで持ちます。
+
+```
+kata-ui/
+├── loader/
+│   └── template-loader.js       # 汎用ローダー（複数の独自要素タイプに対応）
+├── dense-table/
+│   ├── dense-table-spec.md      # HTML契約
+│   ├── dense-table.js
+│   ├── dense-table.css
+│   └── examples/
+│       ├── razor/
+│       ├── ejs/
+│       └── django/
+└── ...
+```
+
+## コンポーネント一覧
+
+### 実装済み / 実装予定（プレーンなHTML構造で完結するもの）
+
+- Button / Toggle / Toggle Group
+- Input / Textarea / Checkbox / Radio Group / Switch / Select / Slider
+- Card / Table（`dense-table`）/ Accordion / Avatar / Badge / Tabs
+- Dropdown Menu / Breadcrumb / Pagination
+
+### アクセシビリティ拡張が必要なもの（Alpine公式プラグイン併用）
+
+- Dialog / Alert Dialog / Sheet / Drawer（`@alpinejs/focus` によるフォーカストラップ）
+- Popover / Tooltip / Hover Card（`@alpinejs/anchor` による配置制御）
+
+### 可視化が必要なもの（外部ライブラリ併用、任意導入）
+
+- Charts（Chart.js を標準、複雑な表現が必要な場合は D3 を選択可能）
+
+進捗・詳細は [Issues](../../issues) および各コンポーネントディレクトリの spec を参照してください。
+
+## 既知の制約
+
+正直に書きます。このアーキテクチャは万能ではありません。
+
+- ビルド時の型検証がなく、契約と実装のズレは実行時にしか検知できません
+- React エコシステムほどの実績・サンプル数はまだありません
+- 大規模な一覧・頻繁な部分更新が発生する画面では、HTMXの通信方式が仮想DOM差分更新に比べて不利になる場合があります
+
+これらのうち、**ドキュメントの充実・実装例の蓄積・エッジケースの洗い出しは、コミュニティからの貢献によって補える**と考えています。Issue・PR を歓迎します。
+
+## Contributing
+
+1. 新しいコンポーネントを追加する場合は、まず `{component}-spec.md`（契約）から書いてください
+2. Shadow DOM を使用しない、複雑な状態管理を持ち込まない、という設計原則（上記「設計思想」参照）に沿っているか確認してください
+3. 実装例（`examples/`）は最低1つのバックエンド言語分を添えてください
+
+詳細は [CONTRIBUTING.md](./CONTRIBUTING.md) を参照してください（準備中）。
+
+## License
+
+[MIT](./LICENSE)
