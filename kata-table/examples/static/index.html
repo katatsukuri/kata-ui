@@ -6,13 +6,14 @@
     <title>kata-table example</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="stylesheet" href="../../kata-table.css">
+    <script src="https://unpkg.com/htmx.org@1/dist/htmx.min.js"></script>
     <script type="module" src="../../kata-table.js"></script>
   </head>
   <body class="container">
     <main>
       <h1>kata-table prototype</h1>
 
-      <template id="kata-table-template">
+      <template id="all-users-table-template">
         <table class="kata-table">
           <thead>
             <tr>
@@ -20,43 +21,38 @@
               <th scope="col">Role</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody hx-get="/api/rows" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+        </table>
+      </template>
+
+      <template id="maintainers-table-template">
+        <table class="kata-table">
+          <thead>
+            <tr>
+              <th scope="col">Maintainer</th>
+              <th scope="col">Role</th>
+            </tr>
+          </thead>
+          <tbody hx-get="/api/maintainers" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
         </table>
       </template>
 
       <div style="display:flex;gap:0.5rem;margin-bottom:1rem;align-items:center;">
-        <button id="btn-fetch" type="button">データ取得</button>
-        <input id="search-input" type="search" placeholder="検索キーワード" style="flex:1;margin:0;">
-        <button id="btn-search" type="button">検索</button>
+        <button type="button"
+                hx-get="/api/table?view=all"
+                hx-target="#table-host"
+                hx-swap="innerHTML">全ユーザー</button>
+        <button type="button"
+                hx-get="/api/table?view=maintainers"
+                hx-target="#table-host"
+                hx-swap="innerHTML">メンテナー</button>
       </div>
 
-      <kata-table></kata-table>
-
-      <script type="module">
-        async function loadRows(url) {
-          const tbody = document.querySelector('kata-table tbody');
-          if (!tbody) return;
-          const res = await fetch(url);
-          if (!res.ok) {
-            tbody.innerHTML = '<tr><td colspan="2">エラーが発生しました</td></tr>';
-            return;
-          }
-          tbody.innerHTML = await res.text();
-        }
-
-        document.getElementById('btn-fetch').addEventListener('click', () => {
-          loadRows('/api/rows');
-        });
-
-        document.getElementById('btn-search').addEventListener('click', () => {
-          const q = encodeURIComponent(document.getElementById('search-input').value);
-          loadRows(`/api/search?q=${q}`);
-        });
-
-        document.getElementById('search-input').addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') document.getElementById('btn-search').click();
-        });
-      </script>
+      <div id="table-host"
+           hx-get="/api/table?view=all"
+           hx-trigger="load"
+           hx-target="this"
+           hx-swap="innerHTML"></div>
     </main>
   </body>
 </html>
