@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-select example</title>
+  <link rel="stylesheet" href="../../kata-select/kata-select.css">
+</head>
+<body>
+  <h1>kata-select examples</h1>
+
+  <template id="kata-select-template">
+    <label for="color-field">色</label>
+    <select id="color-field" name="color">
+      <option value="">選択してください</option>
+      <option value="red">赤</option>
+      <option value="green">緑</option>
+      <option value="blue">青</option>
+    </select>
+  </template>
+
+  <template id="kata-country-template">
+    <label for="country-field">国</label>
+    <select id="country-field" name="country">
+      <option value="">選択してください</option>
+      <option value="jp">日本</option>
+      <option value="us">アメリカ</option>
+      <option value="gb">イギリス</option>
+    </select>
+  </template>
+
+  <div><kata-select></kata-select></div>
+  <div><kata-select template="kata-country-template"></kata-select></div>
+
+  <script type="module" src="../../kata-select/kata-select.js"></script>
+</body>
+</html>
