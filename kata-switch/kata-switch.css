@@ -1,0 +1,63 @@
+kata-switch {
+  display: block;
+}
+
+kata-switch label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+kata-switch input[type="checkbox"][role="switch"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  display: inline-block;
+  width: 2.5rem;
+  height: 1.25rem;
+  background-color: var(--pico-muted-border-color, #dfe3e6);
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+kata-switch input[type="checkbox"][role="switch"]::before {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1rem;
+  height: 1rem;
+  background-color: #fff;
+  border-radius: 9999px;
+  transition: transform 0.2s ease;
+}
+
+kata-switch input[type="checkbox"][role="switch"]:checked {
+  background-color: var(--pico-primary-background, #1d4ed8);
+}
+
+kata-switch input[type="checkbox"][role="switch"]:checked::before {
+  transform: translateX(1.25rem);
+}
+
+kata-switch input[type="checkbox"][role="switch"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.2);
+}
+
+kata-switch input[type="checkbox"][role="switch"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+kata-switch input[type="checkbox"][role="switch"]:disabled + label,
+kata-switch label:has(input[type="checkbox"][role="switch"]:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
