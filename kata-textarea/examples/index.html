@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-textarea example</title>
+  <link rel="stylesheet" href="../../kata-textarea/kata-textarea.css">
+</head>
+<body>
+  <h1>kata-textarea examples</h1>
+
+  <template id="kata-textarea-template">
+    <label for="bio-field">自己紹介</label>
+    <textarea id="bio-field" name="bio" rows="4" placeholder="自己紹介を入力してください"></textarea>
+  </template>
+
+  <template id="kata-textarea-disabled-template">
+    <label for="note-field">メモ（無効）</label>
+    <textarea id="note-field" name="note" rows="3" disabled>編集不可のテキスト</textarea>
+  </template>
+
+  <p><kata-textarea></kata-textarea></p>
+  <p><kata-textarea template="kata-textarea-disabled-template"></kata-textarea></p>
+
+  <script type="module" src="../../kata-textarea/kata-textarea.js"></script>
+</body>
+</html>
