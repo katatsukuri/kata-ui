@@ -1,0 +1,44 @@
+kata-toggle-group {
+  display: inline-block;
+}
+
+kata-toggle-group [role="group"] {
+  display: inline-flex;
+  gap: 0;
+  border: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+kata-toggle-group [data-toggle-item] {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  cursor: pointer;
+  color: var(--pico-muted-color, #6b7280);
+  line-height: 1.5;
+}
+
+kata-toggle-group [data-toggle-item]:last-child {
+  border-right: none;
+}
+
+kata-toggle-group [data-toggle-item]:hover {
+  background-color: var(--pico-secondary-background, #f1f5f9);
+  color: var(--pico-contrast, #0f172a);
+}
+
+kata-toggle-group [data-toggle-item][aria-pressed="true"] {
+  background-color: var(--pico-primary-background, #1d4ed8);
+  color: var(--pico-primary-inverse, #ffffff);
+}
+
+kata-toggle-group [data-toggle-item]:focus-visible {
+  outline: 2px solid var(--pico-primary-background, #1d4ed8);
+  outline-offset: -2px;
+  z-index: 1;
+  position: relative;
+}
