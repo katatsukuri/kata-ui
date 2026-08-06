@@ -1,0 +1,22 @@
+kata-slider {
+  display: block;
+}
+
+kata-slider input[type="range"] {
+  display: block;
+  width: 100%;
+  accent-color: var(--pico-primary-background, #1d4ed8);
+  cursor: pointer;
+}
+
+kata-slider input[type="range"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+kata-slider label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
