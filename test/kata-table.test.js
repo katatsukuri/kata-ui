@@ -70,6 +70,22 @@ test('kata-table clones its template on connect', () => {
   assert.equal(element.children[0].tagName, 'TABLE');
 });
 
+test('kata-table uses the template attribute for a server-selected component', () => {
+  const template = new FakeTemplateElement([{ tagName: 'TABLE', view: 'maintainers' }]);
+  const ownerDocument = {
+    getElementById(id) {
+      return id === 'maintainers-table-template' ? template : null;
+    },
+  };
+
+  const element = new KataTableElement(ownerDocument);
+  element.setAttribute('template', 'maintainers-table-template');
+  element.connectedCallback();
+
+  assert.equal(element.children.length, 1);
+  assert.equal(element.children[0].view, 'maintainers');
+});
+
 test('kata-table throws when template is missing', () => {
   const ownerDocument = {
     getElementById() {

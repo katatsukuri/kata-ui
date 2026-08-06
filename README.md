@@ -25,24 +25,29 @@ React 前提のコンポーネント集は、アクセシビリティ配慮や�
 
 ## 設計思想
 
-1. **骨格とデータを分離する**：コンポーネントの構造（`<table>` の枠組みなど）は `<template>` 要素として静的に定義し、動的なデータ部分（行データなど）のみをサーバーが返す
+1. **コンポーネント選択・骨格・データを分離する**：サーバーは外側の交換領域へ必要な Custom Element を返し、コンポーネントの骨格は `<template>`、動的なデータは行などの部分HTMLとして別々に返す。コンポーネント取得とデータ取得の2リクエストを許容し、画面全体を再描画せずにUIを切り替える
 2. **Shadow DOM は使わない**：Alpine.js の自動初期化・HTMX のセレクタ探索・CSS のスタイル継承は、いずれも Light DOM を前提に動作するため
 3. **契約（Contract）でバックエンドと疎結合にする**：各コンポーネントは `{component}-spec.md` として「サーバーが返すべきHTML構造」を明文化する。この契約さえ満たせば、実装言語やフレームワークは問わない
 4. **骨格の記述は利用側の必須作業とする**：デフォルト骨格へのフォールバックは持たない。未定義時は明示的なエラー表示で早期に気づける設計にしている
+5. **交換境界を分ける**：`<kata-table>` などのコンポーネント応答は外側の通常コンテナへ、`<tr>` などのデータ応答はコンポーネント内部の対象要素へ挿入する。コンポーネントを `<tbody>` へ挿入するような境界の混在は行わない
 
 ```html
-<!-- 1. 骨格を定義する（画面内に1回だけ） -->
-<template id="kata-table-template">
+<!-- 1. 利用候補の骨格を定義する（交換領域の外側） -->
+<template id="users-table-template">
 	<table class="kata-table">
 		<thead><tr class="header-row"><!-- カラム見出し --></tr></thead>
-		<tbody hx-target="this" hx-swap="innerHTML"></tbody>
+		<tbody hx-get="/users/rows" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
 	</table>
 </template>
 
-<!-- 2. 独自要素を配置する -->
-<kata-table>
-	<!-- 行データはサーバーがここに直接出力する -->
-</kata-table>
+<!-- 2. サーバーが選んだコンポーネントを外側の領域へ取得する -->
+<div id="table-host" hx-get="/users/table" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></div>
+
+<!-- 3. /users/table はコンポーネントだけを返す -->
+<kata-table template="users-table-template"></kata-table>
+
+<!-- 4. /users/rows は行だけを返す -->
+<tr><td>...</td></tr>
 ```
 
 ## Non-Goals（対象外とする範囲）
@@ -160,7 +165,7 @@ kata-ui/
 
 | 技術要素 | 主な役割 | 採用理由・メリット |
 | :--- | :--- | :--- |
-| **HTMX** | サーバー主導の画面部分更新 (Partial Rendering) | API層とクライアント状態管理の二重構造を排除。信頼できる単一の情報源 (Single Source of Truth) をサーバー側に集約し、HTMLの差分送受信のみで高いインタラクティブ性を実現します。 |
+| **HTMX** | サーバー主導の画面部分更新 (Partial Rendering) | API層とクライアント状態管理の二重構造を排除。コンポーネント選択とデータ取得を独立したHTML応答として扱い、信頼できる単一の情報源 (Single Source of Truth) をサーバー側に集約します。 |
 | **Alpine.js** | 画面内の軽量なUI状態管理 | モーダルの開閉、タブ切り替え、一時的な表示制御など、サーバー通信を伴わない純粋なUIロジックのみをシンプルに記述できます。 |
 | **Web Components** | UIパーツのモジュール化・カプセル化 | 高機能データグリッド (`win-data-grid`) や複合UIパーツ (`facility-summary`) をWeb標準規格でカプセル化。特定のJSフレームワークに依存せず長期間安全に再利用可能です。 |
 | **開発モック分離** | フロント・バックエンド並行開発の実現 | `deliverable/` (本番アセット) と `mock-only/` (検証用モック) を明確に分離し、バックエンド未完成時でも画面動作検証を完結させます。 |

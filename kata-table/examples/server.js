@@ -51,6 +51,13 @@ function rowsToHtml(rows) {
     .join('\n');
 }
 
+function tableToHtml(view) {
+  const templateId = view === 'maintainers'
+    ? 'maintainers-table-template'
+    : 'all-users-table-template';
+  return `<kata-table template="${templateId}"></kata-table>`;
+}
+
 const server = http.createServer((req, res) => {
   let urlPath;
   let queryString = '';
@@ -67,6 +74,20 @@ const server = http.createServer((req, res) => {
   if (urlPath === '/api/rows') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(rowsToHtml(ALL_ROWS));
+    return;
+  }
+
+  if (urlPath === '/api/maintainers') {
+    const maintainers = ALL_ROWS.filter(r => r.role === 'Maintainer');
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(rowsToHtml(maintainers));
+    return;
+  }
+
+  if (urlPath === '/api/table') {
+    const params = new URLSearchParams(queryString);
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(tableToHtml(params.get('view')));
     return;
   }
 
