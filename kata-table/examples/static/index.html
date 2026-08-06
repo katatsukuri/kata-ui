@@ -3,17 +3,17 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>dense-table example</title>
+    <title>kata-table example</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-    <link rel="stylesheet" href="../../dense-table.css">
-    <script type="module" src="../../dense-table.js"></script>
+    <link rel="stylesheet" href="../../kata-table.css">
+    <script type="module" src="../../kata-table.js"></script>
   </head>
   <body class="container">
     <main>
-      <h1>dense-table prototype</h1>
+      <h1>kata-table prototype</h1>
 
-      <template id="dense-table-template">
-        <table class="dense-table">
+      <template id="kata-table-template">
+        <table class="kata-table">
           <thead>
             <tr>
               <th scope="col">Name</th>
@@ -30,11 +30,11 @@
         <button id="btn-search" type="button">検索</button>
       </div>
 
-      <dense-table></dense-table>
+      <kata-table></kata-table>
 
       <script type="module">
         async function loadRows(url) {
-          const tbody = document.querySelector('dense-table tbody');
+          const tbody = document.querySelector('kata-table tbody');
           if (!tbody) return;
           const res = await fetch(url);
           if (!res.ok) {

@@ -1,8 +1,8 @@
 import { instantiateTemplate } from '../loader/template-loader.js';
 
-const DEFAULT_TEMPLATE_ID = 'dense-table-template';
+const DEFAULT_TEMPLATE_ID = 'kata-table-template';
 
-export class DenseTableElement extends HTMLElement {
+export class KataTableElement extends HTMLElement {
   connectedCallback() {
     if (this.dataset.kataUiInitialized === 'true') {
       return;
@@ -16,6 +16,6 @@ export class DenseTableElement extends HTMLElement {
   }
 }
 
-if (!customElements.get('dense-table')) {
-  customElements.define('dense-table', DenseTableElement);
+if (!customElements.get('kata-table')) {
+  customElements.define('kata-table', KataTableElement);
 }
