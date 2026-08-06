@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>dense-table example (EJS)</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <%#
+      Express の static ミドルウェアで kata-ui ディレクトリを公開してください。
+      例: app.use('/kata-ui', express.static(path.join(__dirname, 'node_modules/kata-ui')))
+    %>
+    <link rel="stylesheet" href="/kata-ui/dense-table/dense-table.css">
+    <script type="module"  src="/kata-ui/dense-table/dense-table.js"></script>
+    <script src="https://unpkg.com/htmx.org@1/dist/htmx.min.js"></script>
+  </head>
+  <body class="container">
+    <main>
+      <h1>dense-table（EJS）</h1>
+
+      <%# columns 配列はルートハンドラーから res.render('index', { columns }) で渡す %>
+      <template id="dense-table-template">
+        <table class="dense-table">
+          <thead>
+            <tr>
+              <% columns.forEach(function(col) { %>
+                <th scope="col"><%= col %></th>
+              <% }); %>
+            </tr>
+          </thead>
+          <tbody
+            hx-get="/api/rows"
+            hx-target="this"
+            hx-swap="innerHTML"
+            hx-trigger="load">
+          </tbody>
+        </table>
+      </template>
+
+      <dense-table></dense-table>
+    </main>
+  </body>
+</html>
