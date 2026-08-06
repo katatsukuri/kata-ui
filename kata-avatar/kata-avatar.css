@@ -1,0 +1,36 @@
+kata-avatar {
+  display: inline-block;
+}
+
+kata-avatar .avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  background-color: var(--pico-secondary-background, #f1f5f9);
+  color: var(--pico-secondary-inverse, #0f172a);
+  font-size: 1rem;
+  font-weight: 500;
+  user-select: none;
+}
+
+kata-avatar .avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+kata-avatar .avatar[data-size="sm"] {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.75rem;
+}
+
+kata-avatar .avatar[data-size="lg"] {
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: 1.25rem;
+}
