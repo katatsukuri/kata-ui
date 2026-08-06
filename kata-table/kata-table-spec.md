@@ -1,24 +1,24 @@
-# dense-table contract
+# kata-table contract
 
-`<dense-table>` は、`<template id="dense-table-template">` で定義された骨格を Light DOM に展開する Custom Element です。
+`<kata-table>` は、`<template id="kata-table-template">` で定義された骨格を Light DOM に展開する Custom Element です。
 
 ## 必須条件
 
-1. 画面内に `id="dense-table-template"` を持つ `<template>` が1つ存在すること
+1. 画面内に `id="kata-table-template"` を持つ `<template>` が1つ存在すること
 2. `<template>` の内容は、少なくとも1つの `<tbody>` を含む `<table>` 構造であること
-3. サーバーは `<dense-table>` の展開後に生成される `<tbody>` へ行 HTML（`<tr>...</tr>`）を返すこと
+3. サーバーは `<kata-table>` の展開後に生成される `<tbody>` へ行 HTML（`<tr>...</tr>`）を返すこと
 
 ## 属性
 
 | 属性名     | 必須 | デフォルト値             | 説明                                   |
 | ---------- | ---- | ------------------------ | -------------------------------------- |
-| `template` | 任意 | `dense-table-template`   | 使用する `<template>` 要素の `id` 値   |
+| `template` | 任意 | `kata-table-template`    | 使用する `<template>` 要素の `id` 値   |
 
 ## 基本的な使い方
 
 ```html
-<template id="dense-table-template">
-  <table class="dense-table">
+<template id="kata-table-template">
+  <table class="kata-table">
     <thead>
       <tr>
         <th scope="col">Name</th>
@@ -29,7 +29,7 @@
   </table>
 </template>
 
-<dense-table></dense-table>
+<kata-table></kata-table>
 ```
 
 ## HTMX との組み合わせ
@@ -37,8 +37,8 @@
 `hx-get` / `hx-target` / `hx-swap` を `<tbody>` に付与することで、ページロード時に行データを自動取得できます。
 
 ```html
-<template id="dense-table-template">
-  <table class="dense-table">
+<template id="kata-table-template">
+  <table class="kata-table">
     <thead>
       <tr>
         <th scope="col">Name</th>
@@ -49,7 +49,7 @@
   </table>
 </template>
 
-<dense-table></dense-table>
+<kata-table></kata-table>
 ```
 
 ## 複数テーブルを同一ページで使う
@@ -60,13 +60,13 @@
 <template id="users-table-template"> … </template>
 <template id="orders-table-template"> … </template>
 
-<dense-table template="users-table-template"></dense-table>
-<dense-table template="orders-table-template"></dense-table>
+<kata-table template="users-table-template"></kata-table>
+<kata-table template="orders-table-template"></kata-table>
 ```
 
 ## サーバーサイドテンプレートの利用例
 
-各フレームワークのテンプレートエンジンで `<template>` と `<dense-table>` を出力する例を  
+各フレームワークのテンプレートエンジンで `<template>` と `<kata-table>` を出力する例を
 `examples/` フォルダーに用意しています。
 
 | フォルダー          | フレームワーク              |
@@ -83,10 +83,10 @@
 
 ## CSS カスタマイズ
 
-`dense-table.css` が提供するスタイルは CSS カスタムプロパティで上書きできます。
+`kata-table.css` が提供するスタイルは CSS カスタムプロパティで上書きできます。
 
 | カスタムプロパティ                 | デフォルト値  | 説明                         |
 | ---------------------------------- | ------------- | ---------------------------- |
-| `--dense-table-border-color`       | `#dfe3e6`     | セル下境界線の色             |
-| `--dense-table-header-bg`          | `transparent` | ヘッダー行の背景色           |
-| `--dense-table-hover-bg`           | `#f5f5f5`     | 行ホバー時の背景色           |
+| `--kata-table-border-color`        | `#dfe3e6`     | セル下境界線の色             |
+| `--kata-table-header-bg`           | `transparent` | ヘッダー行の背景色           |
+| `--kata-table-hover-bg`            | `#f5f5f5`     | 行ホバー時の背景色           |

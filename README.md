@@ -32,17 +32,17 @@ React 前提のコンポーネント集は、アクセシビリティ配慮や�
 
 ```html
 <!-- 1. 骨格を定義する（画面内に1回だけ） -->
-<template id="dense-table-template">
-	<table class="dense-table">
+<template id="kata-table-template">
+	<table class="kata-table">
 		<thead><tr class="header-row"><!-- カラム見出し --></tr></thead>
 		<tbody hx-target="this" hx-swap="innerHTML"></tbody>
 	</table>
 </template>
 
 <!-- 2. 独自要素を配置する -->
-<dense-table>
+<kata-table>
 	<!-- 行データはサーバーがここに直接出力する -->
-</dense-table>
+</kata-table>
 ```
 
 ## Non-Goals（対象外とする範囲）
@@ -58,9 +58,9 @@ React 前提のコンポーネント集は、アクセシビリティ配慮や�
 ## 導入方法
 
 ```html
-<link rel="stylesheet" href="https://cdn.example.com/kata-ui/dense-table/dense-table.css">
+<link rel="stylesheet" href="https://cdn.example.com/kata-ui/kata-table/kata-table.css">
 <script src="https://cdn.example.com/kata-ui/loader/template-loader.js"></script>
-<script src="https://cdn.example.com/kata-ui/dense-table/dense-table.js"></script>
+<script src="https://cdn.example.com/kata-ui/kata-table/kata-table.js"></script>
 ```
 
 各コンポーネントは `{component}/` ディレクトリ配下に、契約（`-spec.md`）・実装（`.js` / `.css`）・利用例（`examples/`）を1セットで持ちます。
@@ -69,10 +69,10 @@ React 前提のコンポーネント集は、アクセシビリティ配慮や�
 kata-ui/
 ├── loader/
 │   └── template-loader.js       # 汎用ローダー（複数の独自要素タイプに対応）
-├── dense-table/
-│   ├── dense-table-spec.md      # HTML契約
-│   ├── dense-table.js
-│   ├── dense-table.css
+├── kata-table/
+│   ├── kata-table-spec.md       # HTML契約
+│   ├── kata-table.js
+│   ├── kata-table.css
 │   └── examples/
 ├── kata-button/
 │   ├── kata-button-spec.md
@@ -99,7 +99,7 @@ kata-ui/
 | Button | `kata-button/` | ✅ 実装済み |
 | Input / Textarea | `kata-input/` | ✅ 実装済み |
 | Card | `kata-card/` | ✅ 実装済み |
-| Table | `dense-table/` | ✅ 実装済み |
+| Table | `kata-table/` | ✅ 実装済み |
 | Accordion | `kata-accordion/` | ✅ 実装済み |
 | Badge | `kata-badge/` | ✅ 実装済み |
 | Tabs | `kata-tabs/` | ✅ 実装済み |

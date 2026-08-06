@@ -52,17 +52,17 @@ globalThis.customElements = {
 
 globalThis.document = { getElementById() { return null; } };
 
-const { DenseTableElement } = await import('../dense-table/dense-table.js');
+const { KataTableElement } = await import('../kata-table/kata-table.js');
 
-test('dense-table clones its template on connect', () => {
+test('kata-table clones its template on connect', () => {
   const template = new FakeTemplateElement([{ tagName: 'TABLE' }]);
   const ownerDocument = {
     getElementById(id) {
-      return id === 'dense-table-template' ? template : null;
+      return id === 'kata-table-template' ? template : null;
     },
   };
 
-  const element = new DenseTableElement(ownerDocument);
+  const element = new KataTableElement(ownerDocument);
   element.connectedCallback();
 
   assert.equal(element.dataset.kataUiInitialized, 'true');
@@ -70,14 +70,14 @@ test('dense-table clones its template on connect', () => {
   assert.equal(element.children[0].tagName, 'TABLE');
 });
 
-test('dense-table throws when template is missing', () => {
+test('kata-table throws when template is missing', () => {
   const ownerDocument = {
     getElementById() {
       return null;
     },
   };
 
-  const element = new DenseTableElement(ownerDocument);
+  const element = new KataTableElement(ownerDocument);
 
-  assert.throws(() => element.connectedCallback(), /dense-table-template/);
+  assert.throws(() => element.connectedCallback(), /kata-table-template/);
 });

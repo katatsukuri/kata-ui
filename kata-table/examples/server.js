@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * Mock server for dense-table examples.
+ * Mock server for kata-table examples.
  * Serves the repository root so that relative paths like
- * ../../dense-table.js resolve correctly.
+ * ../../kata-table.js resolve correctly.
  *
- * Usage: node dense-table/examples/server.js
- *        PORT=3000 node dense-table/examples/server.js
+ * Usage: node kata-table/examples/server.js
+ *        PORT=3000 node kata-table/examples/server.js
  */
 
 import http from 'node:http';
@@ -82,7 +82,7 @@ const server = http.createServer((req, res) => {
   }
 
   if (urlPath === '/') {
-    urlPath = '/dense-table/examples/static/index.html';
+    urlPath = '/kata-table/examples/static/index.html';
   }
 
   const filePath = path.normalize(path.join(NORMALIZED_ROOT, urlPath));
@@ -109,5 +109,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`dense-table examples server running at http://localhost:${PORT}/`);
+  console.log(`kata-table examples server running at http://localhost:${PORT}/`);
 });

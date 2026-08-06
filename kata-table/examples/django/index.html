@@ -3,23 +3,23 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>dense-table example (Django)</title>
+    <title>kata-table example (Django)</title>
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     {# Django の staticfiles を使って kata-ui アセットを配信してください。 #}
     {# 例: STATICFILES_DIRS に kata-ui ディレクトリを追加する             #}
     {% load static %}
-    <link rel="stylesheet" href="{% static 'kata-ui/dense-table/dense-table.css' %}">
-    <script type="module"  src="{% static 'kata-ui/dense-table/dense-table.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'kata-ui/kata-table/kata-table.css' %}">
+    <script type="module"  src="{% static 'kata-ui/kata-table/kata-table.js' %}"></script>
     <script src="https://unpkg.com/htmx.org@1/dist/htmx.min.js"></script>
   </head>
   <body class="container">
     <main>
-      <h1>dense-table（Django）</h1>
+      <h1>kata-table（Django）</h1>
 
       {# columns リストはビューから context = {'columns': [...]} で渡す #}
-      <template id="dense-table-template">
-        <table class="dense-table">
+      <template id="kata-table-template">
+        <table class="kata-table">
           <thead>
             <tr>
               {% for col in columns %}
@@ -36,7 +36,7 @@
         </table>
       </template>
 
-      <dense-table></dense-table>
+      <kata-table></kata-table>
     </main>
   </body>
 </html>
