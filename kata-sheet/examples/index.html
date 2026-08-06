@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-sheet example</title>
+  <link rel="stylesheet" href="../../kata-sheet/kata-sheet.css">
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    h1 { margin-bottom: 1.5rem; }
+    .demo-row { display: flex; gap: 1rem; margin-bottom: 2rem; }
+    button { padding: 0.5rem 1rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>kata-sheet examples</h1>
+
+  <div class="demo-row">
+    <!-- Right sheet (default) -->
+    <template id="kata-sheet-template">
+      <button type="button" data-sheet-trigger>右からシートを開く</button>
+      <div data-sheet-overlay hidden></div>
+      <div role="dialog" aria-modal="true" aria-labelledby="sheet-title" data-sheet-panel hidden>
+        <div class="sheet-header">
+          <h2 id="sheet-title" class="sheet-title">設定</h2>
+          <button type="button" data-sheet-close aria-label="閉じる">×</button>
+        </div>
+        <div class="sheet-content">
+          <p>ここにシートのコンテンツが入ります。</p>
+          <input type="text" placeholder="テキスト入力">
+        </div>
+        <div class="sheet-footer">
+          <button type="button" data-sheet-close>キャンセル</button>
+          <button type="button" data-sheet-close>保存</button>
+        </div>
+      </div>
+    </template>
+    <kata-sheet side="right"></kata-sheet>
+  </div>
+
+  <div class="demo-row">
+    <!-- Left sheet -->
+    <template id="kata-sheet-left-template">
+      <button type="button" data-sheet-trigger>左からシートを開く</button>
+      <div data-sheet-overlay hidden></div>
+      <div role="dialog" aria-modal="true" aria-labelledby="sheet-left-title" data-sheet-panel hidden>
+        <div class="sheet-header">
+          <h2 id="sheet-left-title" class="sheet-title">メニュー</h2>
+          <button type="button" data-sheet-close aria-label="閉じる">×</button>
+        </div>
+        <div class="sheet-content">
+          <ul>
+            <li><a href="#">ホーム</a></li>
+            <li><a href="#">プロフィール</a></li>
+            <li><a href="#">設定</a></li>
+          </ul>
+        </div>
+        <div class="sheet-footer">
+          <button type="button" data-sheet-close>閉じる</button>
+        </div>
+      </div>
+    </template>
+    <kata-sheet template="kata-sheet-left-template" side="left"></kata-sheet>
+  </div>
+
+  <script type="module" src="../../kata-sheet/kata-sheet.js"></script>
+</body>
+</html>
