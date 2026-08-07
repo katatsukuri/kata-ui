@@ -19,6 +19,22 @@ function read(file) {
   return fs.readFileSync(file, 'utf8');
 }
 
+function verifyPageReferences(file, source) {
+  for (const attribute of source.matchAll(/\b(?:href|src)\s*=\s*["']([^"']+)["']/gi)) {
+    const reference = attribute[1];
+    if (/^(?:https?:|data:|mailto:|#)/i.test(reference)) continue;
+    if (reference.startsWith('/')) {
+      report(file, `root-relative reference is not GitHub Pages safe: ${reference}`);
+      continue;
+    }
+
+    const target = reference.split(/[?#]/, 1)[0];
+    if (!target) continue;
+    const resolved = path.resolve(path.dirname(file), target);
+    if (!fs.existsSync(resolved)) report(file, `local reference does not exist: ${reference}`);
+  }
+}
+
 function verifyPinnedDependencies(file, source) {
   const normalizedSource = source.replaceAll('@@', '@');
   const checks = [
@@ -60,8 +76,11 @@ if (!fs.existsSync(componentsRoot)) {
     }
 
     const examples = path.join(directory, 'examples');
-    if (!fs.existsSync(examples) || fs.readdirSync(examples).length === 0) {
-      report(examples, 'at least one example is required.');
+    const pagesExample = path.join(examples, 'index.html');
+    if (!fs.existsSync(pagesExample)) {
+      report(pagesExample, 'a GitHub Pages-compatible example is required.');
+    } else {
+      verifyPageReferences(pagesExample, read(pagesExample));
     }
 
     if (requiredFiles.some((file) => !fs.existsSync(path.join(directory, file)))) continue;
@@ -145,6 +164,22 @@ if (!fs.existsSync(componentsRoot)) {
     for (const file of fs.readdirSync(examples, { recursive: true })) {
       const exampleFile = path.join(examples, file);
       if (fs.statSync(exampleFile).isFile()) verifyPinnedDependencies(exampleFile, read(exampleFile));
+    }
+  }
+
+  const docsIndex = path.join(repositoryRoot, 'index.html');
+  if (!fs.existsSync(docsIndex)) {
+    report(docsIndex, 'repository-root component catalog is required.');
+  } else {
+    const docs = read(docsIndex);
+    verifyPageReferences(docsIndex, docs);
+    for (const name of componentNames) {
+      if (!docs.includes(`./components/${name}/examples/index.html`)) {
+        report(docsIndex, `catalog example link is missing for ${name}.`);
+      }
+      if (!docs.includes(`./components/${name}/${name}.spec.md`)) {
+        report(docsIndex, `catalog contract link is missing for ${name}.`);
+      }
     }
   }
 }

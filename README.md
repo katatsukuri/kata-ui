@@ -2,6 +2,8 @@
 
 `kata-ui` は、サーバー主導型MPAへ段階導入できる、ビルドレスなLight DOM Web Component集です。
 
+全コンポーネントの説明と動作例は、[Component Catalog](./index.html)で確認できます。GitHub Pages公開後は `https://katatsukuri.github.io/kata-ui/` が入口になります。
+
 設計の正本は次の2文書です。
 
 - [architecture.md](./architecture.md)：フロントエンド全体の責務、セキュリティ、検証方針
@@ -103,10 +105,10 @@ npm run check
 2. Light DOM、禁止API、BEM、CSSスコープ、依存バージョンのアーキテクチャLint
 3. 初期化、イベント、属性、切断・再接続を含むNode.jsテスト
 
-kata-tableの静的利用例は次で起動できます。
+Component Catalogと全exampleは次で起動できます。
 
 ```powershell
-npm run examples
+npm run docs
 ```
 
 ## このリポジトリの責任境界

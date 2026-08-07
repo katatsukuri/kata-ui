@@ -102,7 +102,7 @@ const server = http.createServer((req, res) => {
   }
 
   if (urlPath === '/') {
-    urlPath = '/components/kata-table/examples/static/index.html';
+    urlPath = '/index.html';
   }
 
   const filePath = path.normalize(path.join(NORMALIZED_ROOT, urlPath));
