@@ -2,11 +2,11 @@
 <template id="kata-breadcrumb-template">
     <nav aria-label="パンくずリスト">
       <ol>
-        <li><a href="/">ホーム</a></li>
+        <li><a href="#"><slot name="item-1">ホーム</slot></a></li>
         <li aria-hidden="true" data-breadcrumb-separator>/</li>
-        <li><a href="/products">製品一覧</a></li>
+        <li><a href="#"><slot name="item-2">製品一覧</slot></a></li>
         <li aria-hidden="true" data-breadcrumb-separator>/</li>
-        <li aria-current="page">製品詳細</li>
+        <li aria-current="page"><slot name="current">製品詳細</slot></li>
       </ol>
     </nav>
   </template>

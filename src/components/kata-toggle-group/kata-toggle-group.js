@@ -1,4 +1,4 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { findEventTarget, initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-toggle-group-template';
 
@@ -39,14 +39,14 @@ export class KataToggleGroupElement extends HTMLElement {
       // Skip keyboard-generated clicks (detail === 0) to avoid double-toggle
       // when Space/Enter is handled by the keydown listener below.
       if (event.detail === 0) return;
-      const item = event.target.closest('[data-toggle-item]');
+      const item = findEventTarget(event, '[data-toggle-item]');
       if (!item) return;
       toggle(item);
     });
 
     this.shadowRoot.addEventListener('keydown', (event) => {
       if (event.key !== ' ' && event.key !== 'Enter') return;
-      const item = event.target.closest('[data-toggle-item]');
+      const item = findEventTarget(event, '[data-toggle-item]');
       if (!item) return;
       event.preventDefault();
       toggle(item);

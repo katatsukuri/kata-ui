@@ -1,18 +1,16 @@
 <!-- Canonical Shadow DOM fallback templates for <kata-avatar>. Copy only the templates required by the page. -->
 <template id="kata-avatar-template">
-    <span class="kata-avatar">
-      <img src="/assets/avatar-placeholder.png" alt="ユーザー">
-    </span>
+    <span class="kata-avatar"><slot>YN</slot></span>
   </template>
 
-<template id="kata-avatar-initials-template">
-    <span class="kata-avatar">AB</span>
+  <template id="kata-avatar-initials-template">
+    <span class="kata-avatar"><slot>AB</slot></span>
   </template>
 
-<template id="kata-avatar-sm-template">
-    <span class="kata-avatar" data-size="sm">YN</span>
+  <template id="kata-avatar-sm-template">
+    <span class="kata-avatar" data-size="sm"><slot>YN</slot></span>
   </template>
 
-<template id="kata-avatar-lg-template">
-    <span class="kata-avatar" data-size="lg">YN</span>
+  <template id="kata-avatar-lg-template">
+    <span class="kata-avatar" data-size="lg"><slot>YN</slot></span>
   </template>

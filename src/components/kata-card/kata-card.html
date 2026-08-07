@@ -2,15 +2,14 @@
 <template id="kata-card-template">
     <div class="kata-card">
       <div class="kata-card__header">
-        <h2 class="kata-card__title">アカウント情報</h2>
-        <p class="kata-card__description">登録済みのアカウント情報を確認します。</p>
+        <h2 class="kata-card__title"><slot name="title">アカウント情報</slot></h2>
+        <p class="kata-card__description"><slot name="description">登録済みのアカウント情報を確認します。</slot></p>
       </div>
       <div class="kata-card__content">
-        <p>名前: 山田太郎</p>
-        <p>メール: yamada@example.com</p>
+        <slot><p>名前: 山田太郎</p><p>メール: yamada@example.com</p></slot>
       </div>
       <div class="kata-card__footer">
-        <button type="button">編集</button>
+        <button type="button"><slot name="action">編集</slot></button>
       </div>
     </div>
   </template>

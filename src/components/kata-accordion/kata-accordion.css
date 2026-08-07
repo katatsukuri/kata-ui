@@ -1,19 +1,24 @@
-kata-accordion {
+kata-accordion,
+:host(kata-accordion) {
   display: block;
   border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
   border-radius: var(--kata-radius-lg, 0.5rem);
   overflow: hidden;
 }
 
-kata-accordion [data-accordion-item] {
+kata-accordion-item,
+:host(kata-accordion-item) {
+  display: block;
   border-bottom: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
 }
 
-kata-accordion [data-accordion-item]:last-child {
+kata-accordion-item:last-child,
+:host(kata-accordion-item:last-child) {
   border-bottom: none;
 }
 
-kata-accordion [data-accordion-trigger] {
+kata-accordion .kata-accordion__trigger,
+:host(kata-accordion-item) .kata-accordion__trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -27,55 +32,23 @@ kata-accordion [data-accordion-trigger] {
   text-align: left;
 }
 
-kata-accordion [data-accordion-trigger]:hover {
+kata-accordion .kata-accordion__trigger:hover,
+:host(kata-accordion-item) .kata-accordion__trigger:hover {
   background-color: var(--kata-color-surface-muted, var(--pico-muted-background-color, #f8fafc));
 }
 
-kata-accordion [data-accordion-content] {
+kata-accordion .kata-accordion__icon,
+:host(kata-accordion-item) .kata-accordion__icon {
+  transition: transform 0.2s ease;
+}
+
+kata-accordion-item[data-state="open"] .kata-accordion__icon,
+:host(kata-accordion-item[data-state="open"]) .kata-accordion__icon {
+  transform: rotate(180deg);
+}
+
+kata-accordion .kata-accordion__content,
+:host(kata-accordion-item) .kata-accordion__content {
   padding: 0 var(--kata-space-lg) var(--kata-space-lg);
   font-size: var(--kata-font-size-sm);
-}
-
-/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
-:host {
-  display: block;
-  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
-  border-radius: var(--kata-radius-lg, 0.5rem);
-  overflow: hidden;
-}
-
-:host [data-accordion-item] {
-  border-bottom: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
-}
-
-:host [data-accordion-item]:last-child {
-  border-bottom: none;
-}
-
-:host [data-accordion-trigger] {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: var(--kata-space-lg);
-  font-size: var(--kata-font-size-sm);
-  font-weight: 500;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-}
-
-:host [data-accordion-trigger]:hover {
-  background-color: var(--kata-color-surface-muted, var(--pico-muted-background-color, #f8fafc));
-}
-
-:host [data-accordion-content] {
-  padding: 0 var(--kata-space-lg) var(--kata-space-lg);
-  font-size: var(--kata-font-size-sm);
-}
-
-:host ::slotted([data-accordion-title]) {
-  display: block;
-  margin: 0;
 }

@@ -14,14 +14,18 @@
   <h1>kata-hover-card examples</h1>
 
   <template id="kata-hover-card-template">
-    <button type="button" data-hover-card-trigger>山田太郎</button>
+    <button type="button" data-hover-card-trigger><slot name="trigger">山田太郎</slot></button>
     <div data-kata-hover-card__content class="kata-hover-card__content" hidden>
-      <p class="kata-hover-card__title">山田太郎</p>
-      <p class="kata-hover-card__description">2023年1月から利用中</p>
+      <p class="kata-hover-card__title"><slot name="title">山田太郎</slot></p>
+      <p class="kata-hover-card__description"><slot name="description">2023年1月から利用中</slot></p>
     </div>
   </template>
 
-  <kata-hover-card></kata-hover-card>
+  <kata-hover-card>
+    <span slot="trigger">山田太郎</span>
+    <span slot="title">山田太郎</span>
+    <span slot="description">2023年1月から利用中</span>
+  </kata-hover-card>
 
   <script type="module" src="../kata-hover-card.js"></script>
 </body>

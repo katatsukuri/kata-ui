@@ -11,23 +11,23 @@
   <h1>kata-badge examples</h1>
 
   <template id="kata-badge-template">
-    <span class="kata-badge">新着</span>
+    <span class="kata-badge"><slot>新着</slot></span>
   </template>
   <template id="kata-badge-secondary-template">
-    <span class="kata-badge" data-variant="secondary">Draft</span>
+    <span class="kata-badge" data-variant="secondary"><slot>Draft</slot></span>
   </template>
   <template id="kata-badge-outline-template">
-    <span class="kata-badge" data-variant="outline">タグ</span>
+    <span class="kata-badge" data-variant="outline"><slot>タグ</slot></span>
   </template>
   <template id="kata-badge-destructive-template">
-    <span class="kata-badge" data-variant="destructive">削除済み</span>
+    <span class="kata-badge" data-variant="destructive"><slot>削除済み</slot></span>
   </template>
 
   <p>
-    <kata-badge></kata-badge>
-    <kata-badge template="kata-badge-secondary-template"></kata-badge>
-    <kata-badge template="kata-badge-outline-template"></kata-badge>
-    <kata-badge template="kata-badge-destructive-template"></kata-badge>
+    <kata-badge>新着</kata-badge>
+    <kata-badge template="kata-badge-secondary-template">Draft</kata-badge>
+    <kata-badge template="kata-badge-outline-template">タグ</kata-badge>
+    <kata-badge template="kata-badge-destructive-template">削除済み</kata-badge>
   </p>
 
   <script type="module" src="../kata-badge.js"></script>

@@ -34,10 +34,6 @@ export function instantiateTemplate(templateId, root = document) {
   return resolveTemplate(templateId, root).content.cloneNode(true);
 }
 
-const COMPONENT_SLOTS = Object.freeze({
-  'kata-card': ['header', '', 'footer'],
-});
-
 function createElement(root, name) {
   const documentRoot = typeof root.createElement === 'function' ? root : document;
   if (typeof documentRoot.createElement === 'function') return documentRoot.createElement(name);
@@ -59,12 +55,6 @@ function createComponentShadowRoot(element, moduleUrl) {
   return shadowRoot;
 }
 
-function setText(root, selector, value) {
-  if (value == null) return;
-  const target = root.querySelector(selector);
-  if (target) target.textContent = value;
-}
-
 function setAttribute(root, selector, name, value) {
   if (value == null) return;
   const target = root.querySelector(selector);
@@ -73,19 +63,9 @@ function setAttribute(root, selector, name, value) {
 
 function applyHostAttributes(element, root) {
   const values = Object.fromEntries([
-    'label', 'title', 'description', 'value', 'name', 'placeholder', 'type',
+    'value', 'name', 'placeholder', 'type',
     'src', 'alt', 'href', 'min', 'max', 'step',
   ].map((name) => [name, element.getAttribute(name)]));
-
-  setText(root, 'button', values.label);
-  setText(root, '.kata-badge', values.label);
-  setText(root, '.kata-card__title', values.title);
-  setText(root, '.kata-card__description', values.description);
-  setText(root, '.kata-dialog__title, .kata-drawer__title, .kata-sheet__title', values.title);
-  const label = root.querySelector('label');
-  if (values.label != null && label && !label.querySelector('input, textarea, select')) {
-    label.textContent = values.label;
-  }
 
   for (const selector of ['input', 'textarea', 'select']) {
     for (const name of ['name', 'placeholder', 'type', 'min', 'max', 'step']) {
@@ -108,46 +88,19 @@ function applyHostAttributes(element, root) {
   }
 }
 
-/** Creates an open Shadow Root from the canonical template and exposes slots. */
+/** Creates an open Shadow Root from the canonical template and projects Light DOM through its slots. */
 export function initializeShadowComponent(element, templateId, moduleUrl) {
   if (element.shadowRoot) return 'initialized';
 
   const shadowRoot = createComponentShadowRoot(element, moduleUrl);
-
-  const slotNames = COMPONENT_SLOTS[element.localName] ?? [''];
   const hasConsumerContent = [...(element.childNodes ?? [])].some((node) => (
     node.nodeType !== 3 || node.textContent?.trim()
   ));
 
-  if (element.localName === 'kata-card' && hasConsumerContent) {
-    const card = createElement(element.ownerDocument, 'div');
-    card.className = 'kata-card';
-    for (const [name, className] of [
-      ['header', 'kata-card__header'],
-      ['', 'kata-card__content'],
-      ['footer', 'kata-card__footer'],
-    ]) {
-      const region = createElement(element.ownerDocument, 'div');
-      region.className = className;
-      const slot = createElement(element.ownerDocument, 'slot');
-      if (name) slot.name = name;
-      region.append(slot);
-      card.append(region);
-    }
-    shadowRoot.append(card);
-  } else {
-    for (const name of slotNames) {
-      const slot = createElement(element.ownerDocument, 'slot');
-      if (name) slot.name = name;
-      if (!name && !hasConsumerContent) {
-        slot.append(instantiateTemplate(templateId, element.ownerDocument));
-      }
-      shadowRoot.append(slot);
-    }
-  }
+  shadowRoot.append(instantiateTemplate(templateId, element.ownerDocument));
 
   applyHostAttributes(element, shadowRoot);
-  element.dataset.kataUiProjection = hasConsumerContent ? 'slots' : 'attributes';
+  element.dataset.kataUiProjection = hasConsumerContent ? 'template-and-slots' : 'template';
   return element.dataset.kataUiProjection;
 }
 
@@ -176,4 +129,10 @@ export function queryComponentAll(element, selector) {
     ...element.querySelectorAll(selector),
     ...(element.shadowRoot?.querySelectorAll(selector) ?? []),
   ];
+}
+
+export function findEventTarget(event, selector) {
+  return event.composedPath?.().find((node) => node?.matches?.(selector))
+    ?? event.target?.closest?.(selector)
+    ?? null;
 }

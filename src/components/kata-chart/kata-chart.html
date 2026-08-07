@@ -1,4 +1,4 @@
 <!-- Canonical Shadow DOM fallback template for <kata-chart>. -->
 <template id="kata-chart-template">
-  <canvas data-chart-canvas></canvas>
+    <canvas data-chart-canvas><slot name="fallback">グラフを表示できません。</slot></canvas>
 </template>

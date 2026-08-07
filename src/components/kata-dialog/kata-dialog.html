@@ -1,17 +1,17 @@
 <!-- Canonical Shadow DOM fallback templates for <kata-dialog>. Copy only the templates required by the page. -->
 <template id="kata-dialog-template">
-    <button type="button" data-dialog-trigger>ダイアログを開く</button>
+    <button type="button" data-dialog-trigger><slot name="trigger">ダイアログを開く</slot></button>
     <dialog aria-labelledby="kata-dialog__title" aria-describedby="dialog-desc">
       <div class="kata-dialog__header">
-        <h2 id="kata-dialog__title" class="kata-dialog__title">確認</h2>
-        <p id="dialog-desc" class="kata-dialog__description">この操作は元に戻せません。本当に続けますか？</p>
+        <h2 id="kata-dialog__title" class="kata-dialog__title"><slot name="title">確認</slot></h2>
+        <p id="dialog-desc" class="kata-dialog__description"><slot name="description">この操作は元に戻せません。本当に続けますか？</slot></p>
       </div>
       <div class="kata-dialog__content">
-        <p>削除するとすべてのデータが失われます。</p>
+        <slot><p>削除するとすべてのデータが失われます。</p></slot>
       </div>
       <div class="kata-dialog__footer">
-        <button type="button" data-dialog-close>キャンセル</button>
-        <button type="button" data-dialog-close>削除する</button>
+        <button type="button" data-dialog-close><slot name="cancel">キャンセル</slot></button>
+        <button type="button" data-dialog-close><slot name="confirm">削除する</slot></button>
       </div>
     </dialog>
   </template>

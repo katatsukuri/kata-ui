@@ -11,17 +11,17 @@
   <h1>kata-slider examples</h1>
 
   <template id="kata-slider-template">
-    <label for="volume-slider">音量</label>
+    <label for="volume-slider"><slot name="label">音量</slot></label>
     <input id="volume-slider" type="range" name="volume" min="0" max="100" value="50">
   </template>
 
   <template id="kata-slider-brightness-template">
-    <label for="brightness-slider">明るさ</label>
+    <label for="brightness-slider"><slot name="label">明るさ</slot></label>
     <input id="brightness-slider" type="range" name="brightness" min="0" max="100" value="80" step="10">
   </template>
 
-  <p><kata-slider></kata-slider></p>
-  <p><kata-slider template="kata-slider-brightness-template"></kata-slider></p>
+  <p><kata-slider><span slot="label">音量</span></kata-slider></p>
+  <p><kata-slider template="kata-slider-brightness-template"><span slot="label">明るさ</span></kata-slider></p>
 
   <script type="module" src="../kata-slider.js"></script>
 </body>

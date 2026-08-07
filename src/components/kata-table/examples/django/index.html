@@ -18,13 +18,12 @@
       <h1>kata-table（Django）</h1>
 
       {# columns リストはビューから context = {'columns': [...]} で渡す #}
-      <kata-table>
+      <template id="kata-table-server-template">
         <table class="kata-table">
           <thead>
             <tr>
-              {% for col in columns %}
-                <th scope="col">{{ col }}</th>
-              {% endfor %}
+              <th scope="col"><slot name="column-1">Name</slot></th>
+              <th scope="col"><slot name="column-2">Role</slot></th>
             </tr>
           </thead>
           <tbody
@@ -34,6 +33,10 @@
             hx-trigger="load">
           </tbody>
         </table>
+      </template>
+      <kata-table template="kata-table-server-template">
+        <span slot="column-1">{{ columns.0 }}</span>
+        <span slot="column-2">{{ columns.1 }}</span>
       </kata-table>
     </main>
   </body>

@@ -29,7 +29,8 @@
 - 通信不要の局所的な画面状態はAlpine.jsが担当する
 - 独立UI部品の内部状態とライフサイクルはWeb Componentが担当する
 - Web Componentはopen Shadow DOMとし、内部骨格は`template`から生成する
-- 単純な文字列・値・状態は利用側の属性、意味のあるHTMLはdefault／named `slot`で渡す
+- 利用者に見えるタイトル、ラベル、説明、本文などの表示データはdefault／named `slot`で渡す
+- 値、URL、フォーム名、状態などネイティブ要素の設定値だけを属性で渡す
 - 一つのDOM領域を複数の技術で再生成しない
 - 外部通知には`CustomEvent`を使用し、外部DOMを直接変更しない
 - 色・境界・フォーカス・エレベーションは`--kata-*`セマンティックトークンを介してテーマから設定する
@@ -67,7 +68,7 @@ kata-ui/
     └── architecture-lint.js
 ```
 
-`*.html`は、属性だけで利用するときにShadow DOMへ複製する正規templateです。利用ページは必要なtemplateだけをサーバーHTMLへ配置してください。利用側が子HTMLを渡した場合は、templateの代わりにdefault／named `slot`へ投影されます。
+`*.html`はShadow DOMへ必ず複製する正規templateです。利用ページは必要なtemplateだけをサーバーHTMLへ配置してください。利用側の子HTMLはtemplateを置き換えず、template内のdefault／named `slot`へ投影されます。slot未指定時だけtemplateのフォールバック内容を表示します。
 
 ## 導入例
 
@@ -76,23 +77,24 @@ kata-ui/
 <link rel="stylesheet" href="/kata-ui/src/components/kata-button/kata-button.css">
 
 <template id="kata-button-template">
-  <button type="button">保存</button>
+  <button type="button"><slot>保存</slot></button>
 </template>
 
-<kata-button label="保存"></kata-button>
+<kata-button>保存</kata-button>
 
 <script type="module" src="/kata-ui/src/components/kata-button/kata-button.js"></script>
 ```
 
 `kata-ui.css`はPico CSSの後、コンポーネントCSSの前に読み込みます。Pico CSSを使わないページでも、同じ既定値で利用できます。
 
-複雑な表示内容は属性へHTML文字列を詰めず、利用側のHTMLをslotへ渡します。
+表示データは文字列の複雑さにかかわらずslotへ渡します。利用者はtemplate内のボタン、ARIA属性、レイアウト用要素を記述しません。
 
 ```html
 <kata-card>
-  <header slot="header"><strong>警告</strong></header>
+  <strong slot="title">警告</strong>
+  <span slot="description">入力内容を確認してください。</span>
   <p>入力内容を確認してください。</p>
-  <footer slot="footer"><button type="button">確認</button></footer>
+  <span slot="action">確認</span>
 </kata-card>
 ```
 

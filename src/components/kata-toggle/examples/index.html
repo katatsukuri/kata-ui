@@ -15,32 +15,20 @@
   <h1>kata-toggle examples</h1>
 
   <template id="kata-toggle-template">
-    <button type="button" data-toggle-track role="switch"
-            aria-checked="false" tabindex="0">
-      <span data-toggle-thumb></span>
-    </button>
+    <label>
+      <button type="button" data-toggle-track role="switch"
+              aria-checked="false" tabindex="0">
+        <span data-toggle-thumb></span>
+      </button>
+      <slot name="label">通知を受け取る</slot>
+    </label>
   </template>
 
-  <p>
-    <label>
-      <kata-toggle id="toggle-basic"></kata-toggle>
-      通知を受け取る
-    </label>
-  </p>
+  <p><kata-toggle id="toggle-basic"><span slot="label">通知を受け取る</span></kata-toggle></p>
 
-  <p>
-    <label>
-      <kata-toggle id="toggle-checked" checked></kata-toggle>
-      初期オン
-    </label>
-  </p>
+  <p><kata-toggle id="toggle-checked" checked><span slot="label">初期オン</span></kata-toggle></p>
 
-  <p>
-    <label>
-      <kata-toggle id="toggle-disabled" disabled></kata-toggle>
-      無効化
-    </label>
-  </p>
+  <p><kata-toggle id="toggle-disabled" disabled><span slot="label">無効化</span></kata-toggle></p>
 
   <p id="status">状態: —</p>
 

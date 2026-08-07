@@ -13,16 +13,20 @@
   <template id="kata-breadcrumb-template">
     <nav aria-label="パンくずリスト">
       <ol>
-        <li><a href="../../../../index.html">ホーム</a></li>
+        <li><a href="#"><slot name="item-1">ホーム</slot></a></li>
         <li aria-hidden="true" data-breadcrumb-separator>/</li>
-        <li><a href="#products">製品一覧</a></li>
+        <li><a href="#"><slot name="item-2">製品一覧</slot></a></li>
         <li aria-hidden="true" data-breadcrumb-separator>/</li>
-        <li aria-current="page">製品詳細</li>
+        <li aria-current="page"><slot name="current">製品詳細</slot></li>
       </ol>
     </nav>
   </template>
 
-  <kata-breadcrumb></kata-breadcrumb>
+  <kata-breadcrumb>
+    <span slot="item-1">ホーム</span>
+    <span slot="item-2">製品一覧</span>
+    <span slot="current">製品詳細</span>
+  </kata-breadcrumb>
 
   <script type="module" src="../kata-breadcrumb.js"></script>
 </body>

@@ -119,8 +119,11 @@ if (!fs.existsSync(componentsRoot)) {
     if (/\bhx-(?:get|post|put|patch|delete)\s*=\s*["']https?:\/\//i.test(template)) {
       report(templateFile, 'external HTMX request URLs are forbidden.');
     }
-    for (const templateElement of template.matchAll(/<template\b[^>]*\bid\s*=\s*["']([^"']+)["']/gi)) {
+    for (const templateElement of template.matchAll(/<template\b[^>]*\bid\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/template>/gi)) {
       const templateId = templateElement[1];
+      if (!/<slot\b/i.test(templateElement[2])) {
+        report(templateFile, `template must declare at least one data slot: ${templateId}`);
+      }
       if (!templateId.startsWith(`${name}-`)) {
         report(templateFile, `template id must use the ${name}- prefix: ${templateId}`);
       } else if (templateIds.has(templateId)) {

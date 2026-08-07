@@ -1,6 +1,6 @@
 <!-- Canonical Shadow DOM fallback templates for <kata-select>. Copy only the templates required by the page. -->
 <template id="kata-select-template">
-    <label for="color-field">色</label>
+    <label for="color-field"><slot name="label">色</slot></label>
     <select id="color-field" name="color">
       <option value="">選択してください</option>
       <option value="red">赤</option>
@@ -10,7 +10,7 @@
   </template>
 
 <template id="kata-select-country-template">
-    <label for="country-field">国</label>
+    <label for="country-field"><slot name="label">国</slot></label>
     <select id="country-field" name="country">
       <option value="">選択してください</option>
       <option value="jp">日本</option>

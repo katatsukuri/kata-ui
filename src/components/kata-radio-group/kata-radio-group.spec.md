@@ -38,7 +38,8 @@
 ## Shadow DOM・slot・属性契約
 
 - Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
-- ラベル、値、状態などの単純データは利用側の属性で渡す。
-- 意味または構造を持つHTMLはdefault／named `slot`で渡し、子HTMLがある場合はtemplateの既定内容を重複表示しない。
-- 子HTMLがない場合は正規`template`を複製し、利用側の属性を既定骨格へ反映する。
+- 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
+- Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
+- 表示データは次のslotへ投影し、未指定時だけtemplateのフォールバック内容を表示する: `legend`、`option-1`、`option-2`、`option-3`
+- `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
 - サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。

@@ -11,11 +11,11 @@
   <h1>kata-input examples</h1>
 
   <template id="kata-input-template">
-    <label for="name-field">名前</label>
+    <label for="name-field"><slot name="label">名前</slot></label>
     <input id="name-field" type="text" name="name" placeholder="山田太郎">
   </template>
 
-  <p><kata-input label="氏名" name="displayName" placeholder="山田太郎" required></kata-input></p>
+  <p><kata-input name="displayName" placeholder="山田太郎" required><span slot="label">氏名</span></kata-input></p>
 
   <script type="module" src="../kata-input.js"></script>
 </body>

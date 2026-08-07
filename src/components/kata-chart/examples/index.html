@@ -16,8 +16,8 @@
   <h1>kata-chart examples</h1>
 
   <template id="kata-chart-template">
-    <canvas data-chart-canvas></canvas>
-  </template>
+    <canvas data-chart-canvas><slot name="fallback">グラフを表示できません。</slot></canvas>
+</template>
 
   <h2>棒グラフ（Bar）</h2>
   <kata-chart

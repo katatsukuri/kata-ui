@@ -17,12 +17,22 @@ export class FakeFragment {
 
 function cloneFakeNode(node) {
   const attributes = new Map();
+  const listeners = new Map();
   const clone = {
     ...node,
     dataset: { ...(node.dataset ?? {}) },
     children: (node.children ?? []).map(cloneFakeNode),
-    addEventListener() {},
-    removeEventListener() {},
+    addEventListener(event, handler) {
+      if (!listeners.has(event)) listeners.set(event, []);
+      listeners.get(event).push(handler);
+    },
+    removeEventListener(event, handler) {
+      listeners.set(event, (listeners.get(event) ?? []).filter((listener) => listener !== handler));
+    },
+    dispatchEvent(event) {
+      for (const handler of listeners.get(event.type) ?? []) handler(event);
+      return true;
+    },
     getAttribute(name) { return attributes.get(name) ?? null; },
     setAttribute(name, value) { attributes.set(name, String(value)); },
     removeAttribute(name) { attributes.delete(name); },
@@ -117,6 +127,17 @@ export class FakeHTMLElement {
   addEventListener(event, handler) {
     if (!this._listeners.has(event)) this._listeners.set(event, []);
     this._listeners.get(event).push(handler);
+  }
+
+  removeEventListener(event, handler) {
+    const listeners = this._listeners.get(event) ?? [];
+    this._listeners.set(event, listeners.filter((listener) => listener !== handler));
+  }
+
+  dispatchEvent(event) {
+    if (!event.target) Object.defineProperty(event, 'target', { value: this });
+    for (const handler of this._listeners.get(event.type) ?? []) handler(event);
+    return true;
   }
 }
 

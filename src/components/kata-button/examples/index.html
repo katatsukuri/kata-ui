@@ -11,27 +11,27 @@
   <h1>kata-button examples</h1>
 
   <template id="kata-button-template">
-    <button type="button">保存</button>
+    <button type="button"><slot>保存</slot></button>
   </template>
 
   <template id="kata-button-secondary-template">
-    <button type="button" data-variant="secondary">キャンセル</button>
+    <button type="button" data-variant="secondary"><slot>キャンセル</slot></button>
   </template>
 
   <template id="kata-button-destructive-template">
-    <button type="button" data-variant="destructive">削除</button>
+    <button type="button" data-variant="destructive"><slot>削除</slot></button>
   </template>
 
   <template id="kata-button-disabled-template">
-    <button type="button" disabled>送信（無効）</button>
+    <button type="button" disabled><slot>送信（無効）</slot></button>
   </template>
 
   <p>
-    <kata-button label="属性から保存"></kata-button>
-    <kata-button><button type="button">slotから保存</button></kata-button>
-    <kata-button template="kata-button-secondary-template"></kata-button>
-    <kata-button template="kata-button-destructive-template"></kata-button>
-    <kata-button template="kata-button-disabled-template"></kata-button>
+    <kata-button>保存</kata-button>
+    <kata-button>更新</kata-button>
+    <kata-button template="kata-button-secondary-template">キャンセル</kata-button>
+    <kata-button template="kata-button-destructive-template">削除</kata-button>
+    <kata-button template="kata-button-disabled-template">送信（無効）</kata-button>
   </p>
 
   <script type="module" src="../kata-button.js"></script>

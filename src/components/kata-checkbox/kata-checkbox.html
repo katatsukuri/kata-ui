@@ -2,13 +2,13 @@
 <template id="kata-checkbox-template">
     <label>
       <input type="checkbox" name="agree">
-      利用規約に同意する
+      <slot name="label">利用規約に同意する</slot>
     </label>
   </template>
 
 <template id="kata-checkbox-disabled-template">
     <label>
       <input type="checkbox" name="newsletter" disabled>
-      メールマガジンを受け取る（現在利用不可）
+      <slot name="label">メールマガジンを受け取る（現在利用不可）</slot>
     </label>
   </template>

@@ -13,6 +13,20 @@
     <main>
       <h1>kata-table prototype</h1>
 
+      <template id="kata-table-all-users-template">
+        <table class="kata-table">
+          <thead><tr><th scope="col"><slot name="column-1">Name</slot></th><th scope="col"><slot name="column-2">Role</slot></th></tr></thead>
+          <tbody hx-get="/api/rows" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+        </table>
+      </template>
+
+      <template id="kata-table-maintainers-template">
+        <table class="kata-table">
+          <thead><tr><th scope="col"><slot name="column-1">Maintainer</slot></th><th scope="col"><slot name="column-2">Role</slot></th></tr></thead>
+          <tbody hx-get="/api/maintainers" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+        </table>
+      </template>
+
       <div style="display:flex;gap:0.5rem;margin-bottom:1rem;align-items:center;">
         <button type="button"
                 hx-get="/api/table?view=all"

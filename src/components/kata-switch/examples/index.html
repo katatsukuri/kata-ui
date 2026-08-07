@@ -11,23 +11,23 @@
   <h1>kata-switch examples</h1>
 
   <template id="kata-switch-template">
-    <label for="notify-switch">通知</label>
+    <label for="notify-switch"><slot name="label">通知</slot></label>
     <input id="notify-switch" type="checkbox" role="switch" name="notify">
   </template>
 
   <template id="kata-switch-checked-template">
-    <label for="dark-switch">ダークモード</label>
+    <label for="dark-switch"><slot name="label">ダークモード</slot></label>
     <input id="dark-switch" type="checkbox" role="switch" name="dark" checked>
   </template>
 
   <template id="kata-switch-disabled-template">
-    <label for="disabled-switch">無効（変更不可）</label>
+    <label for="disabled-switch"><slot name="label">無効（変更不可）</slot></label>
     <input id="disabled-switch" type="checkbox" role="switch" name="disabled" disabled>
   </template>
 
-  <p><kata-switch></kata-switch></p>
-  <p><kata-switch template="kata-switch-checked-template"></kata-switch></p>
-  <p><kata-switch template="kata-switch-disabled-template"></kata-switch></p>
+  <p><kata-switch><span slot="label">通知</span></kata-switch></p>
+  <p><kata-switch template="kata-switch-checked-template"><span slot="label">ダークモード</span></kata-switch></p>
+  <p><kata-switch template="kata-switch-disabled-template"><span slot="label">無効（変更不可）</span></kata-switch></p>
 
   <script type="module" src="../kata-switch.js"></script>
 </body>

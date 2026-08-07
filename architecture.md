@@ -390,11 +390,12 @@ Web Componentから外部へ通知するときは、外部DOMを直接更新せ�
 
 Web Componentはopen Shadow DOMを標準とする。内部DOMとComponent CSSを利用ページのセレクタから隔離しつつ、DevTools、イベントのcomposed path、フォーム連携に必要な観測性を保つ。
 
-利用側から渡すデータは次の順序とする。
+利用側から渡すデータは次の規則とする。
 
-1. ラベル、値、状態など単純なデータはCustom Elementの属性
-2. 意味や構造を持つHTMLはdefaultまたはnamed `slot`
-3. 利用側からHTMLがない場合は、正規`template`をShadow DOMへ複製して属性を反映
+1. タイトル、ラベル、説明、本文、操作名など利用者に見える表示データはdefaultまたはnamed `slot`
+2. 値、URL、フォーム名、状態、外部ライブラリ設定など、ネイティブ要素またはComponent動作の設定値はCustom Elementの属性
+3. 正規`template`はLight DOMの有無にかかわらずShadow DOMへ必ず複製し、UI構造、CSS、ARIAを所有する
+4. slotにデータがない場合だけ、template内のフォールバック内容を表示する
 
 サイト全体のテーマは、継承可能な`--kata-*` CSSカスタムプロパティでShadow DOMへ伝える。利用側の通常セレクタを内部実装へ結合させない。外部から限定的な装飾点が必要な場合だけ`part`を公開し、`::part()`を契約へ記載する。
 

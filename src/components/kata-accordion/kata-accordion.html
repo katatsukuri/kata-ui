@@ -1,9 +1,30 @@
-<!-- Canonical Shadow DOM fallback templates for <kata-accordion>. Copy only the templates required by the page. -->
+<!-- Canonical Shadow DOM templates for <kata-accordion> and <kata-accordion-item>. -->
 <template id="kata-accordion-template">
-    <div data-accordion-item data-state="closed">
-      <button type="button" data-accordion-trigger aria-expanded="false"></button>
-      <div data-accordion-content role="region" hidden>
-        <slot data-accordion-content-slot></slot>
-      </div>
+  <slot></slot>
+</template>
+
+<template id="kata-accordion-item-template">
+  <div class="kata-accordion__item">
+    <button
+      id="trigger"
+      type="button"
+      class="kata-accordion__trigger"
+      data-accordion-trigger
+      aria-expanded="false"
+      aria-controls="content"
+    >
+      <slot name="title">デフォルトタイトル</slot>
+      <span class="kata-accordion__icon" aria-hidden="true">▼</span>
+    </button>
+    <div
+      id="content"
+      class="kata-accordion__content"
+      data-accordion-content
+      role="region"
+      aria-labelledby="trigger"
+      hidden
+    >
+      <slot></slot>
     </div>
-  </template>
+  </div>
+</template>

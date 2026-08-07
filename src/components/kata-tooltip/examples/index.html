@@ -16,47 +16,47 @@
   <!-- Top (default) -->
   <template id="kata-tooltip-template">
     <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-top">
-      上（デフォルト）
+      <slot name="trigger">上（デフォルト）</slot>
     </button>
     <div class="kata-tooltip__content" id="tip-top" role="tooltip" data-side="top">
-      上に表示されます
+      <slot>上に表示されます</slot>
     </div>
   </template>
 
   <!-- Bottom -->
   <template id="kata-tooltip-bottom-template">
     <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-bottom">
-      下
+      <slot name="trigger">下</slot>
     </button>
     <div class="kata-tooltip__content" id="tip-bottom" role="tooltip" data-side="bottom">
-      下に表示されます
+      <slot>下に表示されます</slot>
     </div>
   </template>
 
   <!-- Left -->
   <template id="kata-tooltip-left-template">
     <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-left">
-      左
+      <slot name="trigger">左</slot>
     </button>
     <div class="kata-tooltip__content" id="tip-left" role="tooltip" data-side="left">
-      左に表示されます
+      <slot>左に表示されます</slot>
     </div>
   </template>
 
   <!-- Right -->
   <template id="kata-tooltip-right-template">
     <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-right">
-      右
+      <slot name="trigger">右</slot>
     </button>
     <div class="kata-tooltip__content" id="tip-right" role="tooltip" data-side="right">
-      右に表示されます
+      <slot>右に表示されます</slot>
     </div>
   </template>
 
-  <kata-tooltip></kata-tooltip>
-  <kata-tooltip template="kata-tooltip-bottom-template"></kata-tooltip>
-  <kata-tooltip template="kata-tooltip-left-template"></kata-tooltip>
-  <kata-tooltip template="kata-tooltip-right-template"></kata-tooltip>
+  <kata-tooltip><span slot="trigger">上</span>上に表示されます</kata-tooltip>
+  <kata-tooltip template="kata-tooltip-bottom-template"><span slot="trigger">下</span>下に表示されます</kata-tooltip>
+  <kata-tooltip template="kata-tooltip-left-template"><span slot="trigger">左</span>左に表示されます</kata-tooltip>
+  <kata-tooltip template="kata-tooltip-right-template"><span slot="trigger">右</span>右に表示されます</kata-tooltip>
 
   <script type="module" src="../kata-tooltip.js"></script>
 </body>

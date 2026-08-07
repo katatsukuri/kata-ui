@@ -11,27 +11,34 @@
   <h1>kata-alert-dialog examples</h1>
 
   <template id="kata-alert-dialog-template">
-    <button type="button" data-alert-dialog-trigger>削除する</button>
+    <button type="button" data-alert-dialog-trigger><slot name="trigger">削除する</slot></button>
     <dialog
       role="alertdialog"
       aria-labelledby="kata-alert-dialog__title"
       aria-describedby="alert-dialog-desc"
     >
       <div class="kata-alert-dialog__header">
-        <h2 id="kata-alert-dialog__title" class="kata-alert-dialog__title">本当に削除しますか？</h2>
-        <p id="alert-dialog-desc" class="kata-alert-dialog__description">この操作は元に戻せません。続けますか？</p>
+        <h2 id="kata-alert-dialog__title" class="kata-alert-dialog__title"><slot name="title">本当に削除しますか？</slot></h2>
+        <p id="alert-dialog-desc" class="kata-alert-dialog__description"><slot name="description">この操作は元に戻せません。続けますか？</slot></p>
       </div>
       <div class="kata-alert-dialog__content">
-        <p>削除するとすべてのデータが失われます。</p>
+        <slot><p>削除するとすべてのデータが失われます。</p></slot>
       </div>
       <div class="kata-alert-dialog__footer">
-        <button type="button" data-alert-dialog-close>キャンセル</button>
-        <button type="button" data-alert-dialog-close>削除する</button>
+        <button type="button" data-alert-dialog-close><slot name="cancel">キャンセル</slot></button>
+        <button type="button" data-alert-dialog-close><slot name="confirm">削除する</slot></button>
       </div>
     </dialog>
   </template>
 
-  <kata-alert-dialog></kata-alert-dialog>
+  <kata-alert-dialog>
+    <span slot="trigger">削除する</span>
+    <span slot="title">本当に削除しますか？</span>
+    <span slot="description">この操作は元に戻せません。続けますか？</span>
+    <p>削除するとすべてのデータが失われます。</p>
+    <span slot="cancel">キャンセル</span>
+    <span slot="confirm">削除する</span>
+  </kata-alert-dialog>
 
   <script type="module" src="../kata-alert-dialog.js"></script>
 </body>
