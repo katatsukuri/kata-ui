@@ -5,21 +5,35 @@ export class FakeFragment {
     this.nodeType = 11;
     this.children = children;
   }
+
+  querySelector(selector) {
+    return fakeDescendants(this.children).find((node) => fakeMatches(node, selector)) ?? null;
+  }
+
+  querySelectorAll(selector) {
+    return fakeDescendants(this.children).filter((node) => fakeMatches(node, selector));
+  }
 }
 
 function cloneFakeNode(node) {
   const attributes = new Map();
-  return {
+  const clone = {
     ...node,
+    dataset: { ...(node.dataset ?? {}) },
     children: (node.children ?? []).map(cloneFakeNode),
     addEventListener() {},
     removeEventListener() {},
     getAttribute(name) { return attributes.get(name) ?? null; },
     setAttribute(name, value) { attributes.set(name, String(value)); },
     removeAttribute(name) { attributes.delete(name); },
-    querySelector() { return null; },
-    querySelectorAll() { return []; },
+    querySelector(selector) {
+      return fakeDescendants(this.children).find((child) => fakeMatches(child, selector)) ?? null;
+    },
+    querySelectorAll(selector) {
+      return fakeDescendants(this.children).filter((child) => fakeMatches(child, selector));
+    },
   };
+  return clone;
 }
 
 export class FakeTemplateElement {
@@ -37,10 +51,12 @@ function fakeDescendants(nodes) {
 
 function fakeMatches(node, selector) {
   if (!node) return false;
-  const dataAttribute = selector.match(/^\[data-([a-z0-9-]+)\]$/);
-  if (dataAttribute) {
-    const key = dataAttribute[1].replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-    return node.dataset && key in node.dataset;
+  const dataAttributes = [...selector.matchAll(/\[data-([a-z0-9-]+)(?:="([^"]*)")?\]/g)];
+  if (dataAttributes.length > 0 && dataAttributes.map(({ 0: value }) => value).join('') === selector) {
+    return dataAttributes.every(([, attribute, expected]) => {
+      const key = attribute.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+      return node.dataset && key in node.dataset && (expected === undefined || node.dataset[key] === expected);
+    });
   }
   if (selector.startsWith('.')) {
     return String(node.className ?? '').split(/\s+/).includes(selector.slice(1));

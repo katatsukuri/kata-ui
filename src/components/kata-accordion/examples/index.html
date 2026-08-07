@@ -11,30 +11,25 @@
   <h1>kata-accordion examples</h1>
 
   <template id="kata-accordion-template">
-    <div data-accordion-item data-state="open">
-      <button type="button" data-accordion-trigger
-              aria-expanded="true" aria-controls="acc-1">kata-uiとは何ですか？</button>
-      <div id="acc-1" data-accordion-content role="region">
-        ビルドレス・フレームワークレスなWebコンポーネント集です。
-      </div>
-    </div>
     <div data-accordion-item data-state="closed">
-      <button type="button" data-accordion-trigger
-              aria-expanded="false" aria-controls="acc-2">Reactなしで使えますか？</button>
-      <div id="acc-2" data-accordion-content role="region" hidden>
-        はい。scriptタグを読み込むだけで利用できます。
-      </div>
-    </div>
-    <div data-accordion-item data-state="closed">
-      <button type="button" data-accordion-trigger
-              aria-expanded="false" aria-controls="acc-3">どのバックエンドでも使えますか？</button>
-      <div id="acc-3" data-accordion-content role="region" hidden>
-        はい。契約（HTML構造の仕様）を満たせば、どのサーバーサイド環境でも利用できます。
+      <button type="button" data-accordion-trigger aria-expanded="false"></button>
+      <div data-accordion-content role="region" hidden>
+        <slot data-accordion-content-slot></slot>
       </div>
     </div>
   </template>
 
-  <kata-accordion></kata-accordion>
+  <kata-accordion>
+    <section data-accordion-title="kata-uiとは何ですか？" data-state="open">
+      ビルドレス・フレームワークレスなWebコンポーネント集です。
+    </section>
+    <section data-accordion-title="Reactなしで使えますか？">
+      はい。scriptタグを読み込むだけで利用できます。
+    </section>
+    <section data-accordion-title="どのバックエンドでも使えますか？">
+      はい。HTML契約を満たせば、どのサーバーサイド環境でも利用できます。
+    </section>
+  </kata-accordion>
 
   <script type="module" src="../kata-accordion.js"></script>
 </body>

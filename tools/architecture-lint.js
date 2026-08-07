@@ -164,8 +164,8 @@ if (!fs.existsSync(componentsRoot)) {
     for (const [pattern, label] of forbiddenJavaScript) {
       if (pattern.test(script)) report(scriptFile, `${label} is forbidden by architecture.md.`);
     }
-    if (!script.includes('initializeShadowComponent')) {
-      report(scriptFile, 'initializeShadowComponent() is required for the shared Shadow DOM contract.');
+    if (!script.includes('initializeShadowComponent') && !script.includes('initializeShadowCollection')) {
+      report(scriptFile, 'a shared Shadow DOM initializer is required.');
     }
 
     if (/!important\b/.test(style)) report(styleFile, '!important is forbidden.');
