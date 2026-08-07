@@ -5,7 +5,7 @@
   --kata-font-size-xs: 11px;
   --kata-font-size-sm: 12px;
   --kata-font-size-md: 12px;
-  --kata-font-size-lg: 13px;
+  --kata-font-size-lg: 14px;
   --kata-line-height-control: 17px;
   --kata-line-height-content: 1.4;
   --kata-space-xs: 1px;
@@ -40,6 +40,11 @@
   --kata-shadow-sm: inset 1px 1px 2px rgb(0 0 0 / 0.28);
   --kata-shadow-md: 2px 3px 8px rgb(24 35 44 / 0.22);
   --kata-shadow-lg: 0 14px 40px rgb(24 35 44 / 0.28);
+  --kata-toggle-track-width: 36px;
+  --kata-toggle-track-height: 18px;
+  --kata-toggle-track-padding: 2px;
+  --kata-toggle-thumb-size: 14px;
+  --kata-toggle-thumb-translate: 18px;
   --kata-table-header-bg: #e4e4e4;
   --kata-table-hover-bg: #eaf3f9;
 }

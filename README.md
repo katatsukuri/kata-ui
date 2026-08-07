@@ -4,7 +4,18 @@
 
 `kata-ui` は、サーバー主導型MPAへ段階導入できる、ビルドレスなLight DOM Web Component集です。
 
-全コンポーネントの説明と動作例は、[Component Catalog](./index.html)で確認できます。GitHub Pages公開後は `https://katatsukuri.github.io/kata-ui/` が入口になります。
+全コンポーネントの説明と動作例は、[Component Catalog](./index.html)で確認できます。カタログ内のMarkdown文書は、スタイル付きのドキュメントビューアでそのまま閲覧できます。GitHub Pages公開後は `https://katatsukuri.github.io/kata-ui/` が入口になります。
+
+## 読み手別の入口
+
+| 読み手・目的 | 最初に読む場所 | 次に確認する場所 |
+| --- | --- | --- |
+| コンポーネントを探す | [Component Catalog](./index.html) | 各カードの動作例と契約 |
+| アプリへ導入する | 本READMEの「導入例」 | [全体アーキテクチャ](./architecture.md) |
+| コンポーネントを実装・レビューする | [コンポーネント設計](./component_architecture.md) | 各`*.spec.md`とテスト |
+| テーマを追加・調整する | [テーマ設計](./theming/theming.md) | `src/styles/themes/`とサンプル |
+
+公開サイトでは、入口を「概要と導入」「コンポーネントを探す」「設計を理解する」「テーマを作る」の4経路に分けます。READMEは概要と最短導入、カタログは比較と動作確認、アーキテクチャ文書は設計判断、`*.spec.md`は個別契約に責務を限定します。
 
 設計の正本は次の2文書です。
 
@@ -90,7 +101,16 @@ kata-ui/
 document.documentElement.dataset.theme = 'blue';
 ```
 
-ブランドテーマを追加するときは`src/styles/themes/`へテーマCSSを追加し、コンポーネントセレクタではなく`--kata-*`トークンだけを上書きします。詳細は[theming.md](./theming.md)を参照してください。
+ブランドテーマを追加するときは`src/styles/themes/`へテーマCSSを追加し、コンポーネントセレクタではなく`--kata-*`トークンだけを上書きします。詳細は[theming.md](./theming/theming.md)を参照してください。
+
+## Markdownドキュメントの表示
+
+公開サイトでは`docs.html?doc=...`がリポジトリ内のMarkdownを取得し、目次付きHTMLとして表示します。変換にはバージョン固定した[Marked](https://marked.js.org/)を使い、生成HTMLは[DOMPurify](https://github.com/cure53/DOMPurify)でサニタイズします。
+
+- 表示対象はREADME、設計文書、テーマ文書、各コンポーネントの`*.spec.md`に限定する
+- Markdown内の相対リンクと画像URLは元文書を基準に解決する
+- 変換ライブラリを取得できない場合は、元のMarkdownへのリンクを案内する
+- GitHub上では従来どおりMarkdownを直接閲覧でき、同じ文書を二重管理しない
 
 独自のtemplateを使用する場合は`template`属性でIDを指定します。
 

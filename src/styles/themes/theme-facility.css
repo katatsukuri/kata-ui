@@ -1,13 +1,13 @@
 :root[data-theme="facility"] {
   color-scheme: light;
   --kata-font-family: "MS Gothic", "ＭＳ ゴシック", "Yu Gothic UI", sans-serif;
-  --kata-font-size-root: 13px;
+  --kata-font-size-root: 14px;
   --kata-font-size-xs: 12px;
-  --kata-font-size-sm: 13px;
-  --kata-font-size-md: 13px;
+  --kata-font-size-sm: 14px;
+  --kata-font-size-md: 14px;
   --kata-font-size-lg: 14px;
   --kata-line-height-control: 18px;
-  --kata-line-height-content: 1.45;
+  --kata-line-height-content: 1.44;
   --kata-space-xs: 1px;
   --kata-space-sm: 2px;
   --kata-space-md: 4px;
@@ -40,6 +40,11 @@
   --kata-shadow-sm: inset 1px 1px 2px rgb(83 91 99 / 0.35);
   --kata-shadow-md: 2px 2px 5px rgb(83 91 99 / 0.25);
   --kata-shadow-lg: 4px 4px 12px rgb(39 56 78 / 0.3);
+  --kata-toggle-track-width: 40px;
+  --kata-toggle-track-height: 20px;
+  --kata-toggle-track-padding: 2px;
+  --kata-toggle-thumb-size: 16px;
+  --kata-toggle-thumb-translate: 20px;
   --kata-table-header-bg: #f3f3f3;
   --kata-table-hover-bg: #e8f5ff;
 }
