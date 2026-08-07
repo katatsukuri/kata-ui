@@ -1,12 +1,12 @@
 kata-accordion {
   display: block;
-  border: 1px solid var(--pico-muted-border-color, #dfe3e6);
-  border-radius: 0.5rem;
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-lg, 0.5rem);
   overflow: hidden;
 }
 
 kata-accordion [data-accordion-item] {
-  border-bottom: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-bottom: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
 }
 
 kata-accordion [data-accordion-item]:last-child {
@@ -28,7 +28,7 @@ kata-accordion [data-accordion-trigger] {
 }
 
 kata-accordion [data-accordion-trigger]:hover {
-  background-color: var(--pico-muted-background-color, #f8fafc);
+  background-color: var(--kata-color-surface-muted, var(--pico-muted-background-color, #f8fafc));
 }
 
 kata-accordion [data-accordion-content] {

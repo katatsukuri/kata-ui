@@ -11,14 +11,14 @@ kata-table th {
   padding: 0.5rem 0.75rem;
   text-align: left;
   background-color: var(--kata-table-header-bg, transparent);
-  border-bottom: 2px solid var(--kata-table-border-color, #dfe3e6);
+  border-bottom: 2px solid var(--kata-table-border-color, var(--kata-color-border, #dfe3e6));
   font-weight: 600;
 }
 
 kata-table td {
   padding: 0.5rem 0.75rem;
   text-align: left;
-  border-bottom: 1px solid var(--kata-table-border-color, #dfe3e6);
+  border-bottom: 1px solid var(--kata-table-border-color, var(--kata-color-border, #dfe3e6));
 }
 
 kata-table tbody tr:last-child td {
@@ -26,5 +26,5 @@ kata-table tbody tr:last-child td {
 }
 
 kata-table tbody tr:hover td {
-  background-color: var(--kata-table-hover-bg, #f5f5f5);
+  background-color: var(--kata-table-hover-bg, var(--kata-color-surface-muted, #f5f5f5));
 }

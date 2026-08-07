@@ -1,0 +1,18 @@
+:root[data-theme="blue"] {
+  color-scheme: light;
+  --kata-color-background: #f7faff;
+  --kata-color-surface: #ffffff;
+  --kata-color-surface-muted: #edf4ff;
+  --kata-color-text: #10213d;
+  --kata-color-text-muted: #53657f;
+  --kata-color-border: #b9cbe6;
+  --kata-color-primary: #174ea6;
+  --kata-color-on-primary: #ffffff;
+  --kata-color-secondary: #dce9fb;
+  --kata-color-on-secondary: #17365f;
+  --kata-color-danger: #b42318;
+  --kata-color-on-danger: #ffffff;
+  --kata-color-contrast: #10213d;
+  --kata-color-on-contrast: #f7faff;
+  --kata-color-focus-ring: rgb(23 78 166 / 0.25);
+}

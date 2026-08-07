@@ -24,6 +24,11 @@ test('docs server serves the repository index and component assets', async (t) =
   assert.match(indexResponse.headers.get('content-type'), /^text\/html/);
   assert.match(await indexResponse.text(), /kata-ui Component Catalog/);
 
+  const themeResponse = await fetch(`${origin}/src/styles/kata-ui.css`);
+  assert.equal(themeResponse.status, 200);
+  assert.match(themeResponse.headers.get('content-type'), /^text\/css/);
+  assert.match(await themeResponse.text(), /theme-dark\.css/);
+
   const componentResponse = await fetch(`${origin}/src/components/kata-button/kata-button.js`);
   assert.equal(componentResponse.status, 200);
   assert.match(componentResponse.headers.get('content-type'), /^text\/javascript/);

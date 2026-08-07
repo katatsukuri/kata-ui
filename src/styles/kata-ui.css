@@ -1,0 +1,9 @@
+@import url("./tokens.css");
+@import url("./themes/theme-default.css");
+@import url("./themes/theme-blue.css");
+@import url("./themes/theme-dark.css");
+
+html {
+  background-color: var(--kata-color-background);
+  color: var(--kata-color-text);
+}

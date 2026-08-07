@@ -6,7 +6,7 @@ kata-sheet {
 kata-sheet [data-sheet-overlay] {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--kata-color-backdrop, rgb(0 0 0 / 0.4));
   z-index: 40;
 }
 
@@ -21,9 +21,9 @@ kata-sheet [data-sheet-panel] {
   bottom: 0;
   width: 20rem;
   max-width: 90vw;
-  background-color: var(--pico-background-color, #fff);
-  border: 1px solid var(--pico-muted-border-color, #dfe3e6);
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  background-color: var(--kata-color-background, var(--pico-background-color, #fff));
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  box-shadow: -4px 0 20px var(--kata-shadow-color, rgb(0 0 0 / 0.15));
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -36,16 +36,16 @@ kata-sheet [data-sheet-panel][hidden] {
 
 kata-sheet[data-side="right"] [data-sheet-panel] {
   right: 0;
-  border-left: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-left: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
   border-right: none;
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  box-shadow: -4px 0 20px var(--kata-shadow-color, rgb(0 0 0 / 0.15));
 }
 
 kata-sheet[data-side="left"] [data-sheet-panel] {
   left: 0;
-  border-right: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-right: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
   border-left: none;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 4px 0 20px var(--kata-shadow-color, rgb(0 0 0 / 0.15));
 }
 
 /* Header */
@@ -54,7 +54,7 @@ kata-sheet .kata-sheet__header {
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-bottom: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
 }
 
 kata-sheet .kata-sheet__title {
@@ -73,7 +73,7 @@ kata-sheet .kata-sheet__content {
 /* Footer */
 kata-sheet .kata-sheet__footer {
   padding: 1rem 1.5rem;
-  border-top: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-top: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;

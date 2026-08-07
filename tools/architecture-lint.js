@@ -11,6 +11,19 @@ const failures = [];
 const definedTags = new Map();
 const templateIds = new Map();
 
+const requiredStyleFiles = [
+  'src/styles/kata-ui.css',
+  'src/styles/tokens.css',
+  'src/styles/themes/theme-default.css',
+  'src/styles/themes/theme-blue.css',
+  'src/styles/themes/theme-dark.css',
+];
+
+for (const relativeFile of requiredStyleFiles) {
+  const file = path.join(repositoryRoot, relativeFile);
+  if (!fs.existsSync(file)) report(file, 'required theme artifact is missing.');
+}
+
 function report(file, message) {
   failures.push(`${path.relative(repositoryRoot, file)}: ${message}`);
 }
@@ -150,6 +163,14 @@ if (!fs.existsSync(componentsRoot)) {
     }
 
     if (/!important\b/.test(style)) report(styleFile, '!important is forbidden.');
+    if (/\[data-theme(?:=|\])/.test(style)) {
+      report(styleFile, 'component styles must not branch on a concrete theme.');
+    }
+    for (const [index, line] of style.split(/\r?\n/).entries()) {
+      if (/var\(--pico-/.test(line) && !/var\(--kata-/.test(line)) {
+        report(styleFile, `line ${index + 1} must access Pico colors through a --kata-* semantic token.`);
+      }
+    }
     const styleWithoutComments = style.replace(/\/\*[\s\S]*?\*\//g, '');
     for (const block of styleWithoutComments.matchAll(/([^{}]+)\{/g)) {
       const selectors = block[1].trim();

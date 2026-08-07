@@ -18,8 +18,8 @@ kata-switch input[type="checkbox"][role="switch"] {
   display: inline-block;
   width: 2.5rem;
   height: 1.25rem;
-  background-color: var(--pico-muted-border-color, #dfe3e6);
-  border-radius: 9999px;
+  background-color: var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-pill, 9999px);
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -33,13 +33,13 @@ kata-switch input[type="checkbox"][role="switch"]::before {
   left: 0.125rem;
   width: 1rem;
   height: 1rem;
-  background-color: #fff;
-  border-radius: 9999px;
+  background-color: var(--kata-color-on-primary, #fff);
+  border-radius: var(--kata-radius-pill, 9999px);
   transition: transform 0.2s ease;
 }
 
 kata-switch input[type="checkbox"][role="switch"]:checked {
-  background-color: var(--pico-primary-background, #1d4ed8);
+  background-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
 }
 
 kata-switch input[type="checkbox"][role="switch"]:checked::before {
@@ -48,7 +48,7 @@ kata-switch input[type="checkbox"][role="switch"]:checked::before {
 
 kata-switch input[type="checkbox"][role="switch"]:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.2);
+  box-shadow: 0 0 0 2px var(--kata-color-focus-ring, rgb(29 78 216 / 0.2));
 }
 
 kata-switch input[type="checkbox"][role="switch"]:disabled {

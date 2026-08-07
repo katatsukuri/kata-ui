@@ -5,7 +5,7 @@ kata-slider {
 kata-slider input[type="range"] {
   display: block;
   width: 100%;
-  accent-color: var(--pico-primary-background, #1d4ed8);
+  accent-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
   cursor: pointer;
 }
 

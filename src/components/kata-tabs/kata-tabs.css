@@ -4,7 +4,7 @@ kata-tabs {
 
 kata-tabs [role="tablist"] {
   display: flex;
-  border-bottom: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-bottom: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
   gap: 0;
 }
 
@@ -16,17 +16,17 @@ kata-tabs [data-tabs-trigger] {
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  color: var(--pico-muted-color, #6b7280);
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
   margin-bottom: -1px;
 }
 
 kata-tabs [data-tabs-trigger]:hover {
-  color: var(--pico-contrast, #0f172a);
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
 }
 
 kata-tabs [data-tabs-trigger][aria-selected="true"] {
-  color: var(--pico-primary-background, #1d4ed8);
-  border-bottom-color: var(--pico-primary-background, #1d4ed8);
+  color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+  border-bottom-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
 }
 
 kata-tabs [data-tabs-panel] {

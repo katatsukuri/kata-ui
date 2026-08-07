@@ -3,10 +3,10 @@ kata-card {
 }
 
 kata-card .kata-card {
-  border: 1px solid var(--pico-muted-border-color, #dfe3e6);
-  border-radius: 0.5rem;
-  background-color: var(--pico-card-background-color, #fff);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-lg, 0.5rem);
+  background-color: var(--kata-color-surface, var(--pico-card-background-color, #fff));
+  box-shadow: var(--kata-shadow-xs, 0 1px 3px rgb(0 0 0 / 0.06));
   overflow: hidden;
 }
 
@@ -22,7 +22,7 @@ kata-card .kata-card__title {
 
 kata-card .kata-card__description {
   font-size: 0.875rem;
-  color: var(--pico-muted-color, #6b7280);
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
   margin: 0;
 }
 

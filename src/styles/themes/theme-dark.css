@@ -1,0 +1,24 @@
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --kata-color-background: #111827;
+  --kata-color-surface: #1f2937;
+  --kata-color-surface-muted: #273449;
+  --kata-color-text: #f3f4f6;
+  --kata-color-text-muted: #b6c0cf;
+  --kata-color-border: #445268;
+  --kata-color-primary: #7db3ff;
+  --kata-color-on-primary: #0d2547;
+  --kata-color-secondary: #344258;
+  --kata-color-on-secondary: #f3f4f6;
+  --kata-color-danger: #ff7b72;
+  --kata-color-on-danger: #3d0b08;
+  --kata-color-contrast: #f3f4f6;
+  --kata-color-on-contrast: #111827;
+  --kata-color-focus-ring: rgb(125 179 255 / 0.35);
+  --kata-color-backdrop: rgb(0 0 0 / 0.65);
+  --kata-shadow-color: rgb(0 0 0 / 0.5);
+  --kata-shadow-xs: 0 1px 3px rgb(0 0 0 / 0.3);
+  --kata-shadow-sm: 0 1px 3px rgb(0 0 0 / 0.45);
+  --kata-shadow-md: 0 4px 12px rgb(0 0 0 / 0.4);
+  --kata-shadow-lg: 0 10px 30px rgb(0 0 0 / 0.5);
+}

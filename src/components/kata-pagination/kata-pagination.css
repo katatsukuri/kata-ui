@@ -21,23 +21,23 @@ kata-pagination button {
   height: 2rem;
   padding: 0 0.5rem;
   font-size: 0.875rem;
-  border-radius: 0.375rem;
-  border: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  border-radius: var(--kata-radius-md, 0.375rem);
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
   background: none;
-  color: var(--pico-contrast, #0f172a);
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
   text-decoration: none;
   cursor: pointer;
 }
 
 kata-pagination a:hover,
 kata-pagination button:hover {
-  background-color: var(--pico-muted-background-color, #f8fafc);
+  background-color: var(--kata-color-surface-muted, var(--pico-muted-background-color, #f8fafc));
 }
 
 kata-pagination [aria-current="page"] {
-  background-color: var(--pico-primary-background, #1d4ed8);
-  border-color: var(--pico-primary-background, #1d4ed8);
-  color: var(--pico-primary-inverse, #fff);
+  background-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+  border-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+  color: var(--kata-color-on-primary, var(--pico-primary-inverse, #fff));
 }
 
 kata-pagination [aria-disabled="true"],
