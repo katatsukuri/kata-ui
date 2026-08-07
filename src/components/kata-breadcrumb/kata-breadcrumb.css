@@ -15,21 +15,21 @@ kata-breadcrumb nav ul {
 }
 
 kata-breadcrumb [aria-current="page"] {
-  color: var(--pico-contrast, #0f172a);
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
   font-weight: 500;
 }
 
 kata-breadcrumb a {
-  color: var(--pico-muted-color, #6b7280);
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
   text-decoration: none;
 }
 
 kata-breadcrumb a:hover {
-  color: var(--pico-contrast, #0f172a);
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
   text-decoration: underline;
 }
 
 kata-breadcrumb [data-breadcrumb-separator] {
-  color: var(--pico-muted-color, #6b7280);
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
   user-select: none;
 }

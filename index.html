@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="kata-uiの全コンポーネントと動作例を確認できるカタログ">
     <title>kata-ui Component Catalog</title>
+    <link rel="stylesheet" href="./src/styles/kata-ui.css">
     <link rel="stylesheet" href="./docs.css">
   </head>
   <body>
@@ -24,6 +25,14 @@
           <a href="./component_architecture.md">コンポーネント設計</a>
           <a href="https://github.com/katatsukuri/kata-ui">GitHub</a>
         </nav>
+        <label class="theme-control">
+          <span>表示テーマ</span>
+          <select data-theme-switcher>
+            <option value="default">Default</option>
+            <option value="blue">Blue</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
       </div>
     </header>
 
@@ -133,5 +142,6 @@
     <footer>
       <p>kata-ui — Web標準を中心にした、長期保守向けのUI境界。</p>
     </footer>
+    <script type="module" src="./src/theme-switcher.js"></script>
   </body>
 </html>

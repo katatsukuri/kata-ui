@@ -11,11 +11,11 @@ kata-button button {
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.25rem;
-  border-radius: 0.375rem;
+  border-radius: var(--kata-radius-md, 0.375rem);
   border: 1px solid transparent;
   cursor: pointer;
-  background-color: var(--pico-primary-background, #1d4ed8);
-  color: var(--pico-primary-inverse, #fff);
+  background-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+  color: var(--kata-color-on-primary, var(--pico-primary-inverse, #fff));
   transition: opacity 0.15s ease;
 }
 
@@ -29,24 +29,24 @@ kata-button button:disabled {
 }
 
 kata-button button[data-variant="secondary"] {
-  background-color: var(--pico-secondary-background, #f1f5f9);
-  color: var(--pico-secondary-inverse, #0f172a);
-  border-color: var(--pico-muted-border-color, #dfe3e6);
+  background-color: var(--kata-color-secondary, var(--pico-secondary-background, #f1f5f9));
+  color: var(--kata-color-on-secondary, var(--pico-secondary-inverse, #0f172a));
+  border-color: var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
 }
 
 kata-button button[data-variant="outline"] {
   background-color: transparent;
-  color: var(--pico-primary-background, #1d4ed8);
-  border-color: var(--pico-primary-background, #1d4ed8);
+  color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+  border-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
 }
 
 kata-button button[data-variant="ghost"] {
   background-color: transparent;
-  color: var(--pico-contrast, #0f172a);
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
   border-color: transparent;
 }
 
 kata-button button[data-variant="destructive"] {
-  background-color: var(--pico-del-color, #dc2626);
-  color: #fff;
+  background-color: var(--kata-color-danger, var(--pico-del-color, #dc2626));
+  color: var(--kata-color-on-danger, #fff);
 }

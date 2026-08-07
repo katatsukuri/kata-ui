@@ -18,10 +18,10 @@ kata-hover-card [data-kata-hover-card__content][hidden] {
 }
 
 kata-hover-card .kata-hover-card__content {
-  border: 1px solid var(--pico-muted-border-color, #dfe3e6);
-  border-radius: 0.5rem;
-  background-color: var(--pico-card-background-color, #fff);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-lg, 0.5rem);
+  background-color: var(--kata-color-surface, var(--pico-card-background-color, #fff));
+  box-shadow: var(--kata-shadow-md, 0 4px 12px rgb(0 0 0 / 0.1));
   padding: 1rem;
 }
 
@@ -33,6 +33,6 @@ kata-hover-card .kata-hover-card__title {
 
 kata-hover-card .kata-hover-card__description {
   font-size: 0.875rem;
-  color: var(--pico-muted-color, #6b7280);
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
   margin: 0;
 }

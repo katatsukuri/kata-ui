@@ -1,0 +1,32 @@
+:root {
+  color-scheme: light;
+
+  /* Semantic colors. Pico variables remain the compatibility fallback. */
+  --kata-color-background: var(--pico-background-color, #ffffff);
+  --kata-color-surface: var(--pico-card-background-color, var(--kata-color-background));
+  --kata-color-surface-muted: var(--pico-muted-background-color, #f8fafc);
+  --kata-color-text: var(--pico-contrast, #0f172a);
+  --kata-color-text-muted: var(--pico-muted-color, #6b7280);
+  --kata-color-border: var(--pico-muted-border-color, #dfe3e6);
+  --kata-color-primary: var(--pico-primary-background, #1d4ed8);
+  --kata-color-on-primary: var(--pico-primary-inverse, #ffffff);
+  --kata-color-secondary: var(--pico-secondary-background, #f1f5f9);
+  --kata-color-on-secondary: var(--pico-secondary-inverse, #0f172a);
+  --kata-color-danger: var(--pico-del-color, #dc2626);
+  --kata-color-on-danger: #ffffff;
+  --kata-color-contrast: var(--pico-contrast-background, #0f172a);
+  --kata-color-on-contrast: var(--pico-contrast-inverse, #f8fafc);
+  --kata-color-focus-ring: rgb(29 78 216 / 0.2);
+  --kata-color-backdrop: rgb(0 0 0 / 0.4);
+  --kata-shadow-color: rgb(0 0 0 / 0.15);
+
+  /* Reusable shape and elevation tokens for application-level overrides. */
+  --kata-radius-sm: 0.25rem;
+  --kata-radius-md: 0.375rem;
+  --kata-radius-lg: 0.5rem;
+  --kata-radius-pill: 9999px;
+  --kata-shadow-xs: 0 1px 3px rgb(0 0 0 / 0.06);
+  --kata-shadow-sm: 0 1px 3px rgb(0 0 0 / 0.2);
+  --kata-shadow-md: 0 4px 12px rgb(0 0 0 / 0.1);
+  --kata-shadow-lg: 0 10px 30px rgb(0 0 0 / 0.15);
+}

@@ -3,16 +3,16 @@ kata-alert-dialog {
 }
 
 kata-alert-dialog dialog {
-  border: 1px solid var(--pico-muted-border-color, #dfe3e6);
-  border-radius: 0.5rem;
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-lg, 0.5rem);
   padding: 0;
   min-width: 20rem;
   max-width: 90vw;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--kata-shadow-lg, 0 10px 30px rgb(0 0 0 / 0.15));
 }
 
 kata-alert-dialog dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--kata-color-backdrop, rgb(0 0 0 / 0.4));
 }
 
 kata-alert-dialog .kata-alert-dialog__header {
@@ -27,7 +27,7 @@ kata-alert-dialog .kata-alert-dialog__title {
 
 kata-alert-dialog .kata-alert-dialog__description {
   font-size: 0.875rem;
-  color: var(--pico-muted-color, #6b7280);
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
   margin: 0;
 }
 

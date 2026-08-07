@@ -137,6 +137,6 @@
 
 | カスタムプロパティ                 | デフォルト値  | 説明                         |
 | ---------------------------------- | ------------- | ---------------------------- |
-| `--kata-table-border-color`        | `#dfe3e6`     | セル下境界線の色             |
+| `--kata-table-border-color`        | `--kata-color-border` | セル下境界線の色       |
 | `--kata-table-header-bg`           | `transparent` | ヘッダー行の背景色           |
-| `--kata-table-hover-bg`            | `#f5f5f5`     | 行ホバー時の背景色           |
+| `--kata-table-hover-bg`            | `--kata-color-surface-muted` | 行ホバー時の背景色 |

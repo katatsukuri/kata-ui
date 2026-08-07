@@ -255,13 +255,19 @@ Pico CSSだけで業務画面全体を完成させようとはせず、次の層
 pico.min.css
   → 標準HTMLの基本スタイル
 
-tokens.css
-  → 色、余白、文字サイズ等の設計変数
+src/styles/kata-ui.css
+  → tokens.cssと選択可能なTheme CSSの入口
+
+src/styles/tokens.css
+  → Pico CSSとComponent CSSを分離するセマンティック設計変数
+
+src/styles/themes/*.css
+  → data-themeに応じたトークン値
 
 application.css
   → 画面レイアウト、共通業務スタイル
 
-src/components/*.css
+src/components/*/*.css
   → 独自コンポーネント
 ```
 

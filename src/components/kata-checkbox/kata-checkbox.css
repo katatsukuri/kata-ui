@@ -14,7 +14,7 @@ kata-checkbox input[type="checkbox"] {
   width: 1rem;
   height: 1rem;
   cursor: pointer;
-  accent-color: var(--pico-primary-background, #1d4ed8);
+  accent-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
 }
 
 kata-checkbox input[type="checkbox"]:disabled {

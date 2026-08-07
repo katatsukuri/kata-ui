@@ -511,17 +511,18 @@ Componentは外部DOMを直接操作しない。
 
 ## 基本
 
-Pico CSSを基盤とする。
+Pico CSSを基盤とし、Component CSSは`src/styles/tokens.css`の`--kata-*`セマンティックトークンを参照する。Pico CSS変数はトークン層またはComponent CSSの後方互換フォールバックでのみ参照する。
 
 Component CSS：
 
 ```css
-.user-card {
-
+kata-user-card .kata-user-card {
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
+  background: var(--kata-color-surface, #ffffff);
 }
 
-.user-card__name {
-
+kata-user-card .kata-user-card__name {
+  color: var(--kata-color-text-muted, #6b7280);
 }
 ```
 
@@ -535,6 +536,8 @@ Component CSS：
 - グローバル汚染禁止
 - 高詳細度セレクタ禁止
 - !important禁止
+- 色、境界、フォーカス、エレベーションは`--kata-*`トークン経由で指定する
+- 特定の`data-theme`をComponent CSS内で分岐しない
 
 悪い：
 

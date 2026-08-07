@@ -1,13 +1,13 @@
 :root {
   color-scheme: light dark;
-  --page-bg: #f4f7fb;
-  --surface: #ffffff;
-  --surface-muted: #eef3f9;
-  --text: #172033;
-  --muted: #5c687d;
-  --border: #d7dfeb;
-  --accent: #2457d6;
-  --accent-strong: #173fa9;
+  --page-bg: var(--kata-color-background, #f4f7fb);
+  --surface: var(--kata-color-surface, #ffffff);
+  --surface-muted: var(--kata-color-surface-muted, #eef3f9);
+  --text: var(--kata-color-text, #172033);
+  --muted: var(--kata-color-text-muted, #5c687d);
+  --border: var(--kata-color-border, #d7dfeb);
+  --accent: var(--kata-color-primary, #2457d6);
+  --accent-strong: var(--kata-color-primary, #173fa9);
   --shadow: 0 18px 50px rgba(31, 50, 81, 0.08);
 }
 
@@ -109,6 +109,19 @@ footer {
 
 .header-links a:hover { background: rgba(255, 255, 255, 0.12); }
 
+.theme-control {
+  display: inline-grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.theme-control select {
+  min-width: 10rem;
+  margin: 0;
+}
+
 .catalog { padding-block: 4rem; }
 
 .catalog > section + section { margin-top: 5rem; }
@@ -199,18 +212,8 @@ footer {
   text-align: center;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --page-bg: #0f1522;
-    --surface: #171f2f;
-    --surface-muted: #242e42;
-    --text: #edf2fb;
-    --muted: #aeb9cc;
-    --border: #313d52;
-    --accent: #8eb7ff;
-    --accent-strong: #b5ceff;
-    --shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
-  }
+:root[data-theme="dark"] {
+  --shadow: 0 18px 50px rgb(0 0 0 / 0.35);
 }
 
 @media (max-width: 760px) {

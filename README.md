@@ -20,6 +20,7 @@
 - Web ComponentはLight DOMとし、内部骨格は`template`から生成する
 - 一つのDOM領域を複数の技術で再生成しない
 - 外部通知には`CustomEvent`を使用し、外部DOMを直接変更しない
+- 色・境界・フォーカス・エレベーションは`--kata-*`セマンティックトークンを介してテーマから設定する
 
 ## ディレクトリ構成
 
@@ -39,6 +40,13 @@ kata-ui/
 │   │       ├── kata-example.css
 │   │       ├── kata-example.test.js
 │   │       └── examples/
+│   ├── styles/
+│   │   ├── kata-ui.css
+│   │   ├── tokens.css
+│   │   └── themes/
+│   │       ├── theme-default.css
+│   │       ├── theme-blue.css
+│   │       └── theme-dark.css
 │   └── loader/
 │       └── template-loader.js
 └── tools/
@@ -50,6 +58,7 @@ kata-ui/
 ## 導入例
 
 ```html
+<link rel="stylesheet" href="/kata-ui/src/styles/kata-ui.css">
 <link rel="stylesheet" href="/kata-ui/src/components/kata-button/kata-button.css">
 
 <template id="kata-button-template">
@@ -60,6 +69,24 @@ kata-ui/
 
 <script type="module" src="/kata-ui/src/components/kata-button/kata-button.js"></script>
 ```
+
+`kata-ui.css`はPico CSSの後、コンポーネントCSSの前に読み込みます。Pico CSSを使わないページでも、同じ既定値で利用できます。
+
+## テーマ設定
+
+`html`要素の`data-theme`を`default`、`blue`、`dark`のいずれかにすると、全コンポーネントへ同じテーマが継承されます。
+
+```html
+<html lang="ja" data-theme="dark">
+```
+
+実行時の切り替えは属性値の変更だけで行います。選択値をCookie、DB、`localStorage`のどこへ保存するかは利用アプリケーションの責務です。
+
+```js
+document.documentElement.dataset.theme = 'blue';
+```
+
+ブランドテーマを追加するときは`src/styles/themes/`へテーマCSSを追加し、コンポーネントセレクタではなく`--kata-*`トークンだけを上書きします。詳細は[theming.md](./theming.md)を参照してください。
 
 独自のtemplateを使用する場合は`template`属性でIDを指定します。
 
