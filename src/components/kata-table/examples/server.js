@@ -3,8 +3,8 @@
  * Mock server for kata-table examples.
  * Serves the repository root so component modules can resolve the shared loader.
  *
- * Usage: node components/kata-table/examples/server.js
- *        PORT=3000 node components/kata-table/examples/server.js
+ * Usage: node src/components/kata-table/examples/server.js
+ *        PORT=3000 node src/components/kata-table/examples/server.js
  */
 
 import http from 'node:http';
@@ -13,7 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '../../..');
+const ROOT = path.resolve(__dirname, '../../../..');
 const PORT = Number(process.env.PORT) || 3000;
 
 const MIME_TYPES = {
@@ -102,7 +102,7 @@ const server = http.createServer((req, res) => {
   }
 
   if (urlPath === '/') {
-    urlPath = '/components/kata-table/examples/static/index.html';
+    urlPath = '/index.html';
   }
 
   const filePath = path.normalize(path.join(NORMALIZED_ROOT, urlPath));

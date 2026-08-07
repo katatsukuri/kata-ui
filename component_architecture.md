@@ -86,7 +86,7 @@ Forbidden:
 推奨構成：
 
 ```text
-components/
+src/components/
 
 └── user-card/
     |

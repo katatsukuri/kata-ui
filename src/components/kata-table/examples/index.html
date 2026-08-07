@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="htmx-config" content='{"selfRequestsOnly":true,"allowScriptTags":false,"allowEval":false,"historyCacheSize":0}'>
+    <title>kata-table GitHub Pages example</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+    <link rel="stylesheet" href="../kata-table.css">
+    <script src="https://unpkg.com/htmx.org@2.0.10/dist/htmx.min.js"></script>
+    <script type="module" src="../kata-table.js"></script>
+  </head>
+  <body class="container">
+    <h1>kata-table example</h1>
+    <p>GitHub Pages上でも、静的HTML断片をHTMXで取得して表を切り替えられます。</p>
+
+    <template id="kata-table-all-users-template">
+      <table class="kata-table">
+        <thead><tr><th scope="col">Name</th><th scope="col">Role</th></tr></thead>
+        <tbody hx-get="./rows.html" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+      </table>
+    </template>
+
+    <template id="kata-table-maintainers-template">
+      <table class="kata-table">
+        <thead><tr><th scope="col">Maintainer</th><th scope="col">Role</th></tr></thead>
+        <tbody hx-get="./maintainers.html" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+      </table>
+    </template>
+
+    <div role="group" aria-label="表示する表">
+      <button type="button" hx-get="./table-all.html" hx-target="#table-host" hx-swap="innerHTML">All users</button>
+      <button type="button" hx-get="./table-maintainers.html" hx-target="#table-host" hx-swap="innerHTML">Maintainers</button>
+    </div>
+
+    <div id="table-host" hx-get="./table-all.html" hx-trigger="load" hx-target="this" hx-swap="innerHTML" aria-live="polite"></div>
+  </body>
+</html>

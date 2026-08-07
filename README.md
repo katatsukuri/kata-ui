@@ -2,6 +2,8 @@
 
 `kata-ui` は、サーバー主導型MPAへ段階導入できる、ビルドレスなLight DOM Web Component集です。
 
+全コンポーネントの説明と動作例は、[Component Catalog](./index.html)で確認できます。GitHub Pages公開後は `https://katatsukuri.github.io/kata-ui/` が入口になります。
+
 設計の正本は次の2文書です。
 
 - [architecture.md](./architecture.md)：フロントエンド全体の責務、セキュリティ、検証方針
@@ -26,16 +28,17 @@ kata-ui/
 ├── architecture.md
 ├── component_architecture.md
 ├── architecture-manifest.json
-├── components/
-│   └── kata-example/
-│       ├── kata-example.spec.md
-│       ├── kata-example.html
-│       ├── kata-example.js
-│       ├── kata-example.css
-│       ├── kata-example.test.js
-│       └── examples/
-├── loader/
-│   └── template-loader.js
+├── src/
+│   ├── components/
+│   │   └── kata-example/
+│   │       ├── kata-example.spec.md
+│   │       ├── kata-example.html
+│   │       ├── kata-example.js
+│   │       ├── kata-example.css
+│   │       ├── kata-example.test.js
+│   │       └── examples/
+│   └── loader/
+│       └── template-loader.js
 └── tools/
     └── architecture-lint.js
 ```
@@ -45,7 +48,7 @@ kata-ui/
 ## 導入例
 
 ```html
-<link rel="stylesheet" href="/kata-ui/components/kata-button/kata-button.css">
+<link rel="stylesheet" href="/kata-ui/src/components/kata-button/kata-button.css">
 
 <template id="kata-button-template">
   <button type="button">保存</button>
@@ -53,7 +56,7 @@ kata-ui/
 
 <kata-button></kata-button>
 
-<script type="module" src="/kata-ui/components/kata-button/kata-button.js"></script>
+<script type="module" src="/kata-ui/src/components/kata-button/kata-button.js"></script>
 ```
 
 独自のtemplateを使用する場合は`template`属性でIDを指定します。
@@ -103,10 +106,10 @@ npm run check
 2. Light DOM、禁止API、BEM、CSSスコープ、依存バージョンのアーキテクチャLint
 3. 初期化、イベント、属性、切断・再接続を含むNode.jsテスト
 
-kata-tableの静的利用例は次で起動できます。
+Component Catalogと全exampleは次で起動できます。
 
 ```powershell
-npm run examples
+npm run docs
 ```
 
 ## このリポジトリの責任境界

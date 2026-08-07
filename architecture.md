@@ -261,7 +261,7 @@ tokens.css
 application.css
   → 画面レイアウト、共通業務スタイル
 
-components/*.css
+src/components/*.css
   → 独自コンポーネント
 ```
 

@@ -50,7 +50,7 @@
   }'
 ></kata-chart>
 
-<script type="module" src="/kata-ui/components/kata-chart/kata-chart.js"></script>
+<script type="module" src="/kata-ui/src/components/kata-chart/kata-chart.js"></script>
 ```
 
 ## エラー条件
