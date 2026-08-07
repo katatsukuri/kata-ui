@@ -58,3 +58,10 @@
 - `data` 属性に不正な JSON が渡された場合、コンソールにエラーを出力してグラフを描画しない
 - Chart.js（`window.Chart`）が見つからない場合、コンソールにエラーを出力する
 - 対応するtemplateまたは`data-chart-canvas`が見つからない場合、初期化時にエラーを送出する
+## Shadow DOM・slot・属性契約
+
+- Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
+- ラベル、値、状態などの単純データは利用側の属性で渡す。
+- 意味または構造を持つHTMLはdefault／named `slot`で渡し、子HTMLがある場合はtemplateの既定内容を重複表示しない。
+- 子HTMLがない場合は正規`template`を複製し、利用側の属性を既定骨格へ反映する。
+- サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。

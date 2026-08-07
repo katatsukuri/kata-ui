@@ -36,3 +36,43 @@ kata-hover-card .kata-hover-card__description {
   color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
   margin: 0;
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: inline-block;
+  position: relative;
+}
+
+:host [data-kata-hover-card__content] {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 12rem;
+  max-width: 20rem;
+}
+
+:host [data-kata-hover-card__content][hidden] {
+  display: none;
+}
+
+:host .kata-hover-card__content {
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-lg, 0.5rem);
+  background-color: var(--kata-color-surface, var(--pico-card-background-color, #fff));
+  box-shadow: var(--kata-shadow-md, 0 4px 12px rgb(0 0 0 / 0.1));
+  padding: var(--kata-space-xl);
+}
+
+:host .kata-hover-card__title {
+  font-size: var(--kata-font-size-sm);
+  font-weight: 600;
+  margin: 0 0 var(--kata-space-sm);
+}
+
+:host .kata-hover-card__description {
+  font-size: var(--kata-font-size-sm);
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
+  margin: 0;
+}

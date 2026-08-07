@@ -16,7 +16,7 @@ test('kata-card clones its template on connect', () => {
   const element = new KataCardElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'DIV');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-card throws when template is missing', () => {

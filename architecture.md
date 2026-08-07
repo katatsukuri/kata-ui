@@ -8,7 +8,7 @@
 サーバー主導型MPA
   ＋ HTMXによるページ遷移・部分HTML更新
   ＋ Alpine.jsによる局所的なUI状態管理
-  ＋ Light DOM Web Componentsによる再利用UI部品
+  ＋ Shadow DOM Web Componentsによる再利用UI部品
   ＋ templateによる部品内部構造・通信不要の要素複製
   ＋ Pico CSSを基礎とした統一スタイル
 ```
@@ -31,7 +31,7 @@
 | ページ全体の`template` SPA | 原則禁止 |
 | 局所的なUI状態 | Alpine.js |
 | 再利用UI部品 | Web Components |
-| Web ComponentのDOM | Light DOMを標準 |
+| Web ComponentのDOM | open Shadow DOMを標準 |
 | `template`の用途 | Web Component内部構造、通信不要の要素複製 |
 | 基本スタイル | Pico CSS |
 | 業務固有スタイル | 独自CSSを追加 |
@@ -386,25 +386,19 @@ Web Componentから外部へ通知するときは、外部DOMを直接更新せ�
 
 ---
 
-## 8. Light DOMとShadow DOM
+## 8. Shadow DOMと利用側契約
 
-Web ComponentはLight DOMを標準とする。
+Web Componentはopen Shadow DOMを標準とする。内部DOMとComponent CSSを利用ページのセレクタから隔離しつつ、DevTools、イベントのcomposed path、フォーム連携に必要な観測性を保つ。
 
-理由：
+利用側から渡すデータは次の順序とする。
 
-- Pico CSSをそのまま適用できる
-- HTMXと統合しやすい
-- Alpine.jsから扱いやすい
-- フォームへ統合しやすい
-- DevToolsで確認しやすい
-- 業務画面からCSSを調整しやすい
+1. ラベル、値、状態など単純なデータはCustom Elementの属性
+2. 意味や構造を持つHTMLはdefaultまたはnamed `slot`
+3. 利用側からHTMLがない場合は、正規`template`をShadow DOMへ複製して属性を反映
 
-Shadow DOMは原則禁止とし、次の場合だけADRによる承認を必要とする。
+サイト全体のテーマは、継承可能な`--kata-*` CSSカスタムプロパティでShadow DOMへ伝える。利用側の通常セレクタを内部実装へ結合させない。外部から限定的な装飾点が必要な場合だけ`part`を公開し、`::part()`を契約へ記載する。
 
-- 外部システムへ配布する部品
-- 外部CSSから完全隔離する必要がある
-- サードパーティー画面へ埋め込む
-- 部品固有の見た目を厳格に保証する必要がある
+HTMXはCustom Element全体、またはslotが所有するLight DOMだけを交換対象とする。Shadow DOM内部の深い要素は交換しない。
 
 ---
 
@@ -663,7 +657,7 @@ Permissions-Policy: 必要な機能だけ許可
 4. 業務状態の正本はサーバーに置く
 5. 一つのDOM領域を複数技術で再生成しない
 6. Alpine.jsは局所的なUI状態だけを管理する
-7. Web ComponentはLight DOMを標準とする
+7. Web Componentはopen Shadow DOMを標準とし、属性・slot・templateの入力規約を守る
 8. Ajaxレスポンスへ`script`タグを含めない
 9. 部分HTMLを返すURLは直接アクセス時に完全HTMLを返せること
 10. 完全HTMLと部分HTMLを返し分ける場合は`Vary: HX-Request`を設定する
@@ -690,7 +684,7 @@ Permissions-Policy: 必要な機能だけ許可
 
 - 自作SPAルーター
 - `history.pushState()`、`replaceState()`の直接利用
-- Shadow DOMの無承認利用
+- Shadow DOM内部を前提とする外部CSSセレクタ
 - Alpine.jsからの無承認`fetch()`
 - `x-html`
 - インラインイベント属性
@@ -718,7 +712,7 @@ Permissions-Policy: 必要な機能だけ許可
 | JavaScript | `innerHTML`、`insertAdjacentHTML`の制限 |
 | JavaScript | `fetch()`の利用箇所制限 |
 | JavaScript | `pushState()`、`replaceState()`禁止 |
-| JavaScript | `attachShadow()`禁止または許可リスト制 |
+| Web Components | 共通Shadow DOM初期化、template／slot契約 |
 | JavaScript | `eval()`、`Function()`禁止 |
 | Web Components | `customElements.define()`の重複検査 |
 | 依存関係 | 完全バージョン固定 |
@@ -746,7 +740,7 @@ architecture-lint
 ├─ 外部URLのhx-*がない
 ├─ page templateによるSPA構造がない
 ├─ pushState利用がない
-├─ Shadow DOM利用が許可リスト内
+├─ Shadow DOM共通初期化と:hostスタイルがある
 ├─ Web Component名と定義が対応している
 ├─ vendorバージョンとmanifestが一致する
 └─ 禁止APIの利用がない
@@ -1058,7 +1052,7 @@ exception category
 サーバー主導型MPA
   ＋ HTMXによるページ遷移と部分更新
   ＋ Alpine.js CSP Buildによる局所的なUI状態
-  ＋ Light DOM Web Componentsによる再利用UI
+  ＋ Shadow DOM Web Componentsによる再利用UI
   ＋ templateによる部品構造と通信不要の複製
   ＋ Pico CSSおよび業務固有CSS
   ＋ CSP、CSRF、XSS対策

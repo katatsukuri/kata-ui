@@ -1,4 +1,4 @@
-import { instantiateTemplate } from '../../loader/template-loader.js';
+import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-sheet-template';
 
@@ -10,22 +10,20 @@ export class KataSheetElement extends HTMLElement {
     }
 
     const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    const fragment = instantiateTemplate(templateId, this.ownerDocument);
-
-    this.replaceChildren(fragment);
+    initializeShadowComponent(this, templateId, import.meta.url);
     this.dataset.kataUiInitialized = 'true';
 
     const side = this.getAttribute('side') || 'right';
     this.dataset.side = side;
 
-    this._panel = this.querySelector('[data-sheet-panel]');
-    this._overlay = this.querySelector('[data-sheet-overlay]');
+    this._panel = queryComponent(this, '[data-sheet-panel]');
+    this._overlay = queryComponent(this, '[data-sheet-overlay]');
 
-    this.querySelectorAll('[data-sheet-trigger]').forEach((trigger) => {
+    queryComponentAll(this, '[data-sheet-trigger]').forEach((trigger) => {
       trigger.addEventListener('click', () => this._open());
     });
 
-    this.querySelectorAll('[data-sheet-close]').forEach((btn) => {
+    queryComponentAll(this, '[data-sheet-close]').forEach((btn) => {
       btn.addEventListener('click', () => this._close());
     });
 

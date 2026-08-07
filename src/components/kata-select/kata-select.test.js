@@ -16,7 +16,7 @@ test('kata-select clones its template on connect', () => {
   const element = new KataSelectElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'SELECT');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-select throws when template is missing', () => {

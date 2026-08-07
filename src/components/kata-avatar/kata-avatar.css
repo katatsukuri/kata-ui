@@ -34,3 +34,41 @@ kata-avatar .kata-avatar[data-size="lg"] {
   height: 3.5rem;
   font-size: var(--kata-font-size-lg);
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: inline-block;
+}
+
+:host .kata-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--kata-radius-pill, 9999px);
+  overflow: hidden;
+  background-color: var(--kata-color-secondary, var(--pico-secondary-background, #f1f5f9));
+  color: var(--kata-color-on-secondary, var(--pico-secondary-inverse, #0f172a));
+  font-size: var(--kata-font-size-md);
+  font-weight: 500;
+  user-select: none;
+}
+
+:host .kata-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+:host .kata-avatar[data-size="sm"] {
+  width: 2rem;
+  height: 2rem;
+  font-size: var(--kata-font-size-xs);
+}
+
+:host .kata-avatar[data-size="lg"] {
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: var(--kata-font-size-lg);
+}

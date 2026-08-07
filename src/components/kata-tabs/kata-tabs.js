@@ -1,4 +1,4 @@
-import { instantiateTemplate } from '../../loader/template-loader.js';
+import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-tabs-template';
 
@@ -9,37 +9,35 @@ export class KataTabsElement extends HTMLElement {
     }
 
     const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    const fragment = instantiateTemplate(templateId, this.ownerDocument);
-
-    this.replaceChildren(fragment);
+    initializeShadowComponent(this, templateId, import.meta.url);
     this.dataset.kataUiInitialized = 'true';
 
-    this.addEventListener('click', (event) => {
+    this.shadowRoot.addEventListener('click', (event) => {
       const trigger = event.target.closest('[data-tabs-trigger]');
       if (!trigger) return;
 
       const targetId = trigger.getAttribute('aria-controls');
       if (!targetId) return;
 
-      this.querySelectorAll('[data-tabs-trigger]').forEach((t) => {
+      queryComponentAll(this, '[data-tabs-trigger]').forEach((t) => {
         t.setAttribute('aria-selected', 'false');
         t.removeAttribute('data-active');
       });
-      this.querySelectorAll('[data-tabs-panel]').forEach((p) => {
+      queryComponentAll(this, '[data-tabs-panel]').forEach((p) => {
         p.hidden = true;
       });
 
       trigger.setAttribute('aria-selected', 'true');
       trigger.dataset.active = '';
-      const panel = this.querySelector(`#${CSS.escape(targetId)}`);
+      const panel = queryComponent(this, `#${CSS.escape(targetId)}`);
       if (panel) panel.hidden = false;
     });
 
-    this.addEventListener('keydown', (event) => {
+    this.shadowRoot.addEventListener('keydown', (event) => {
       const trigger = event.target.closest('[data-tabs-trigger]');
       if (!trigger) return;
 
-      const triggers = Array.from(this.querySelectorAll('[data-tabs-trigger]'));
+      const triggers = Array.from(queryComponentAll(this, '[data-tabs-trigger]'));
       const index = triggers.indexOf(trigger);
 
       if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {

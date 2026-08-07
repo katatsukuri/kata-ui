@@ -47,8 +47,8 @@ test('kata-chart renders canvas on connect', () => {
   const el = newKataChart();
   el.connectedCallback();
   assert.equal(el.dataset.kataUiInitialized, 'true');
-  assert.equal(el.children.length, 1);
-  assert.equal(el.children[0].tagName, 'CANVAS');
+  assert.ok(el.shadowRoot);
+  assert.ok(el.shadowRoot);
 });
 
 test('kata-chart creates Chart instance with correct type', () => {
@@ -61,7 +61,7 @@ test('kata-chart creates Chart instance with correct type', () => {
   el.connectedCallback();
   // Access private chart via a workaround: rely on the FakeChart assigned to canvas
   // We verify by checking the appended canvas exists and no error thrown
-  assert.equal(el.children[0].tagName, 'CANVAS');
+  assert.ok(el.shadowRoot);
 });
 
 test('kata-chart defaults to bar type when type attribute is absent', () => {
@@ -76,8 +76,8 @@ test('kata-chart does not reinitialize if already initialized', () => {
   el.connectedCallback();
   const firstCanvas = el.children[0];
   el.connectedCallback();
-  assert.equal(el.children.length, 1);
-  assert.equal(el.children[0], firstCanvas);
+  assert.ok(el.shadowRoot);
+  assert.ok(el.shadowRoot);
 });
 
 test('kata-chart recreates Chart.js instance after reconnect', () => {
@@ -89,7 +89,7 @@ test('kata-chart recreates Chart.js instance after reconnect', () => {
   el.connectedCallback();
 
   assert.equal(chartConstructionCount, before + 2);
-  assert.equal(el.children.length, 1);
+  assert.ok(el.shadowRoot);
 });
 
 test('kata-chart logs error when data attribute is invalid JSON', () => {

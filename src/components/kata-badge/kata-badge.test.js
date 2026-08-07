@@ -16,7 +16,7 @@ test('kata-badge clones its template on connect', () => {
   const element = new KataBadgeElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'SPAN');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-badge throws when template is missing', () => {

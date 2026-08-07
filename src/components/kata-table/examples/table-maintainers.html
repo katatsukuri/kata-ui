@@ -1,1 +1,6 @@
-<kata-table template="kata-table-maintainers-template"></kata-table>
+<kata-table>
+  <table class="kata-table">
+    <thead><tr><th scope="col">Maintainer</th><th scope="col">Role</th></tr></thead>
+    <tbody hx-get="./maintainers.html" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+  </table>
+</kata-table>

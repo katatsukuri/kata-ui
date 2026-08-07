@@ -1,4 +1,4 @@
-import { instantiateTemplate } from '../../loader/template-loader.js';
+import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-hover-card-template';
 
@@ -9,15 +9,13 @@ export class KataHoverCardElement extends HTMLElement {
     }
 
     const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    const fragment = instantiateTemplate(templateId, this.ownerDocument);
-
-    this.replaceChildren(fragment);
+    initializeShadowComponent(this, templateId, import.meta.url);
     this.dataset.kataUiInitialized = 'true';
     this.dataset.state = 'closed';
 
-    this._content = this.querySelector('[data-kata-hover-card__content]');
+    this._content = queryComponent(this, '[data-kata-hover-card__content]');
 
-    this.querySelectorAll('[data-hover-card-trigger]').forEach((trigger) => {
+    queryComponentAll(this, '[data-hover-card-trigger]').forEach((trigger) => {
       trigger.addEventListener('mouseenter', () => this._open());
       trigger.addEventListener('mouseleave', () => this._scheduleClose());
       trigger.addEventListener('focus', () => this._open());

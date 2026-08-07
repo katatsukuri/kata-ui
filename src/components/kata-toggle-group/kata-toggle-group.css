@@ -42,3 +42,49 @@ kata-toggle-group [data-toggle-item]:focus-visible {
   z-index: 1;
   position: relative;
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: inline-block;
+}
+
+:host [role="group"] {
+  display: inline-flex;
+  gap: 0;
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-md, 0.375rem);
+  overflow: hidden;
+}
+
+:host [data-toggle-item] {
+  padding: var(--kata-space-sm) var(--kata-space-lg);
+  font-size: var(--kata-font-size-sm);
+  font-weight: 500;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  cursor: pointer;
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
+  line-height: var(--kata-line-height-content);
+}
+
+:host [data-toggle-item]:last-child {
+  border-right: none;
+}
+
+:host [data-toggle-item]:hover {
+  background-color: var(--kata-color-secondary, var(--pico-secondary-background, #f1f5f9));
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
+}
+
+:host [data-toggle-item][aria-pressed="true"] {
+  background-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+  color: var(--kata-color-on-primary, var(--pico-primary-inverse, #ffffff));
+}
+
+:host [data-toggle-item]:focus-visible {
+  outline: 2px solid var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+  outline-offset: -2px;
+  z-index: 1;
+  position: relative;
+}

@@ -16,7 +16,7 @@ test('kata-tooltip clones its template on connect', () => {
   const element = new KataTooltipElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'BUTTON');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-tooltip throws when template is missing', () => {

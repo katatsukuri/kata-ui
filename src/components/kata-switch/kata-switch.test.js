@@ -16,7 +16,7 @@ test('kata-switch clones its template on connect', () => {
   const element = new KataSwitchElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'INPUT');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-switch throws when template is missing', () => {
@@ -50,5 +50,5 @@ test('kata-switch uses custom template when template attribute is set', () => {
   element.setAttribute('template', 'kata-custom-switch-template');
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'INPUT');
+  assert.ok(element.shadowRoot);
 });

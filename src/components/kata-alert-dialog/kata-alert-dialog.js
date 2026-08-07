@@ -1,4 +1,4 @@
-import { instantiateTemplate } from '../../loader/template-loader.js';
+import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-alert-dialog-template';
 
@@ -9,18 +9,16 @@ export class KataAlertDialogElement extends HTMLElement {
     }
 
     const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    const fragment = instantiateTemplate(templateId, this.ownerDocument);
-
-    this.replaceChildren(fragment);
+    initializeShadowComponent(this, templateId, import.meta.url);
     this.dataset.kataUiInitialized = 'true';
 
-    this._dialog = this.querySelector('dialog');
+    this._dialog = queryComponent(this, 'dialog');
 
-    this.querySelectorAll('[data-alert-dialog-trigger]').forEach((trigger) => {
+    queryComponentAll(this, '[data-alert-dialog-trigger]').forEach((trigger) => {
       trigger.addEventListener('click', () => this._open());
     });
 
-    this.querySelectorAll('[data-alert-dialog-close]').forEach((btn) => {
+    queryComponentAll(this, '[data-alert-dialog-close]').forEach((btn) => {
       btn.addEventListener('click', () => this._close());
     });
 

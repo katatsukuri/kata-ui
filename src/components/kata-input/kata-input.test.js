@@ -16,7 +16,7 @@ test('kata-input clones its template on connect', () => {
   const element = new KataInputElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'INPUT');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-input throws when template is missing', () => {

@@ -42,3 +42,49 @@ kata-alert-dialog .kata-alert-dialog__footer {
   justify-content: flex-end;
   gap: var(--kata-space-md);
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: contents;
+}
+
+:host dialog {
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-lg, 0.5rem);
+  padding: 0;
+  min-width: 20rem;
+  max-width: 90vw;
+  box-shadow: var(--kata-shadow-lg, 0 10px 30px rgb(0 0 0 / 0.15));
+}
+
+:host dialog::backdrop {
+  background-color: var(--kata-color-backdrop, rgb(0 0 0 / 0.4));
+}
+
+:host .kata-alert-dialog__header {
+  padding: var(--kata-space-2xl) var(--kata-space-3xl) 0;
+}
+
+:host .kata-alert-dialog__title {
+  font-size: var(--kata-font-size-lg);
+  font-weight: 600;
+  margin: 0 0 var(--kata-space-sm);
+}
+
+:host .kata-alert-dialog__description {
+  font-size: var(--kata-font-size-sm);
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
+  margin: 0;
+}
+
+:host .kata-alert-dialog__content {
+  padding: var(--kata-space-2xl) var(--kata-space-3xl);
+  font-size: var(--kata-font-size-sm);
+}
+
+:host .kata-alert-dialog__footer {
+  padding: 0 var(--kata-space-3xl) var(--kata-space-2xl);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--kata-space-md);
+}

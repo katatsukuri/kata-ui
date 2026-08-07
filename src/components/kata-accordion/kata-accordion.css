@@ -35,3 +35,42 @@ kata-accordion [data-accordion-content] {
   padding: 0 var(--kata-space-lg) var(--kata-space-lg);
   font-size: var(--kata-font-size-sm);
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: block;
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-lg, 0.5rem);
+  overflow: hidden;
+}
+
+:host [data-accordion-item] {
+  border-bottom: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+}
+
+:host [data-accordion-item]:last-child {
+  border-bottom: none;
+}
+
+:host [data-accordion-trigger] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--kata-space-lg);
+  font-size: var(--kata-font-size-sm);
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+:host [data-accordion-trigger]:hover {
+  background-color: var(--kata-color-surface-muted, var(--pico-muted-background-color, #f8fafc));
+}
+
+:host [data-accordion-content] {
+  padding: 0 var(--kata-space-lg) var(--kata-space-lg);
+  font-size: var(--kata-font-size-sm);
+}

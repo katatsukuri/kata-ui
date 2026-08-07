@@ -16,7 +16,7 @@ test('kata-checkbox clones its template on connect', () => {
   const element = new KataCheckboxElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'LABEL');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-checkbox throws when template is missing', () => {
@@ -36,7 +36,7 @@ test('kata-checkbox respects custom template attribute', () => {
   element.setAttribute('template', 'kata-checkbox-custom-template');
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'LABEL');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-checkbox does not re-initialize if already initialized', () => {

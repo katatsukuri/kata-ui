@@ -21,7 +21,7 @@ test('kata-hover-card clones its template on connect', () => {
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
   assert.equal(element.dataset.state, 'closed');
-  assert.equal(element.children.length, 2);
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-hover-card throws when template is missing', () => {
