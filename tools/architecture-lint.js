@@ -17,6 +17,8 @@ const requiredStyleFiles = [
   'src/styles/themes/theme-default.css',
   'src/styles/themes/theme-blue.css',
   'src/styles/themes/theme-dark.css',
+  'src/styles/themes/theme-facility.css',
+  'src/styles/themes/theme-winforms.css',
 ];
 
 for (const relativeFile of requiredStyleFiles) {

@@ -1,5 +1,22 @@
 :root {
   color-scheme: light;
+  --kata-font-family: inherit;
+  --kata-font-size-root: 100%;
+  --kata-font-size-xs: 0.75rem;
+  --kata-font-size-sm: 0.875rem;
+  --kata-font-size-md: 1rem;
+  --kata-font-size-lg: 1.125rem;
+  --kata-line-height-control: 1.25rem;
+  --kata-line-height-content: 1.5;
+
+  /* Reusable spacing tokens. Compact themes may reduce these independently. */
+  --kata-space-xs: 0.125rem;
+  --kata-space-sm: 0.25rem;
+  --kata-space-md: 0.5rem;
+  --kata-space-lg: 0.75rem;
+  --kata-space-xl: 1rem;
+  --kata-space-2xl: 1.25rem;
+  --kata-space-3xl: 1.5rem;
 
   /* Semantic colors. Pico variables remain the compatibility fallback. */
   --kata-color-background: var(--pico-background-color, #ffffff);

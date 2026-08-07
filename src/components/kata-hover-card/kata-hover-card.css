@@ -22,17 +22,17 @@ kata-hover-card .kata-hover-card__content {
   border-radius: var(--kata-radius-lg, 0.5rem);
   background-color: var(--kata-color-surface, var(--pico-card-background-color, #fff));
   box-shadow: var(--kata-shadow-md, 0 4px 12px rgb(0 0 0 / 0.1));
-  padding: 1rem;
+  padding: var(--kata-space-xl);
 }
 
 kata-hover-card .kata-hover-card__title {
-  font-size: 0.875rem;
+  font-size: var(--kata-font-size-sm);
   font-weight: 600;
-  margin: 0 0 0.25rem;
+  margin: 0 0 var(--kata-space-sm);
 }
 
 kata-hover-card .kata-hover-card__description {
-  font-size: 0.875rem;
+  font-size: var(--kata-font-size-sm);
   color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
   margin: 0;
 }

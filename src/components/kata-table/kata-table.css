@@ -8,7 +8,9 @@ kata-table table {
 }
 
 kata-table th {
-  padding: 0.5rem 0.75rem;
+  padding: var(--kata-space-sm) var(--kata-space-lg);
+  font-size: var(--kata-font-size-sm);
+  line-height: var(--kata-line-height-control);
   text-align: left;
   background-color: var(--kata-table-header-bg, transparent);
   border-bottom: 2px solid var(--kata-table-border-color, var(--kata-color-border, #dfe3e6));
@@ -16,7 +18,7 @@ kata-table th {
 }
 
 kata-table td {
-  padding: 0.5rem 0.75rem;
+  padding: var(--kata-space-sm) var(--kata-space-lg);
   text-align: left;
   border-bottom: 1px solid var(--kata-table-border-color, var(--kata-color-border, #dfe3e6));
 }

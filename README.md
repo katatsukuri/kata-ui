@@ -46,7 +46,9 @@ kata-ui/
 │   │   └── themes/
 │   │       ├── theme-default.css
 │   │       ├── theme-blue.css
-│   │       └── theme-dark.css
+│   │       ├── theme-dark.css
+│   │       ├── theme-facility.css
+│   │       └── theme-winforms.css
 │   └── loader/
 │       └── template-loader.js
 └── tools/
@@ -74,7 +76,9 @@ kata-ui/
 
 ## テーマ設定
 
-`html`要素の`data-theme`を`default`、`blue`、`dark`のいずれかにすると、全コンポーネントへ同じテーマが継承されます。
+`html`要素の`data-theme`を`default`、`blue`、`dark`、`facility`、`winforms`のいずれかにすると、全コンポーネントへ同じテーマが継承されます。
+
+`facility`と`winforms`は、参照元の業務画面に合わせて配色だけでなく文字サイズ、行高、余白もコンパクトにした高密度テーマです。
 
 ```html
 <html lang="ja" data-theme="dark">

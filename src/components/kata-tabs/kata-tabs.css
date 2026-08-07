@@ -9,8 +9,8 @@ kata-tabs [role="tablist"] {
 }
 
 kata-tabs [data-tabs-trigger] {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  padding: var(--kata-space-md) var(--kata-space-xl);
+  font-size: var(--kata-font-size-sm);
   font-weight: 500;
   background: none;
   border: none;
@@ -30,6 +30,6 @@ kata-tabs [data-tabs-trigger][aria-selected="true"] {
 }
 
 kata-tabs [data-tabs-panel] {
-  padding: 1rem 0;
-  font-size: 0.875rem;
+  padding: var(--kata-space-xl) 0;
+  font-size: var(--kata-font-size-sm);
 }

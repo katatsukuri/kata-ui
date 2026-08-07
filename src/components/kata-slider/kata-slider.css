@@ -16,7 +16,7 @@ kata-slider input[type="range"]:disabled {
 
 kata-slider label {
   display: block;
-  margin-bottom: 0.25rem;
-  font-size: 0.875rem;
+  margin-bottom: var(--kata-space-sm);
+  font-size: var(--kata-font-size-sm);
   font-weight: 500;
 }

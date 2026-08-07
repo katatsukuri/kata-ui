@@ -6,11 +6,11 @@ kata-button button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  gap: var(--kata-space-md);
+  padding: var(--kata-space-md) var(--kata-space-xl);
+  font-size: var(--kata-font-size-sm);
   font-weight: 500;
-  line-height: 1.25rem;
+  line-height: var(--kata-line-height-control);
   border-radius: var(--kata-radius-md, 0.375rem);
   border: 1px solid transparent;
   cursor: pointer;

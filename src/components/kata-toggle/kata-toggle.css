@@ -7,7 +7,7 @@ kata-toggle [data-toggle-track] {
   align-items: center;
   width: 2.75rem;
   height: 1.5rem;
-  padding: 0.125rem;
+  padding: var(--kata-space-xs);
   border-radius: var(--kata-radius-pill, 9999px);
   border: none;
   cursor: pointer;

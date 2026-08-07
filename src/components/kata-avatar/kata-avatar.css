@@ -12,7 +12,7 @@ kata-avatar .kata-avatar {
   overflow: hidden;
   background-color: var(--kata-color-secondary, var(--pico-secondary-background, #f1f5f9));
   color: var(--kata-color-on-secondary, var(--pico-secondary-inverse, #0f172a));
-  font-size: 1rem;
+  font-size: var(--kata-font-size-md);
   font-weight: 500;
   user-select: none;
 }
@@ -26,11 +26,11 @@ kata-avatar .kata-avatar img {
 kata-avatar .kata-avatar[data-size="sm"] {
   width: 2rem;
   height: 2rem;
-  font-size: 0.75rem;
+  font-size: var(--kata-font-size-xs);
 }
 
 kata-avatar .kata-avatar[data-size="lg"] {
   width: 3.5rem;
   height: 3.5rem;
-  font-size: 1.25rem;
+  font-size: var(--kata-font-size-lg);
 }

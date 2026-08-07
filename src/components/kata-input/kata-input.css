@@ -7,9 +7,9 @@ kata-input textarea,
 kata-input select {
   display: block;
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  padding: var(--kata-space-sm) var(--kata-space-lg);
+  font-size: var(--kata-font-size-sm);
+  line-height: var(--kata-line-height-control);
   border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
   border-radius: var(--kata-radius-md, 0.375rem);
   background-color: var(--kata-color-background, var(--pico-background-color, #fff));
@@ -34,7 +34,7 @@ kata-input select:disabled {
 
 kata-input label {
   display: block;
-  margin-bottom: 0.25rem;
-  font-size: 0.875rem;
+  margin-bottom: var(--kata-space-sm);
+  font-size: var(--kata-font-size-sm);
   font-weight: 500;
 }

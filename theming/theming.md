@@ -27,6 +27,8 @@ src/components/*/*.css
 | `src/styles/themes/theme-default.css` | 既定テーマと`color-scheme: light` |
 | `src/styles/themes/theme-blue.css` | Blueテーマ |
 | `src/styles/themes/theme-dark.css` | Darkテーマと`color-scheme: dark` |
+| `src/styles/themes/theme-facility.css` | 公共施設検索プロトタイプを基にした業務画面テーマ |
+| `src/styles/themes/theme-winforms.css` | WinFormsサンプルを基にしたデスクトップ風テーマ |
 
 ## 読み込み順
 
@@ -49,7 +51,7 @@ Pico CSSを使わない場合も、`tokens.css`に既定値があるため同じ
 <html lang="ja" data-theme="blue">
 ```
 
-提供値は`default`、`blue`、`dark`です。属性を省略した場合は`default`相当になります。
+提供値は`default`、`blue`、`dark`、`facility`、`winforms`です。属性を省略した場合は`default`相当になります。
 
 クライアント側で即時に切り替える場合は、`html`要素の属性だけを変更します。
 
@@ -65,6 +67,8 @@ Component CSSが参照する主な公開トークンは次のとおりです。
 
 | 分類 | トークン |
 | --- | --- |
+| 書体 | `--kata-font-family`、`--kata-font-size-*`、`--kata-line-height-*` |
+| 余白 | `--kata-space-xs`〜`--kata-space-3xl` |
 | 背景 | `--kata-color-background`、`--kata-color-surface`、`--kata-color-surface-muted` |
 | 文字 | `--kata-color-text`、`--kata-color-text-muted` |
 | 操作 | `--kata-color-primary`、`--kata-color-on-primary` |
@@ -75,6 +79,8 @@ Component CSSが参照する主な公開トークンは次のとおりです。
 | 形状 | `--kata-radius-sm`、`--kata-radius-md`、`--kata-radius-lg`、`--kata-radius-pill` |
 
 Component固有の上書き口が必要な場合は、`--kata-table-border-color`のようなComponentトークンを先に参照し、その既定値をセマンティックトークンへ接続します。
+
+`facility`と`winforms`は参照画面に合わせて文字サイズ、行高、余白を小さくし、表やフォームを高密度に表示します。その他のテーマでは既定の寸法トークンを使用します。
 
 ```css
 border-color: var(--kata-table-border-color, var(--kata-color-border));
