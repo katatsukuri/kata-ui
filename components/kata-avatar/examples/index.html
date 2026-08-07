@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-avatar example</title>
+  <link rel="stylesheet" href="../kata-avatar.css">
+</head>
+<body>
+  <h1>kata-avatar examples</h1>
+
+  <template id="kata-avatar-template">
+    <span class="kata-avatar">
+      <img src="/assets/avatar-placeholder.png" alt="ユーザー">
+    </span>
+  </template>
+  <template id="kata-avatar-initials-template">
+    <span class="kata-avatar">AB</span>
+  </template>
+  <template id="kata-avatar-sm-template">
+    <span class="kata-avatar" data-size="sm">YN</span>
+  </template>
+  <template id="kata-avatar-lg-template">
+    <span class="kata-avatar" data-size="lg">YN</span>
+  </template>
+
+  <h2>画像アバター</h2>
+  <p>
+    <kata-avatar></kata-avatar>
+  </p>
+
+  <h2>イニシャルアバター</h2>
+  <p>
+    <kata-avatar template="kata-avatar-initials-template"></kata-avatar>
+  </p>
+
+  <h2>サイズバリエーション</h2>
+  <p>
+    <kata-avatar template="kata-avatar-sm-template"></kata-avatar>
+    <kata-avatar template="kata-avatar-initials-template"></kata-avatar>
+    <kata-avatar template="kata-avatar-lg-template"></kata-avatar>
+  </p>
+
+  <script type="module" src="../kata-avatar.js"></script>
+</body>
+</html>

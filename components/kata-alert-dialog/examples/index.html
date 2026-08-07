@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-alert-dialog example</title>
+  <link rel="stylesheet" href="../kata-alert-dialog.css">
+</head>
+<body>
+  <h1>kata-alert-dialog examples</h1>
+
+  <template id="kata-alert-dialog-template">
+    <button type="button" data-alert-dialog-trigger>削除する</button>
+    <dialog
+      role="alertdialog"
+      aria-labelledby="kata-alert-dialog__title"
+      aria-describedby="alert-dialog-desc"
+    >
+      <div class="kata-alert-dialog__header">
+        <h2 id="kata-alert-dialog__title" class="kata-alert-dialog__title">本当に削除しますか？</h2>
+        <p id="alert-dialog-desc" class="kata-alert-dialog__description">この操作は元に戻せません。続けますか？</p>
+      </div>
+      <div class="kata-alert-dialog__content">
+        <p>削除するとすべてのデータが失われます。</p>
+      </div>
+      <div class="kata-alert-dialog__footer">
+        <button type="button" data-alert-dialog-close>キャンセル</button>
+        <button type="button" data-alert-dialog-close>削除する</button>
+      </div>
+    </dialog>
+  </template>
+
+  <kata-alert-dialog></kata-alert-dialog>
+
+  <script type="module" src="../kata-alert-dialog.js"></script>
+</body>
+</html>

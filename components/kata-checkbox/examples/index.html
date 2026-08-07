@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-checkbox example</title>
+  <link rel="stylesheet" href="../kata-checkbox.css">
+</head>
+<body>
+  <h1>kata-checkbox examples</h1>
+
+  <template id="kata-checkbox-template">
+    <label>
+      <input type="checkbox" name="agree">
+      利用規約に同意する
+    </label>
+  </template>
+
+  <template id="kata-checkbox-disabled-template">
+    <label>
+      <input type="checkbox" name="newsletter" disabled>
+      メールマガジンを受け取る（現在利用不可）
+    </label>
+  </template>
+
+  <p><kata-checkbox></kata-checkbox></p>
+  <p><kata-checkbox template="kata-checkbox-disabled-template"></kata-checkbox></p>
+
+  <script type="module" src="../kata-checkbox.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-chart example</title>
+  <link rel="stylesheet" href="../kata-chart.css">
+  <style>
+    body { font-family: sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    h2 { margin-top: 2rem; }
+    kata-chart { max-width: 600px; margin-bottom: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>kata-chart examples</h1>
+
+  <template id="kata-chart-template">
+    <canvas data-chart-canvas></canvas>
+  </template>
+
+  <h2>棒グラフ（Bar）</h2>
+  <kata-chart
+    id="bar-chart"
+    type="bar"
+    data='{
+      "labels": ["1月", "2月", "3月", "4月", "5月", "6月"],
+      "datasets": [{
+        "label": "売上（万円）",
+        "data": [120, 190, 150, 210, 170, 230],
+        "backgroundColor": "rgba(29, 78, 216, 0.7)"
+      }]
+    }'
+    options='{"responsive": true}'
+  ></kata-chart>
+
+  <h2>折れ線グラフ（Line）</h2>
+  <kata-chart
+    type="line"
+    data='{
+      "labels": ["月", "火", "水", "木", "金", "土", "日"],
+      "datasets": [{
+        "label": "アクセス数",
+        "data": [300, 450, 380, 520, 410, 290, 200],
+        "borderColor": "rgba(220, 38, 38, 1)",
+        "backgroundColor": "rgba(220, 38, 38, 0.1)",
+        "fill": true,
+        "tension": 0.4
+      }]
+    }'
+    options='{"responsive": true}'
+  ></kata-chart>
+
+  <h2>円グラフ（Pie）</h2>
+  <kata-chart
+    type="pie"
+    data='{
+      "labels": ["直接流入", "検索", "SNS", "広告"],
+      "datasets": [{
+        "data": [35, 40, 15, 10],
+        "backgroundColor": [
+          "rgba(29, 78, 216, 0.8)",
+          "rgba(16, 185, 129, 0.8)",
+          "rgba(251, 191, 36, 0.8)",
+          "rgba(239, 68, 68, 0.8)"
+        ]
+      }]
+    }'
+    options='{"responsive": true}'
+  ></kata-chart>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <script type="module" src="../kata-chart.js"></script>
+</body>
+</html>

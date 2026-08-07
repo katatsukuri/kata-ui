@@ -1,0 +1,58 @@
+kata-drawer {
+  display: contents;
+}
+
+kata-drawer dialog {
+  border: none;
+  padding: 0;
+  margin: 0;
+  max-width: 24rem;
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+}
+
+kata-drawer dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Side positioning */
+kata-drawer dialog,
+kata-drawer[data-side="right"] dialog {
+  margin-inline-start: auto;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+}
+
+kata-drawer[data-side="left"] dialog {
+  margin-inline-start: 0;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+}
+
+kata-drawer .kata-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--pico-muted-border-color, #dfe3e6);
+}
+
+kata-drawer .kata-drawer__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+kata-drawer .kata-drawer__content {
+  padding: 1.25rem 1.5rem;
+  font-size: 0.875rem;
+}
+
+kata-drawer .drawer-footer {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  border-top: 1px solid var(--pico-muted-border-color, #dfe3e6);
+}

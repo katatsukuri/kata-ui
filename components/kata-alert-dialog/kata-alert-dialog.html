@@ -1,0 +1,21 @@
+<!-- Canonical Light DOM templates for <kata-alert-dialog>. Copy only the templates required by the page. -->
+<template id="kata-alert-dialog-template">
+    <button type="button" data-alert-dialog-trigger>削除する</button>
+    <dialog
+      role="alertdialog"
+      aria-labelledby="kata-alert-dialog__title"
+      aria-describedby="alert-dialog-desc"
+    >
+      <div class="kata-alert-dialog__header">
+        <h2 id="kata-alert-dialog__title" class="kata-alert-dialog__title">本当に削除しますか？</h2>
+        <p id="alert-dialog-desc" class="kata-alert-dialog__description">この操作は元に戻せません。続けますか？</p>
+      </div>
+      <div class="kata-alert-dialog__content">
+        <p>削除するとすべてのデータが失われます。</p>
+      </div>
+      <div class="kata-alert-dialog__footer">
+        <button type="button" data-alert-dialog-close>キャンセル</button>
+        <button type="button" data-alert-dialog-close>削除する</button>
+      </div>
+    </dialog>
+  </template>

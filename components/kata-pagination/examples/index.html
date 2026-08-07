@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-pagination example</title>
+  <link rel="stylesheet" href="../kata-pagination.css">
+</head>
+<body>
+  <h1>kata-pagination examples</h1>
+
+  <template id="kata-pagination-template">
+    <nav aria-label="ページネーション">
+      <ol>
+        <li><a href="?page=1" aria-label="前のページへ">&laquo;</a></li>
+        <li><a href="?page=1">1</a></li>
+        <li><a href="?page=2" aria-current="page">2</a></li>
+        <li><a href="?page=3">3</a></li>
+        <li><a href="?page=4">4</a></li>
+        <li><a href="?page=5">5</a></li>
+        <li><a href="?page=3" aria-label="次のページへ">&raquo;</a></li>
+      </ol>
+    </nav>
+  </template>
+
+  <kata-pagination></kata-pagination>
+
+  <script type="module" src="../kata-pagination.js"></script>
+</body>
+</html>

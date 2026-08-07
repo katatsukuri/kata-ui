@@ -1,0 +1,47 @@
+kata-toggle {
+  display: inline-block;
+}
+
+kata-toggle [data-toggle-track] {
+  display: inline-flex;
+  align-items: center;
+  width: 2.75rem;
+  height: 1.5rem;
+  padding: 0.125rem;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  background-color: var(--pico-muted-border-color, #cbd5e1);
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+kata-toggle [data-toggle-track][data-state="checked"] {
+  background-color: var(--pico-primary-background, #1d4ed8);
+}
+
+kata-toggle [data-toggle-track][aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+kata-toggle [data-toggle-track]:focus-visible {
+  outline: 2px solid var(--pico-primary-background, #1d4ed8);
+  outline-offset: 2px;
+}
+
+kata-toggle [data-toggle-thumb] {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+  transform: translateX(0);
+  pointer-events: none;
+}
+
+kata-toggle [data-toggle-track][data-state="checked"] [data-toggle-thumb] {
+  transform: translateX(1.25rem);
+}

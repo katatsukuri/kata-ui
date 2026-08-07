@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "examples": "node kata-table/examples/server.js"
+    "lint:architecture": "node tools/architecture-lint.js",
+    "check": "npm run lint:architecture && npm test",
+    "examples": "node components/kata-table/examples/server.js"
   }
 }

@@ -1,176 +1,131 @@
 # kata-ui
 
-**ビルドレス・フレームワークレスなWebコンポーネント集。**
-HTMX + Alpine.js + Pico.css だけで動く、契約ベースの独自要素（Custom Elements）を提供します。
+`kata-ui` は、サーバー主導型MPAへ段階導入できる、ビルドレスなLight DOM Web Component集です。
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+設計の正本は次の2文書です。
 
----
+- [architecture.md](./architecture.md)：フロントエンド全体の責務、セキュリティ、検証方針
+- [component_architecture.md](./component_architecture.md)：コンポーネントの契約、構造、ライフサイクル
 
-## これは何か
+## 基本方針
 
-`kata-ui` は、shadcn/ui・Radix UI が持つ「UIパターンの網羅性」を、React やビルドツールチェーンに依存せずに再現することを目指すコンポーネント集です。
+- 業務状態、認証、認可、永続データの正本はサーバーに置く
+- サーバー通信とHTML差し替えはHTMXが担当する
+- 通信不要の局所的な画面状態はAlpine.jsが担当する
+- 独立UI部品の内部状態とライフサイクルはWeb Componentが担当する
+- Web ComponentはLight DOMとし、内部骨格は`template`から生成する
+- 一つのDOM領域を複数の技術で再生成しない
+- 外部通知には`CustomEvent`を使用し、外部DOMを直接変更しない
 
-- `<script>` タグを読み込むだけで動作します。npm・Webpack・Vite は不要です。
-- バックエンドは問いません。契約（HTML構造の仕様）さえ満たせば、Razor Pages・EJS・Django・Go テンプレートなど、どのサーバーサイド環境からでも利用できます。
-- 既存のサーバーサイドレンダリング主体のアプリケーションに、画面全体を書き換えることなく1コンポーネントずつ追加導入できます。
+## ディレクトリ構成
 
-## なぜ作ったか
+各コンポーネントの契約、template、実装、スタイル、テスト、利用例を同じディレクトリで管理します。
 
-React 前提のコンポーネント集は、アクセシビリティ配慮や一貫した見た目など実務上の価値が大きい一方、そのままでは非React環境に持ち込めません。`kata-ui` は、ブラウザの標準機能（Custom Elements・`<template>`）と軽量ライブラリ（Alpine.js・HTMX）だけで同等のUIパターンを再現し、以下を実現します。
+```text
+kata-ui/
+├── architecture.md
+├── component_architecture.md
+├── architecture-manifest.json
+├── components/
+│   └── kata-example/
+│       ├── kata-example.spec.md
+│       ├── kata-example.html
+│       ├── kata-example.js
+│       ├── kata-example.css
+│       ├── kata-example.test.js
+│       └── examples/
+├── loader/
+│   └── template-loader.js
+└── tools/
+    └── architecture-lint.js
+```
 
-- **バックエンド非依存**：どのテンプレートエンジンでも同じフロント資産をそのまま使い回せる
-- **ビルドレス**：導入・保守のコストを下げる
-- **段階的導入**：既存アプリへの部分導入がしやすい
+`*.html`はコンポーネントの正規templateです。利用ページは必要なtemplateだけをサーバーHTMLへ配置してください。全コンポーネントのtemplateを共通レイアウトへ一括配置しないでください。
 
-## 設計思想
-
-1. **コンポーネント選択・骨格・データを分離する**：サーバーは外側の交換領域へ必要な Custom Element を返し、コンポーネントの骨格は `<template>`、動的なデータは行などの部分HTMLとして別々に返す。コンポーネント取得とデータ取得の2リクエストを許容し、画面全体を再描画せずにUIを切り替える
-2. **Shadow DOM は使わない**：Alpine.js の自動初期化・HTMX のセレクタ探索・CSS のスタイル継承は、いずれも Light DOM を前提に動作するため
-3. **契約（Contract）でバックエンドと疎結合にする**：各コンポーネントは `{component}-spec.md` として「サーバーが返すべきHTML構造」を明文化する。この契約さえ満たせば、実装言語やフレームワークは問わない
-4. **骨格の記述は利用側の必須作業とする**：デフォルト骨格へのフォールバックは持たない。未定義時は明示的なエラー表示で早期に気づける設計にしている
-5. **交換境界を分ける**：`<kata-table>` などのコンポーネント応答は外側の通常コンテナへ、`<tr>` などのデータ応答はコンポーネント内部の対象要素へ挿入する。コンポーネントを `<tbody>` へ挿入するような境界の混在は行わない
+## 導入例
 
 ```html
-<!-- 1. 利用候補の骨格を定義する（交換領域の外側） -->
-<template id="users-table-template">
-	<table class="kata-table">
-		<thead><tr class="header-row"><!-- カラム見出し --></tr></thead>
-		<tbody hx-get="/users/rows" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
-	</table>
+<link rel="stylesheet" href="/kata-ui/components/kata-button/kata-button.css">
+
+<template id="kata-button-template">
+  <button type="button">保存</button>
 </template>
 
-<!-- 2. サーバーが選んだコンポーネントを外側の領域へ取得する -->
-<div id="table-host" hx-get="/users/table" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></div>
+<kata-button></kata-button>
 
-<!-- 3. /users/table はコンポーネントだけを返す -->
-<kata-table template="users-table-template"></kata-table>
-
-<!-- 4. /users/rows は行だけを返す -->
-<tr><td>...</td></tr>
+<script type="module" src="/kata-ui/components/kata-button/kata-button.js"></script>
 ```
 
-## Non-Goals（対象外とする範囲）
-
-`kata-ui` は「プレーンなフロントエンド・最小限の学習コスト」を最優先します。以下は意図的にスコープ外としています。
-
-- **複雑なインタラクション**：ドラッグ&ドロップの並び替え、仮想スクロール、Undo/Redo など、高度な状態管理を要するUIは対象としません。必要な場合は専用ライブラリの併用を推奨します
-- **リッチなアニメーション・視覚効果**：装飾的なエフェクト（パララックス、パーティクル演出等）は本コンポーネント集の対象外です。CSSまたは個別のライブラリでの実装を推奨します
-- **クライアント側の複雑な状態管理**：Redux 相当の集中管理は持ちません。状態はできる限りサーバー（Single Source of Truth）に置き、クライアントは疎結合なイベント伝播（`$dispatch`）または最小限の `Alpine.store()` に留めます
-
-これらを許容することで、学習コストと実装の見通しやすさを優先しています。複雑な要件がある画面では、他のライブラリと部分的に組み合わせる使い方を想定しています。
-
-## 導入方法
+独自のtemplateを使用する場合は`template`属性でIDを指定します。
 
 ```html
-<link rel="stylesheet" href="https://cdn.example.com/kata-ui/kata-table/kata-table.css">
-<script src="https://cdn.example.com/kata-ui/loader/template-loader.js"></script>
-<script src="https://cdn.example.com/kata-ui/kata-table/kata-table.js"></script>
+<kata-button template="save-button-template"></kata-button>
 ```
 
-各コンポーネントは `{component}/` ディレクトリ配下に、契約（`-spec.md`）・実装（`.js` / `.css`）・利用例（`examples/`）を1セットで持ちます。
+## HTMXとの境界
 
-```
-kata-ui/
-├── loader/
-│   └── template-loader.js       # 汎用ローダー（複数の独自要素タイプに対応）
-├── kata-table/
-│   ├── kata-table-spec.md       # HTML契約
-│   ├── kata-table.js
-│   ├── kata-table.css
-│   └── examples/
-├── kata-button/
-│   ├── kata-button-spec.md
-│   ├── kata-button.js
-│   ├── kata-button.css
-│   └── examples/
-├── kata-input/
-├── kata-card/
-├── kata-accordion/
-├── kata-badge/
-├── kata-tabs/
-├── kata-dialog/
-├── kata-breadcrumb/
-├── kata-pagination/
-└── ...
+Web Componentを更新するときは、原則としてCustom Element全体を交換します。
+
+```html
+<div id="component-host"
+     hx-get="/users/123/card"
+     hx-trigger="load"
+     hx-target="this"
+     hx-swap="innerHTML"></div>
 ```
 
-## コンポーネント一覧
+サーバーは交換領域へCustom Elementだけを返します。部分HTMLに`script`を含めたり、Web Component内部の深い要素だけをHTMXで交換したりしないでください。
 
-### 実装済み（プレーンなHTML構造で完結するもの）
+## 実装済みコンポーネント
 
-| コンポーネント | ディレクトリ | 状態 |
-|---|---|---|
-| Button | `kata-button/` | ✅ 実装済み |
-| Input / Textarea | `kata-input/` | ✅ 実装済み |
-| Card | `kata-card/` | ✅ 実装済み |
-| Table | `kata-table/` | ✅ 実装済み |
-| Accordion | `kata-accordion/` | ✅ 実装済み |
-| Badge | `kata-badge/` | ✅ 実装済み |
-| Tabs | `kata-tabs/` | ✅ 実装済み |
-| Breadcrumb | `kata-breadcrumb/` | ✅ 実装済み |
-| Pagination | `kata-pagination/` | ✅ 実装済み |
+| 分類 | コンポーネント |
+| --- | --- |
+| 表示・入力 | avatar、badge、button、card、checkbox、input、radio-group、select、slider、switch、textarea、toggle、toggle-group |
+| ナビゲーション・構造 | accordion、breadcrumb、pagination、table、tabs |
+| オーバーレイ | alert-dialog、dialog、drawer、dropdown-menu、hover-card、popover、sheet、tooltip |
+| 可視化 | chart |
 
-### 実装予定（プレーンなHTML構造で完結するもの）
+新しいWeb Componentは、複数画面で再利用され、独立した状態・イベント・初期化または破棄処理を持つ場合に限って追加します。単純な見出し、ラベル、一覧行、通常のボタンは標準HTMLとCSSを優先します。
 
-- Toggle / Toggle Group
-- Checkbox / Radio Group / Switch / Select / Slider
-- Avatar / Dropdown Menu
+## バージョン
 
-### アクセシビリティ拡張が必要なもの（Alpine公式プラグイン併用）
+検証基準の完全バージョンは[architecture-manifest.json](./architecture-manifest.json)で管理します。利用例の外部URLも、このmanifestと同じバージョンへ固定します。本番では静的ファイルの自ホストを推奨します。
 
-- Dialog / Alert Dialog / Sheet / Drawer（`@alpinejs/focus` によるフォーカストラップ）
-- Popover / Tooltip / Hover Card（`@alpinejs/anchor` による配置制御）
+## 検証
 
-### 可視化が必要なもの（外部ライブラリ併用、任意導入）
+```powershell
+npm run check
+```
 
-- Charts（Chart.js を標準、複雑な表現が必要な場合は D3 を選択可能）
+`npm run check`は次を実行します。
 
-進捗・詳細は [Issues](../../issues) および各コンポーネントディレクトリの spec を参照してください。
+1. コンポーネント成果物と命名の整合性
+2. Light DOM、禁止API、BEM、CSSスコープ、依存バージョンのアーキテクチャLint
+3. 初期化、イベント、属性、切断・再接続を含むNode.jsテスト
+
+kata-tableの静的利用例は次で起動できます。
+
+```powershell
+npm run examples
+```
+
+## このリポジトリの責任境界
+
+このリポジトリはUIコンポーネント資産を管理します。次は利用側のサーバープロジェクトで実装・検証する必要があります。
+
+- 完全HTMLとHTMX用部分HTMLの返し分け
+- `Vary: HX-Request`とキャッシュ制御
+- CSP、CSRF、Cookie、認証切れ、権限エラー処理
+- HTMX、Alpine.js、ブラウザ履歴を含むPlaywright E2E
+- サーバーHTMLのエスケープとレスポンス契約テスト
 
 ## 既知の制約
 
-正直に書きます。このアーキテクチャは万能ではありません。
-
-- ビルド時の型検証がなく、契約と実装のズレは実行時にしか検知できません
-- React エコシステムほどの実績・サンプル数はまだありません
-- 大規模な一覧・頻繁な部分更新が発生する画面では、HTMXの通信方式が仮想DOM差分更新に比べて不利になる場合があります
-
-これらのうち、**ドキュメントの充実・実装例の蓄積・エッジケースの洗い出しは、コミュニティからの貢献によって補える**と考えています。Issue・PR を歓迎します。
-
-## Contributing
-
-1. 新しいコンポーネントを追加する場合は、まず `{component}-spec.md`（契約）から書いてください
-2. Shadow DOM を使用しない、複雑な状態管理を持ち込まない、という設計原則（上記「設計思想」参照）に沿っているか確認してください
-3. 実装例（`examples/`）は最低1つのバックエンド言語分を添えてください
-
-詳細は [CONTRIBUTING.md](./CONTRIBUTING.md) を参照してください（準備中）。
+- ビルド時の型検証は行わない
+- Node.js単体テストだけではブラウザDOM、HTMX、Alpine.js、フォーカス動作を完全には証明できない
+- Chart.jsは任意依存であり、利用側が固定バージョンを読み込む必要がある
+- 実ブラウザのアクセシビリティと主要業務フローは利用側E2Eおよび手動試験を併用する
 
 ## License
 
 [MIT](./LICENSE)
-
-## なぜこのアーキテクチャを採用するのか（Why This Architecture?）
-
-本プロジェクトでは、**HTMX + Alpine.js + Web Components (Custom Elements) + サーバーサイド Partial レンダリング** を組み合わせたWebアーキテクチャを採用しています。
-
-### 1. 解決する課題（Context & Business Challenges）
-
-- **過剰なSPA化による開発・保守コストの増大**
-  一般的なSPA（React/Vue/Angular等）アーキテクチャでは、フロントエンドとバックエンドの双方で状態管理・型定義・APIインターフェース設計を行う必要があり、初期開発および長期的な維持管理コストが高大化します。
-- **フロントエンド技術の急速な陳腐化への対応**
-  10年以上の長期運用が前提となるシステムにおいて、変化の激しいJSフレームワークへの依存は将来的なリプレイスやセキュリティ対応の重大なリスクとなります。
-
-### 2. 本アーキテクチャの役割分担と選定理由
-
-| 技術要素 | 主な役割 | 採用理由・メリット |
-| :--- | :--- | :--- |
-| **HTMX** | サーバー主導の画面部分更新 (Partial Rendering) | API層とクライアント状態管理の二重構造を排除。コンポーネント選択とデータ取得を独立したHTML応答として扱い、信頼できる単一の情報源 (Single Source of Truth) をサーバー側に集約します。 |
-| **Alpine.js** | 画面内の軽量なUI状態管理 | モーダルの開閉、タブ切り替え、一時的な表示制御など、サーバー通信を伴わない純粋なUIロジックのみをシンプルに記述できます。 |
-| **Web Components** | UIパーツのモジュール化・カプセル化 | 高機能データグリッド (`win-data-grid`) や複合UIパーツ (`facility-summary`) をWeb標準規格でカプセル化。特定のJSフレームワークに依存せず長期間安全に再利用可能です。 |
-| **開発モック分離** | フロント・バックエンド並行開発の実現 | `deliverable/` (本番アセット) と `mock-only/` (検証用モック) を明確に分離し、バックエンド未完成時でも画面動作検証を完結させます。 |
-
-### 3. 本アーキテクチャがもたらす価値
-
-- **低コスト・高速度での機能開発**: 既存のサーバーサイドレンダリングの生産性を活かしつつ、SPA同等の操作感を提供します。
-- **優れた長期保守性**: Web標準技術（HTML/CSS/Custom Elements）を中心に構成しているため、将来的なライブラリ変更や技術移転のリスクが極めて低い設計です。
