@@ -26,7 +26,13 @@
     </div>
   </template>
 
-  <kata-card></kata-card>
+  <kata-card title="属性から渡した見出し" description="単純なデータは属性で渡します。"></kata-card>
+
+  <kata-card>
+    <header slot="header"><strong>slotから渡した見出し</strong></header>
+    <p>意味を持つHTMLはdefault slotへ渡します。</p>
+    <footer slot="footer"><button type="button">確認</button></footer>
+  </kata-card>
 
   <script type="module" src="../kata-card.js"></script>
 </body>

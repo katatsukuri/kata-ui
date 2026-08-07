@@ -2,7 +2,7 @@
 
 # kata-ui
 
-`kata-ui` は、サーバー主導型MPAへ段階導入できる、ビルドレスなLight DOM Web Component集です。
+`kata-ui` は、サーバー主導型MPAへ段階導入できる、ビルドレスなShadow DOM Web Component集です。
 
 全コンポーネントの説明と動作例は、[Component Catalog](./index.html)で確認できます。カタログ内のMarkdown文書は、スタイル付きのドキュメントビューアでそのまま閲覧できます。GitHub Pages公開後は `https://katatsukuri.github.io/kata-ui/` が入口になります。
 
@@ -28,7 +28,8 @@
 - サーバー通信とHTML差し替えはHTMXが担当する
 - 通信不要の局所的な画面状態はAlpine.jsが担当する
 - 独立UI部品の内部状態とライフサイクルはWeb Componentが担当する
-- Web ComponentはLight DOMとし、内部骨格は`template`から生成する
+- Web Componentはopen Shadow DOMとし、内部骨格は`template`から生成する
+- 単純な文字列・値・状態は利用側の属性、意味のあるHTMLはdefault／named `slot`で渡す
 - 一つのDOM領域を複数の技術で再生成しない
 - 外部通知には`CustomEvent`を使用し、外部DOMを直接変更しない
 - 色・境界・フォーカス・エレベーションは`--kata-*`セマンティックトークンを介してテーマから設定する
@@ -66,7 +67,7 @@ kata-ui/
     └── architecture-lint.js
 ```
 
-`*.html`はコンポーネントの正規templateです。利用ページは必要なtemplateだけをサーバーHTMLへ配置してください。全コンポーネントのtemplateを共通レイアウトへ一括配置しないでください。
+`*.html`は、属性だけで利用するときにShadow DOMへ複製する正規templateです。利用ページは必要なtemplateだけをサーバーHTMLへ配置してください。利用側が子HTMLを渡した場合は、templateの代わりにdefault／named `slot`へ投影されます。
 
 ## 導入例
 
@@ -78,12 +79,24 @@ kata-ui/
   <button type="button">保存</button>
 </template>
 
-<kata-button></kata-button>
+<kata-button label="保存"></kata-button>
 
 <script type="module" src="/kata-ui/src/components/kata-button/kata-button.js"></script>
 ```
 
 `kata-ui.css`はPico CSSの後、コンポーネントCSSの前に読み込みます。Pico CSSを使わないページでも、同じ既定値で利用できます。
+
+複雑な表示内容は属性へHTML文字列を詰めず、利用側のHTMLをslotへ渡します。
+
+```html
+<kata-card>
+  <header slot="header"><strong>警告</strong></header>
+  <p>入力内容を確認してください。</p>
+  <footer slot="footer"><button type="button">確認</button></footer>
+</kata-card>
+```
+
+外部CSSの通常セレクタはShadow DOM内部へ入りません。サイト全体のテーマは継承可能な`--kata-*` CSSカスタムプロパティで伝え、公開した装飾点が必要な場合だけ`::part()`を追加します。
 
 ## テーマ設定
 
@@ -156,7 +169,7 @@ npm run check
 `npm run check`は次を実行します。
 
 1. コンポーネント成果物と命名の整合性
-2. Light DOM、禁止API、BEM、CSSスコープ、依存バージョンのアーキテクチャLint
+2. Shadow DOM、template／slot、禁止API、BEM、CSSスコープ、依存バージョンのアーキテクチャLint
 3. 初期化、イベント、属性、切断・再接続を含むNode.jsテスト
 
 ## Component Catalogの起動

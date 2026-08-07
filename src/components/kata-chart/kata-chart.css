@@ -7,3 +7,14 @@ kata-chart canvas {
   display: block;
   max-width: 100%;
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: block;
+  position: relative;
+}
+
+:host canvas {
+  display: block;
+  max-width: 100%;
+}

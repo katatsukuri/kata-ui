@@ -1,4 +1,4 @@
-import { instantiateTemplate } from '../../loader/template-loader.js';
+import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-toggle-template';
 
@@ -11,12 +11,10 @@ export class KataToggleElement extends HTMLElement {
     }
 
     const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    const fragment = instantiateTemplate(templateId, this.ownerDocument);
-
-    this.replaceChildren(fragment);
+    initializeShadowComponent(this, templateId, import.meta.url);
     this.dataset.kataUiInitialized = 'true';
 
-    const track = this.querySelector('[data-toggle-track]');
+    const track = queryComponent(this, '[data-toggle-track]');
     if (!track) return;
 
     const isChecked = this.hasAttribute('checked');
@@ -55,14 +53,14 @@ export class KataToggleElement extends HTMLElement {
       this._toggle(track);
     };
 
-    this.addEventListener('click', this._handleClick);
-    this.addEventListener('keydown', this._handleKeydown);
+    this.shadowRoot.addEventListener('click', this._handleClick);
+    this.shadowRoot.addEventListener('keydown', this._handleKeydown);
   }
 
   _detachListeners() {
     if (this._handleClick) {
-      this.removeEventListener('click', this._handleClick);
-      this.removeEventListener('keydown', this._handleKeydown);
+      this.shadowRoot.removeEventListener('click', this._handleClick);
+      this.shadowRoot.removeEventListener('keydown', this._handleKeydown);
       this._handleClick = null;
       this._handleKeydown = null;
     }

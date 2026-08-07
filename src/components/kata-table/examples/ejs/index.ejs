@@ -19,7 +19,7 @@
       <h1>kata-table（EJS）</h1>
 
       <%# columns 配列はルートハンドラーから res.render('index', { columns }) で渡す %>
-      <template id="kata-table-template">
+      <kata-table>
         <table class="kata-table">
           <thead>
             <tr>
@@ -35,9 +35,7 @@
             hx-trigger="load">
           </tbody>
         </table>
-      </template>
-
-      <kata-table></kata-table>
+      </kata-table>
     </main>
   </body>
 </html>

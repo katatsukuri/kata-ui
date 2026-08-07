@@ -26,3 +26,33 @@ kata-checkbox input[type="checkbox"]:disabled + * {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: block;
+}
+
+:host label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kata-space-md);
+  font-size: var(--kata-font-size-sm);
+  cursor: pointer;
+}
+
+:host input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+}
+
+:host input[type="checkbox"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+:host input[type="checkbox"]:disabled + * {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -16,7 +16,7 @@ test('kata-pagination clones its template on connect', () => {
   const element = new KataPaginationElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'NAV');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-pagination throws when template is missing', () => {

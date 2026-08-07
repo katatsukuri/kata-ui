@@ -1,1 +1,6 @@
-<kata-table template="kata-table-all-users-template"></kata-table>
+<kata-table>
+  <table class="kata-table">
+    <thead><tr><th scope="col">Name</th><th scope="col">Role</th></tr></thead>
+    <tbody hx-get="./rows.html" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+  </table>
+</kata-table>

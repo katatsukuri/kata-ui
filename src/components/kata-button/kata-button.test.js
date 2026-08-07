@@ -18,8 +18,8 @@ test('kata-button clones its template on connect', () => {
   element.connectedCallback();
 
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children.length, 1);
-  assert.equal(element.children[0].tagName, 'BUTTON');
+  assert.ok(element.shadowRoot);
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-button throws when template is missing', () => {

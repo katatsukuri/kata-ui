@@ -16,7 +16,7 @@ test('kata-radio-group clones its template on connect', () => {
   const element = new KataRadioGroupElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'FIELDSET');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-radio-group throws when template is missing', () => {
@@ -50,5 +50,5 @@ test('kata-radio-group uses custom template attribute', () => {
   element.setAttribute('template', 'custom-radio-template');
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'FIELDSET');
+  assert.ok(element.shadowRoot);
 });

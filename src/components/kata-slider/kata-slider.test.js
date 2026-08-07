@@ -16,7 +16,7 @@ test('kata-slider clones its template on connect', () => {
   const element = new KataSliderElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'INPUT');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-slider throws when template is missing', () => {

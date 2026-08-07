@@ -1,4 +1,4 @@
-import { instantiateTemplate } from '../../loader/template-loader.js';
+import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const OBSERVED_ATTRIBUTES = ['type', 'data', 'options'];
 const DEFAULT_TEMPLATE_ID = 'kata-chart-template';
@@ -18,10 +18,8 @@ export class KataChartElement extends HTMLElement {
     }
 
     const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    const fragment = instantiateTemplate(templateId, this.ownerDocument);
-
-    this.replaceChildren(fragment);
-    this.#canvas = this.querySelector('[data-chart-canvas]');
+    initializeShadowComponent(this, templateId, import.meta.url);
+    this.#canvas = queryComponent(this, '[data-chart-canvas]');
     if (!this.#canvas) {
       throw new Error(`[kata-chart] Template "${templateId}" requires [data-chart-canvas].`);
     }

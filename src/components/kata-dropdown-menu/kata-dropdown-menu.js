@@ -1,4 +1,4 @@
-import { instantiateTemplate } from '../../loader/template-loader.js';
+import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-dropdown-menu-template';
 
@@ -10,20 +10,18 @@ export class KataDropdownMenuElement extends HTMLElement {
     }
 
     const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    const fragment = instantiateTemplate(templateId, this.ownerDocument);
-
-    this.replaceChildren(fragment);
+    initializeShadowComponent(this, templateId, import.meta.url);
     this.dataset.kataUiInitialized = 'true';
 
-    this._trigger = this.querySelector('[data-dropdown-trigger]');
-    this._content = this.querySelector('[data-dropdown-content]');
+    this._trigger = queryComponent(this, '[data-dropdown-trigger]');
+    this._content = queryComponent(this, '[data-dropdown-content]');
 
     if (this._trigger) {
       this._trigger.addEventListener('click', () => this._toggle());
     }
 
     this._onOutsideClick = (event) => {
-      if (!this.contains(event.target)) {
+      if (!(event.composedPath?.().includes(this) || this.contains?.(event.target))) {
         this._close();
       }
     };

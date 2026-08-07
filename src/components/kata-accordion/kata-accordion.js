@@ -1,4 +1,4 @@
-import { instantiateTemplate } from '../../loader/template-loader.js';
+import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-accordion-template';
 
@@ -9,12 +9,10 @@ export class KataAccordionElement extends HTMLElement {
     }
 
     const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    const fragment = instantiateTemplate(templateId, this.ownerDocument);
-
-    this.replaceChildren(fragment);
+    initializeShadowComponent(this, templateId, import.meta.url);
     this.dataset.kataUiInitialized = 'true';
 
-    this.addEventListener('click', (event) => {
+    this.shadowRoot.addEventListener('click', (event) => {
       const trigger = event.target.closest('[data-accordion-trigger]');
       if (!trigger) return;
 
@@ -28,7 +26,7 @@ export class KataAccordionElement extends HTMLElement {
       const allowMultiple = this.hasAttribute('multiple');
 
       if (!allowMultiple) {
-        this.querySelectorAll('[data-accordion-item][data-state="open"]').forEach((openItem) => {
+        queryComponentAll(this, '[data-accordion-item][data-state="open"]').forEach((openItem) => {
           if (openItem !== item) {
             openItem.dataset.state = 'closed';
             const openTrigger = openItem.querySelector('[data-accordion-trigger]');

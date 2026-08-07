@@ -1,4 +1,4 @@
-import { instantiateTemplate } from '../../loader/template-loader.js';
+import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-popover-template';
 const PLACEMENTS = ['bottom', 'top', 'left', 'right'];
@@ -11,14 +11,12 @@ export class KataPopoverElement extends HTMLElement {
     }
 
     const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    const fragment = instantiateTemplate(templateId, this.ownerDocument);
-
-    this.replaceChildren(fragment);
+    initializeShadowComponent(this, templateId, import.meta.url);
     this.dataset.kataUiInitialized = 'true';
     this.dataset.state = 'closed';
 
-    this._trigger = this.querySelector('[data-popover-trigger]');
-    this._content = this.querySelector('[data-popover-content]');
+    this._trigger = queryComponent(this, '[data-popover-trigger]');
+    this._content = queryComponent(this, '[data-popover-content]');
 
     if (this._trigger) {
       this._trigger.setAttribute('aria-expanded', 'false');
@@ -32,7 +30,7 @@ export class KataPopoverElement extends HTMLElement {
     }
 
     this._onOutsideClick = (event) => {
-      if (this.dataset.state === 'open' && !this.contains(event.target)) {
+      if (this.dataset.state === 'open' && !(event.composedPath?.().includes(this) || this.contains?.(event.target))) {
         this._close();
       }
     };

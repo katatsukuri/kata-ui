@@ -47,3 +47,54 @@ kata-tooltip .kata-tooltip__content[data-side="right"] {
   top: 50%;
   transform: translateY(-50%);
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: inline-block;
+  position: relative;
+}
+
+:host .kata-tooltip__content {
+  position: absolute;
+  z-index: 50;
+  padding: var(--kata-space-sm) var(--kata-space-lg);
+  font-size: var(--kata-font-size-xs);
+  line-height: var(--kata-line-height-control);
+  border-radius: var(--kata-radius-md, 0.375rem);
+  background-color: var(--kata-color-contrast, var(--pico-contrast-background, #0f172a));
+  color: var(--kata-color-on-contrast, var(--pico-contrast-inverse, #f8fafc));
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+:host .kata-tooltip__content[data-state="open"] {
+  opacity: 1;
+}
+
+/* Positioning by data-side */
+:host .kata-tooltip__content[data-side="top"],
+:host .kata-tooltip__content:not([data-side]) {
+  bottom: calc(100% + 0.375rem);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+:host .kata-tooltip__content[data-side="bottom"] {
+  top: calc(100% + 0.375rem);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+:host .kata-tooltip__content[data-side="left"] {
+  right: calc(100% + 0.375rem);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+:host .kata-tooltip__content[data-side="right"] {
+  left: calc(100% + 0.375rem);
+  top: 50%;
+  transform: translateY(-50%);
+}

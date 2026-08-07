@@ -1,7 +1,7 @@
 
 # 1. コンポーネント設計原則
 
-**「HTML契約を中心に、Light DOMのWeb Componentとして実装し、templateで骨格を保持し、HTMX・Alpine.jsと協調する」** 原則を採用します。
+**「利用側の属性とslotを入力契約とし、open Shadow DOMのWeb Componentとして実装し、templateで既定骨格を保持してHTMX・Alpine.jsと協調する」** 原則を採用します。
 コンポーネントは単なるHTML部品ではなく、以下の4点をセットで管理します。
 
 ```text
@@ -125,24 +125,24 @@ src/components/
 
 ```html
 <template id="user-card-template">
-
   <article class="user-card">
-
     <header>
       <h3 class="user-card__name"></h3>
     </header>
-
     <p class="user-card__email"></p>
-
-    <button
-      type="button"
-      class="user-card__detail">
-      詳細
-    </button>
-
+    <button type="button" class="user-card__detail">詳細</button>
   </article>
-
 </template>
+
+<user-card name="山田太郎" email="yamada@example.com"></user-card>
+
+<!-- 構造を利用側で決める場合はdefault slotへHTMLを渡す -->
+<user-card>
+  <article class="user-card">
+    <h3>山田太郎</h3>
+    <p>yamada@example.com</p>
+  </article>
+</user-card>
 ```
 
 ## HTML設計ルール
@@ -182,51 +182,23 @@ src/components/
 ## javascript基本形
 
 ```javascript
+import { initializeShadowComponent } from "../../loader/template-loader.js";
+
 class UserCard extends HTMLElement {
-
-  constructor() {
-    super();
-  }
-
-
   connectedCallback() {
+    if (this.dataset.kataUiInitialized === "true") return;
 
-    if (this.dataset.kataUiInitialized === "true") {
-      this.bindEvents();
-      return;
-    }
-
-    const template = this.ownerDocument.getElementById(
-      "user-card-template"
+    initializeShadowComponent(
+      this,
+      this.getAttribute("template") || "user-card-template",
+      import.meta.url,
     );
-
-    this.replaceChildren(
-      template.content.cloneNode(true)
-    );
-
     this.dataset.kataUiInitialized = "true";
-
-    this.render();
-
     this.bindEvents();
-
   }
-
-
-  disconnectedCallback() {
-
-    this.destroy();
-
-  }
-
-
 }
 
-
-customElements.define(
-  "user-card",
-  UserCard
-);
+customElements.define("user-card", UserCard);
 ```
 
 ---
@@ -553,28 +525,19 @@ body main div article.user-card h3 span
 
 ---
 
-# 11. Shadow DOM方針
+# 11. Shadow DOM・template・slot方針
 
-標準：
+全Componentはopen Shadow DOMを標準とする。通常の外部CSSセレクタを内部DOMから遮断し、利用ページと内部実装の偶発的な結合を防ぐ。
 
-```txt
-Light DOM
-```
+入力契約は次の優先順位とする。
 
-理由：
+1. ラベル、値、状態などの単純データは利用側の属性
+2. 見出し、説明、操作領域など意味を持つHTMLはdefault／named `slot`
+3. 子HTMLがない場合は正規`template`をShadow DOMへ複製し、属性を既定骨格へ反映
 
-- Pico CSS利用可能
-- HTMX利用可能
-- Alpine利用可能
-- デバッグ容易
+サイトテーマは`--kata-*` CSSカスタムプロパティだけを公開契約としてShadow DOMへ継承する。内部クラス名は公開CSS APIにしない。利用側の装飾が必要な箇所は、必要性を個別仕様へ記載したうえで`part`を限定公開する。
 
-Shadow DOMは例外。
-
-利用条件：
-
-- 外部配布部品
-- CSS完全隔離が必要
-- サードパーティー埋込
+HTMXはComponentホスト全体、またはslotへ渡したLight DOMを更新する。Shadow DOM内部の深い要素は直接交換しない。
 
 ---
 
@@ -757,7 +720,9 @@ approval-dialog
 |                               |
 | Web Components                |
 |  └ 再利用UI                   |
-|       └ template              |
+|       ├ Shadow DOM            |
+|       ├ template（既定骨格）  |
+|       └ slot（利用側HTML）    |
 |                               |
 +-------------------------------+
 ```

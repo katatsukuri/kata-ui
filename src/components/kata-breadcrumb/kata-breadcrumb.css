@@ -33,3 +33,40 @@ kata-breadcrumb [data-breadcrumb-separator] {
   color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
   user-select: none;
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: block;
+}
+
+:host nav ol,
+:host nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--kata-space-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--kata-font-size-sm);
+}
+
+:host [aria-current="page"] {
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
+  font-weight: 500;
+}
+
+:host a {
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
+  text-decoration: none;
+}
+
+:host a:hover {
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
+  text-decoration: underline;
+}
+
+:host [data-breadcrumb-separator] {
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
+  user-select: none;
+}

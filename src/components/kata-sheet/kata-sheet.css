@@ -78,3 +78,85 @@ kata-sheet .kata-sheet__footer {
   justify-content: flex-end;
   gap: var(--kata-space-md);
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: contents;
+}
+
+/* Overlay */
+:host [data-sheet-overlay] {
+  position: fixed;
+  inset: 0;
+  background-color: var(--kata-color-backdrop, rgb(0 0 0 / 0.4));
+  z-index: 40;
+}
+
+:host [data-sheet-overlay][hidden] {
+  display: none;
+}
+
+/* Panel */
+:host [data-sheet-panel] {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 20rem;
+  max-width: 90vw;
+  background-color: var(--kata-color-background, var(--pico-background-color, #fff));
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  box-shadow: -4px 0 20px var(--kata-shadow-color, rgb(0 0 0 / 0.15));
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+:host [data-sheet-panel][hidden] {
+  display: none;
+}
+
+:host[data-side="right"] [data-sheet-panel] {
+  right: 0;
+  border-left: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-right: none;
+  box-shadow: -4px 0 20px var(--kata-shadow-color, rgb(0 0 0 / 0.15));
+}
+
+:host[data-side="left"] [data-sheet-panel] {
+  left: 0;
+  border-right: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-left: none;
+  box-shadow: 4px 0 20px var(--kata-shadow-color, rgb(0 0 0 / 0.15));
+}
+
+/* Header */
+:host .kata-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--kata-space-2xl) var(--kata-space-3xl);
+  border-bottom: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+}
+
+:host .kata-sheet__title {
+  font-size: var(--kata-font-size-lg);
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Content */
+:host .kata-sheet__content {
+  flex: 1;
+  padding: var(--kata-space-2xl) var(--kata-space-3xl);
+  font-size: var(--kata-font-size-sm);
+}
+
+/* Footer */
+:host .kata-sheet__footer {
+  padding: var(--kata-space-xl) var(--kata-space-3xl);
+  border-top: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--kata-space-md);
+}

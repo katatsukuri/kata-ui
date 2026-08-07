@@ -66,3 +66,73 @@ kata-switch label:has(input[type="checkbox"][role="switch"]:disabled) {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kata-space-md);
+  vertical-align: middle;
+}
+
+:host label {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  font-size: var(--kata-font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+:host input[type="checkbox"][role="switch"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  display: inline-block;
+  width: 2.5rem;
+  height: 1.25rem;
+  background-color: var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-pill, 9999px);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+  margin: 0;
+  vertical-align: middle;
+}
+
+:host input[type="checkbox"][role="switch"]::before {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--kata-color-on-primary, #fff);
+  border-radius: var(--kata-radius-pill, 9999px);
+  transition: transform 0.2s ease;
+}
+
+:host input[type="checkbox"][role="switch"]:checked {
+  background-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+}
+
+:host input[type="checkbox"][role="switch"]:checked::before {
+  transform: translateX(1.25rem);
+}
+
+:host input[type="checkbox"][role="switch"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--kata-color-focus-ring, rgb(29 78 216 / 0.2));
+}
+
+:host input[type="checkbox"][role="switch"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+:host input[type="checkbox"][role="switch"]:disabled + label,
+:host label:has(input[type="checkbox"][role="switch"]:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -156,7 +156,6 @@ if (!fs.existsSync(componentsRoot)) {
     const forbiddenJavaScript = [
       [/\.innerHTML\b/, 'innerHTML'],
       [/\.insertAdjacentHTML\b/, 'insertAdjacentHTML'],
-      [/\.attachShadow\b/, 'attachShadow'],
       [/\bfetch\s*\(/, 'fetch'],
       [/\bhistory\.(?:pushState|replaceState)\s*\(/, 'History API'],
       [/\beval\s*\(/, 'eval'],
@@ -164,6 +163,9 @@ if (!fs.existsSync(componentsRoot)) {
     ];
     for (const [pattern, label] of forbiddenJavaScript) {
       if (pattern.test(script)) report(scriptFile, `${label} is forbidden by architecture.md.`);
+    }
+    if (!script.includes('initializeShadowComponent')) {
+      report(scriptFile, 'initializeShadowComponent() is required for the shared Shadow DOM contract.');
     }
 
     if (/!important\b/.test(style)) report(styleFile, '!important is forbidden.');
@@ -176,12 +178,16 @@ if (!fs.existsSync(componentsRoot)) {
       }
     }
     const styleWithoutComments = style.replace(/\/\*[\s\S]*?\*\//g, '');
+    if (!styleWithoutComments.includes(':host')) {
+      report(styleFile, ':host rules are required for Shadow DOM styling.');
+    }
     for (const block of styleWithoutComments.matchAll(/([^{}]+)\{/g)) {
       const selectors = block[1].trim();
       if (selectors.startsWith('@') || selectors.includes(':root')) continue;
       for (const selector of selectors.split(',')) {
-        if (!selector.trim().startsWith(name)) {
-          report(styleFile, `selector must be scoped by ${name}: ${selector.trim()}`);
+        const scopedSelector = selector.trim();
+        if (!scopedSelector.startsWith(name) && !scopedSelector.startsWith(':host')) {
+          report(styleFile, `selector must be scoped by ${name} or :host: ${scopedSelector}`);
         }
       }
     }

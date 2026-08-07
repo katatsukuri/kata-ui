@@ -29,3 +29,36 @@ kata-badge .kata-badge[data-variant="destructive"] {
   background-color: var(--kata-color-danger, var(--pico-del-color, #dc2626));
   color: var(--kata-color-on-danger, #fff);
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: inline-block;
+}
+
+:host .kata-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--kata-space-xs) var(--kata-space-md);
+  font-size: var(--kata-font-size-xs);
+  font-weight: 500;
+  line-height: var(--kata-line-height-control);
+  border-radius: var(--kata-radius-pill, 9999px);
+  background-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+  color: var(--kata-color-on-primary, var(--pico-primary-inverse, #fff));
+}
+
+:host .kata-badge[data-variant="secondary"] {
+  background-color: var(--kata-color-secondary, var(--pico-secondary-background, #f1f5f9));
+  color: var(--kata-color-on-secondary, var(--pico-secondary-inverse, #0f172a));
+}
+
+:host .kata-badge[data-variant="outline"] {
+  background-color: transparent;
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
+}
+
+:host .kata-badge[data-variant="destructive"] {
+  background-color: var(--kata-color-danger, var(--pico-del-color, #dc2626));
+  color: var(--kata-color-on-danger, #fff);
+}

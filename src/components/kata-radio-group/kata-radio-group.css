@@ -41,3 +41,48 @@ kata-radio-group input[type="radio"]:disabled + * {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Shadow DOM scope. CSS custom properties inherit from the host theme. */
+:host {
+  display: block;
+}
+
+:host fieldset {
+  border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  border-radius: var(--kata-radius-md, 0.375rem);
+  padding: var(--kata-space-lg) var(--kata-space-xl);
+  margin: 0;
+}
+
+:host legend {
+  font-size: var(--kata-font-size-sm);
+  font-weight: 500;
+  padding: 0 var(--kata-space-sm);
+  color: var(--kata-color-text, var(--pico-contrast, #0f172a));
+}
+
+:host label {
+  display: flex;
+  align-items: center;
+  gap: var(--kata-space-md);
+  font-size: var(--kata-font-size-sm);
+  cursor: pointer;
+  padding: var(--kata-space-sm) 0;
+}
+
+:host input[type="radio"] {
+  accent-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+:host input[type="radio"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+:host input[type="radio"]:disabled + * {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

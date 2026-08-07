@@ -78,7 +78,7 @@ test('docs server preserves kata-table example APIs', async (t) => {
   assert.equal(tableResponse.status, 200);
   assert.equal(
     await tableResponse.text(),
-    '<kata-table template="kata-table-maintainers-template"></kata-table>',
+    '<kata-table><table class="kata-table"><thead><tr><th scope="col">Maintainer</th><th scope="col">Role</th></tr></thead><tbody hx-get="/api/maintainers" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody></table></kata-table>',
   );
 });
 

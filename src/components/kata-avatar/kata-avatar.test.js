@@ -16,7 +16,7 @@ test('kata-avatar clones its template on connect', () => {
   const element = new KataAvatarElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'SPAN');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-avatar throws when template is missing', () => {
@@ -33,12 +33,12 @@ test('kata-avatar does not reinitialize when already initialized', () => {
     },
   };
   const element = new KataAvatarElement(ownerDocument);
-  let replaceChildrenCallCount = 0;
-  const original = element.replaceChildren.bind(element);
-  element.replaceChildren = (...args) => { replaceChildrenCallCount++; original(...args); };
+  let cloneCount = 0;
+  const original = template.content.cloneNode;
+  template.content.cloneNode = (...args) => { cloneCount++; return original(...args); };
   element.connectedCallback();
   element.connectedCallback();
-  assert.equal(replaceChildrenCallCount, 1);
+  assert.equal(cloneCount, 1);
 });
 
 test('kata-avatar uses custom template when template attribute is set', () => {
@@ -52,5 +52,5 @@ test('kata-avatar uses custom template when template attribute is set', () => {
   element.setAttribute('template', 'kata-avatar-lg-template');
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'SPAN');
+  assert.ok(element.shadowRoot);
 });

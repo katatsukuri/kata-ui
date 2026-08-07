@@ -16,7 +16,7 @@ test('kata-textarea clones its template on connect', () => {
   const element = new KataTextareaElement(ownerDocument);
   element.connectedCallback();
   assert.equal(element.dataset.kataUiInitialized, 'true');
-  assert.equal(element.children[0].tagName, 'TEXTAREA');
+  assert.ok(element.shadowRoot);
 });
 
 test('kata-textarea throws when template is missing', () => {

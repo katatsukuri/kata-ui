@@ -55,10 +55,10 @@ function rowsToHtml(rows) {
 }
 
 function tableToHtml(view) {
-  const templateId = view === 'maintainers'
-    ? 'kata-table-maintainers-template'
-    : 'kata-table-all-users-template';
-  return `<kata-table template="${templateId}"></kata-table>`;
+  const maintainers = view === 'maintainers';
+  const heading = maintainers ? 'Maintainer' : 'Name';
+  const endpoint = maintainers ? '/api/maintainers' : '/api/rows';
+  return `<kata-table><table class="kata-table"><thead><tr><th scope="col">${heading}</th><th scope="col">Role</th></tr></thead><tbody hx-get="${endpoint}" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody></table></kata-table>`;
 }
 
 function send(response, statusCode, contentType, body, method = 'GET') {
