@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="kata-uiの設計・導入・コンポーネント契約ドキュメント">
+    <title>Documentation | kata-ui</title>
+    <link rel="stylesheet" href="./src/styles/kata-ui.css">
+    <link rel="stylesheet" href="./docs.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/marked@18.0.7/lib/marked.umd.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.4.12/dist/purify.min.js"></script>
+    <script defer src="./src/docs-viewer.js"></script>
+  </head>
+  <body class="docs-page">
+    <a class="skip-link" href="#document-content">本文へ移動</a>
+
+    <header class="docs-header">
+      <a class="docs-brand" href="./index.html">kata-ui</a>
+      <nav class="docs-header__links" aria-label="サイト内ナビゲーション">
+        <a href="./index.html">コンポーネント</a>
+        <a href="https://github.com/katatsukuri/kata-ui">GitHub</a>
+      </nav>
+      <label class="theme-control docs-theme-control">
+        <span>表示テーマ</span>
+        <select data-theme-switcher>
+          <option value="default">Default</option>
+          <option value="blue">Blue</option>
+          <option value="dark">Dark</option>
+          <option value="facility">Facility</option>
+          <option value="winforms">WinForms</option>
+        </select>
+      </label>
+    </header>
+
+    <div class="docs-layout">
+      <aside class="docs-sidebar" aria-label="ドキュメント一覧">
+        <p class="eyebrow">Documentation</p>
+        <nav>
+          <a href="./docs.html?doc=./README.md">はじめに・導入</a>
+          <a href="./docs.html?doc=./architecture.md">全体アーキテクチャ</a>
+          <a href="./docs.html?doc=./component_architecture.md">コンポーネント設計</a>
+          <a href="./docs.html?doc=./theming/theming.md">テーマ設計</a>
+          <a href="./docs.html?doc=./theming/theming2.md">テーマ検討記録</a>
+        </nav>
+        <div class="docs-toc" data-docs-toc hidden>
+          <p class="docs-sidebar__heading">このページ</p>
+          <nav data-docs-toc-links></nav>
+        </div>
+      </aside>
+
+      <main id="document-content" class="docs-document" tabindex="-1">
+        <p class="docs-status" data-docs-status>ドキュメントを読み込んでいます…</p>
+        <article class="markdown-body" data-docs-content></article>
+        <p class="docs-raw-link"><a data-docs-raw-link href="./README.md">元のMarkdownを表示</a></p>
+      </main>
+    </div>
+
+    <script type="module" src="./src/theme-switcher.js"></script>
+  </body>
+</html>

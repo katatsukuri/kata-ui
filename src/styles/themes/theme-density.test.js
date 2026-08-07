@@ -13,11 +13,13 @@ function readTheme(name) {
 test('facility theme uses the compact dimensions from the facility prototype', () => {
   const css = readTheme('facility');
 
-  assert.match(css, /--kata-font-size-root:\s*13px/);
-  assert.match(css, /--kata-font-size-sm:\s*13px/);
+  assert.match(css, /--kata-font-size-root:\s*14px/);
+  assert.match(css, /--kata-font-size-sm:\s*14px/);
   assert.match(css, /--kata-line-height-control:\s*18px/);
   assert.match(css, /--kata-space-md:\s*4px/);
   assert.match(css, /--kata-space-xl:\s*8px/);
+  assert.match(css, /--kata-toggle-track-height:\s*20px/);
+  assert.match(css, /--kata-toggle-thumb-size:\s*16px/);
 });
 
 test('winforms theme uses the compact dimensions from the WinForms sample', () => {
@@ -28,4 +30,6 @@ test('winforms theme uses the compact dimensions from the WinForms sample', () =
   assert.match(css, /--kata-line-height-control:\s*17px/);
   assert.match(css, /--kata-space-md:\s*4px/);
   assert.match(css, /--kata-space-xl:\s*8px/);
+  assert.match(css, /--kata-toggle-track-height:\s*18px/);
+  assert.match(css, /--kata-toggle-thumb-size:\s*14px/);
 });

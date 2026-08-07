@@ -1,11 +1,14 @@
 kata-switch {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kata-space-md);
+  vertical-align: middle;
 }
 
 kata-switch label {
   display: inline-flex;
   align-items: center;
-  gap: var(--kata-space-md);
+  margin: 0;
   font-size: var(--kata-font-size-sm);
   font-weight: 500;
   cursor: pointer;
@@ -24,6 +27,8 @@ kata-switch input[type="checkbox"][role="switch"] {
   cursor: pointer;
   transition: background-color 0.2s ease;
   flex-shrink: 0;
+  margin: 0;
+  vertical-align: middle;
 }
 
 kata-switch input[type="checkbox"][role="switch"]::before {

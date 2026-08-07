@@ -56,6 +56,8 @@ function verifyPinnedDependencies(file, source) {
     [/htmx\.org@([^/'"@]+)/g, 'htmx'],
     [/@picocss\/pico@([^/'"@]+)/g, 'pico'],
     [/chart\.js@([^/'"@]+)/g, 'chart.js'],
+    [/marked@([^/'"@]+)/g, 'marked'],
+    [/dompurify@([^/'"@]+)/g, 'dompurify'],
   ];
 
   for (const [pattern, library] of checks) {
@@ -204,6 +206,15 @@ if (!fs.existsSync(componentsRoot)) {
         report(docsIndex, `catalog contract link is missing for ${name}.`);
       }
     }
+  }
+
+  const docsReader = path.join(repositoryRoot, 'docs.html');
+  if (!fs.existsSync(docsReader)) {
+    report(docsReader, 'styled Markdown documentation reader is required.');
+  } else {
+    const docs = read(docsReader);
+    verifyPageReferences(docsReader, docs);
+    verifyPinnedDependencies(docsReader, docs);
   }
 }
 

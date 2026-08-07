@@ -14,11 +14,12 @@ const PUBLIC_ROOT_FILES = new Set([
   'architecture.md',
   'component_architecture.md',
   'docs.css',
+  'docs.html',
   'index.html',
   'LICENSE',
   'README.md',
 ]);
-const PUBLIC_DIRECTORIES = new Set(['assets', 'src']);
+const PUBLIC_DIRECTORIES = new Set(['assets', 'src', 'theming']);
 
 const MIME_TYPES = {
   '.css': 'text/css; charset=utf-8',

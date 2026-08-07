@@ -46,4 +46,11 @@
   --kata-shadow-sm: 0 1px 3px rgb(0 0 0 / 0.2);
   --kata-shadow-md: 0 4px 12px rgb(0 0 0 / 0.1);
   --kata-shadow-lg: 0 10px 30px rgb(0 0 0 / 0.15);
+
+  /* Toggle geometry keeps the thumb optically centered across densities. */
+  --kata-toggle-track-width: 2.75rem;
+  --kata-toggle-track-height: 1.5rem;
+  --kata-toggle-track-padding: 0.125rem;
+  --kata-toggle-thumb-size: 1.25rem;
+  --kata-toggle-thumb-translate: 1.25rem;
 }

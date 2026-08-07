@@ -1,13 +1,18 @@
 kata-toggle {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  line-height: 0;
+  vertical-align: middle;
 }
 
 kata-toggle [data-toggle-track] {
   display: inline-flex;
   align-items: center;
-  width: 2.75rem;
-  height: 1.5rem;
-  padding: var(--kata-space-xs);
+  width: var(--kata-toggle-track-width, 2.75rem);
+  height: var(--kata-toggle-track-height, 1.5rem);
+  margin: 0;
+  padding: var(--kata-toggle-track-padding, var(--kata-space-xs));
   border-radius: var(--kata-radius-pill, 9999px);
   border: none;
   cursor: pointer;
@@ -32,8 +37,9 @@ kata-toggle [data-toggle-track]:focus-visible {
 
 kata-toggle [data-toggle-thumb] {
   display: block;
-  width: 1.25rem;
-  height: 1.25rem;
+  box-sizing: border-box;
+  width: var(--kata-toggle-thumb-size, 1.25rem);
+  height: var(--kata-toggle-thumb-size, 1.25rem);
   border-radius: var(--kata-radius-pill, 9999px);
   background-color: var(--kata-color-on-primary, #fff);
   box-shadow: var(--kata-shadow-sm, 0 1px 3px rgb(0 0 0 / 0.2));
@@ -43,5 +49,5 @@ kata-toggle [data-toggle-thumb] {
 }
 
 kata-toggle [data-toggle-track][data-state="checked"] [data-toggle-thumb] {
-  transform: translateX(1.25rem);
+  transform: translateX(var(--kata-toggle-thumb-translate, 1.25rem));
 }
