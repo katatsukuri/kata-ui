@@ -1,10 +1,10 @@
 <!-- Canonical Shadow DOM fallback templates for <kata-dropdown-menu>. Copy only the templates required by the page. -->
 <template id="kata-dropdown-menu-template">
     <button type="button" data-dropdown-trigger
-            aria-haspopup="menu" aria-expanded="false">アカウント ▾</button>
+            aria-haspopup="menu" aria-expanded="false"><slot name="trigger">アカウント ▾</slot></button>
     <div data-dropdown-content role="menu" hidden>
-      <button type="button" role="menuitem">プロフィール</button>
-      <button type="button" role="menuitem">設定</button>
-      <button type="button" role="menuitem">ログアウト</button>
+      <button type="button" role="menuitem"><slot name="item-1">プロフィール</slot></button>
+      <button type="button" role="menuitem"><slot name="item-2">設定</slot></button>
+      <button type="button" role="menuitem"><slot name="item-3">ログアウト</slot></button>
     </div>
   </template>

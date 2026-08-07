@@ -1,4 +1,4 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { findEventTarget, initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-toggle-template';
 
@@ -39,7 +39,7 @@ export class KataToggleElement extends HTMLElement {
 
     this._handleClick = (event) => {
       if (this.hasAttribute('disabled')) return;
-      const track = event.target.closest('[data-toggle-track]');
+      const track = findEventTarget(event, '[data-toggle-track]');
       if (!track) return;
       this._toggle(track);
     };
@@ -47,7 +47,7 @@ export class KataToggleElement extends HTMLElement {
     this._handleKeydown = (event) => {
       if (this.hasAttribute('disabled')) return;
       if (event.key !== ' ' && event.key !== 'Enter') return;
-      const track = event.target.closest('[data-toggle-track]');
+      const track = findEventTarget(event, '[data-toggle-track]');
       if (!track) return;
       event.preventDefault();
       this._toggle(track);

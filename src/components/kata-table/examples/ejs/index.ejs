@@ -19,13 +19,12 @@
       <h1>kata-table（EJS）</h1>
 
       <%# columns 配列はルートハンドラーから res.render('index', { columns }) で渡す %>
-      <kata-table>
+      <template id="kata-table-server-template">
         <table class="kata-table">
           <thead>
             <tr>
-              <% columns.forEach(function(col) { %>
-                <th scope="col"><%= col %></th>
-              <% }); %>
+              <th scope="col"><slot name="column-1">Name</slot></th>
+              <th scope="col"><slot name="column-2">Role</slot></th>
             </tr>
           </thead>
           <tbody
@@ -35,6 +34,10 @@
             hx-trigger="load">
           </tbody>
         </table>
+      </template>
+      <kata-table template="kata-table-server-template">
+        <span slot="column-1"><%= columns[0] %></span>
+        <span slot="column-2"><%= columns[1] %></span>
       </kata-table>
     </main>
   </body>

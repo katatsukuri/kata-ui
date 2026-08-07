@@ -13,24 +13,28 @@
   <h2>複数選択（デフォルト）</h2>
   <template id="kata-toggle-group-template">
     <div role="group" aria-label="テキスト整形">
-      <button type="button" role="button" data-toggle-item aria-pressed="false">Bold</button>
-      <button type="button" role="button" data-toggle-item aria-pressed="false">Italic</button>
-      <button type="button" role="button" data-toggle-item aria-pressed="false">Underline</button>
+      <button type="button" role="button" data-toggle-item aria-pressed="false"><slot name="item-1">Bold</slot></button>
+      <button type="button" role="button" data-toggle-item aria-pressed="false"><slot name="item-2">Italic</slot></button>
+      <button type="button" role="button" data-toggle-item aria-pressed="false"><slot name="item-3">Underline</slot></button>
     </div>
   </template>
 
-  <kata-toggle-group></kata-toggle-group>
+  <kata-toggle-group>
+    <span slot="item-1">Bold</span><span slot="item-2">Italic</span><span slot="item-3">Underline</span>
+  </kata-toggle-group>
 
   <h2>単一選択（type="single"）</h2>
   <template id="kata-toggle-group-align-template">
     <div role="group" aria-label="文字揃え">
-      <button type="button" role="button" data-toggle-item aria-pressed="true" data-active>左揃え</button>
-      <button type="button" role="button" data-toggle-item aria-pressed="false">中央揃え</button>
-      <button type="button" role="button" data-toggle-item aria-pressed="false">右揃え</button>
+      <button type="button" role="button" data-toggle-item aria-pressed="true" data-active><slot name="item-1">左揃え</slot></button>
+      <button type="button" role="button" data-toggle-item aria-pressed="false"><slot name="item-2">中央揃え</slot></button>
+      <button type="button" role="button" data-toggle-item aria-pressed="false"><slot name="item-3">右揃え</slot></button>
     </div>
   </template>
 
-  <kata-toggle-group type="single" template="kata-toggle-group-align-template"></kata-toggle-group>
+  <kata-toggle-group type="single" template="kata-toggle-group-align-template">
+    <span slot="item-1">左揃え</span><span slot="item-2">中央揃え</span><span slot="item-3">右揃え</span>
+  </kata-toggle-group>
 
   <script type="module" src="../kata-toggle-group.js"></script>
 </body>

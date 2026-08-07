@@ -19,49 +19,58 @@
   <div class="demo-row">
     <!-- Right sheet (default) -->
     <template id="kata-sheet-template">
-      <button type="button" data-sheet-trigger>右からシートを開く</button>
+      <button type="button" data-sheet-trigger><slot name="trigger">右からシートを開く</slot></button>
       <div data-sheet-overlay hidden></div>
       <div role="dialog" aria-modal="true" aria-labelledby="kata-sheet__title" data-sheet-panel hidden>
         <div class="kata-sheet__header">
-          <h2 id="kata-sheet__title" class="kata-sheet__title">設定</h2>
+          <h2 id="kata-sheet__title" class="kata-sheet__title"><slot name="title">設定</slot></h2>
           <button type="button" data-sheet-close aria-label="閉じる">×</button>
         </div>
         <div class="kata-sheet__content">
-          <p>ここにシートのコンテンツが入ります。</p>
-          <input type="text" placeholder="テキスト入力">
+          <slot><p>ここにシートのコンテンツが入ります。</p><input type="text" placeholder="テキスト入力"></slot>
         </div>
         <div class="kata-sheet__footer">
-          <button type="button" data-sheet-close>キャンセル</button>
-          <button type="button" data-sheet-close>保存</button>
+          <button type="button" data-sheet-close><slot name="cancel">キャンセル</slot></button>
+          <button type="button" data-sheet-close><slot name="confirm">保存</slot></button>
         </div>
       </div>
     </template>
-    <kata-sheet side="right"></kata-sheet>
+    <kata-sheet side="right">
+      <span slot="trigger">右からシートを開く</span>
+      <span slot="title">設定</span>
+      <p>ここにシートのコンテンツが入ります。</p>
+      <span slot="cancel">キャンセル</span><span slot="confirm">保存</span>
+    </kata-sheet>
   </div>
 
   <div class="demo-row">
     <!-- Left sheet -->
     <template id="kata-sheet-left-template">
-      <button type="button" data-sheet-trigger>左からシートを開く</button>
+      <button type="button" data-sheet-trigger><slot name="trigger">左からシートを開く</slot></button>
       <div data-sheet-overlay hidden></div>
       <div role="dialog" aria-modal="true" aria-labelledby="sheet-left-title" data-sheet-panel hidden>
         <div class="kata-sheet__header">
-          <h2 id="sheet-left-title" class="kata-sheet__title">メニュー</h2>
+          <h2 id="sheet-left-title" class="kata-sheet__title"><slot name="title">メニュー</slot></h2>
           <button type="button" data-sheet-close aria-label="閉じる">×</button>
         </div>
         <div class="kata-sheet__content">
-          <ul>
+          <slot><ul>
             <li><a href="#">ホーム</a></li>
             <li><a href="#">プロフィール</a></li>
             <li><a href="#">設定</a></li>
-          </ul>
+          </ul></slot>
         </div>
         <div class="kata-sheet__footer">
-          <button type="button" data-sheet-close>閉じる</button>
+          <button type="button" data-sheet-close><slot name="cancel">閉じる</slot></button>
         </div>
       </div>
     </template>
-    <kata-sheet template="kata-sheet-left-template" side="left"></kata-sheet>
+    <kata-sheet template="kata-sheet-left-template" side="left">
+      <span slot="trigger">左からシートを開く</span>
+      <span slot="title">メニュー</span>
+      <ul><li>ホーム</li><li>プロフィール</li><li>設定</li></ul>
+      <span slot="cancel">閉じる</span>
+    </kata-sheet>
   </div>
 
   <script type="module" src="../kata-sheet.js"></script>

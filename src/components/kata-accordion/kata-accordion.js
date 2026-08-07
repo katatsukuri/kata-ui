@@ -1,88 +1,91 @@
-import { initializeShadowCollection } from '../../loader/template-loader.js';
+import { initializeShadowComponent, instantiateTemplate } from '../../loader/template-loader.js';
 
-const DEFAULT_TEMPLATE_ID = 'kata-accordion-template';
-const USAGE_ITEM_BY_FRAME = new WeakMap();
-let accordionSequence = 0;
+const ITEM_TEMPLATE_ID = 'kata-accordion-item-template';
+const ACCORDION_TEMPLATE_ID = 'kata-accordion-template';
+const TOGGLE_EVENT = 'kata-accordion-toggle';
 
 export class KataAccordionElement extends HTMLElement {
+  constructor(ownerDocument) {
+    super(ownerDocument);
+    this.handleToggle = this.handleToggle.bind(this);
+  }
+
   connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      return;
-    }
-
     const items = [...this.children];
-    for (const item of items) {
-      if (!item.hasAttribute('data-accordion-title')) {
-        throw new Error('Each kata-accordion item requires data-accordion-title.');
-      }
+    if (items.length === 0) {
+      throw new Error('kata-accordion requires at least one kata-accordion-item.');
+    }
+    if (items.some((item) => item.localName !== 'kata-accordion-item')) {
+      throw new Error('kata-accordion only accepts kata-accordion-item children.');
     }
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    const accordionId = this.id || `kata-accordion-${++accordionSequence}`;
-    const allowMultiple = this.hasAttribute('multiple');
+    initializeShadowComponent(this, ACCORDION_TEMPLATE_ID, import.meta.url);
+
     let hasOpenItem = false;
+    for (const item of items) {
+      const isOpen = item.dataset.state === 'open' && (this.hasAttribute('multiple') || !hasOpenItem);
+      if ('open' in item) item.open = isOpen;
+      else item.dataset.state = isOpen ? 'open' : 'closed';
+      hasOpenItem ||= isOpen;
+    }
 
-    initializeShadowCollection(this, templateId, import.meta.url, items, (fragment, usageItem, index) => {
-      const frame = fragment.querySelector('[data-accordion-item]');
-      const trigger = fragment.querySelector('[data-accordion-trigger]');
-      const content = fragment.querySelector('[data-accordion-content]');
-      const contentSlot = fragment.querySelector('[data-accordion-content-slot]');
-      const requestedOpen = usageItem.dataset.state === 'open';
-      const isOpen = requestedOpen && (allowMultiple || !hasOpenItem);
-      const itemId = `${accordionId}-item-${index + 1}`;
-      const slotName = `${itemId}-content`;
+    this.removeEventListener(TOGGLE_EVENT, this.handleToggle);
+    this.addEventListener(TOGGLE_EVENT, this.handleToggle);
+  }
 
-      if (isOpen) hasOpenItem = true;
-      usageItem.dataset.state = isOpen ? 'open' : 'closed';
-      usageItem.setAttribute('slot', slotName);
-      frame.dataset.state = usageItem.dataset.state;
-      USAGE_ITEM_BY_FRAME.set(frame, usageItem);
-      trigger.textContent = usageItem.getAttribute('data-accordion-title');
-      trigger.id = `${itemId}-trigger`;
-      trigger.setAttribute('aria-expanded', String(isOpen));
-      trigger.setAttribute('aria-controls', `${itemId}-content`);
-      content.id = `${itemId}-content`;
-      content.setAttribute('aria-labelledby', trigger.id);
-      content.hidden = !isOpen;
-      contentSlot.name = slotName;
-    });
-    this.dataset.kataUiInitialized = 'true';
+  disconnectedCallback() {
+    this.removeEventListener(TOGGLE_EVENT, this.handleToggle);
+  }
 
-    this.shadowRoot.addEventListener('click', (event) => {
-      const trigger = event.target.closest('[data-accordion-trigger]');
-      if (!trigger) return;
+  handleToggle(event) {
+    if (this.hasAttribute('multiple') || !event.detail.open) return;
 
-      const item = trigger.closest('[data-accordion-item]');
-      if (!item) return;
+    for (const item of this.children) {
+      if (item !== event.target) item.open = false;
+    }
+  }
+}
 
-      const content = item.querySelector('[data-accordion-content]');
-      if (!content) return;
+export class KataAccordionItemElement extends HTMLElement {
+  connectedCallback() {
+    if (!this.shadowRoot) {
+      const shadowRoot = this.attachShadow({ mode: 'open' });
+      const stylesheet = this.ownerDocument.createElement('link');
+      stylesheet.rel = 'stylesheet';
+      stylesheet.href = new URL('./kata-accordion.css', import.meta.url).href;
+      shadowRoot.append(stylesheet);
+      shadowRoot.append(instantiateTemplate(ITEM_TEMPLATE_ID, this.ownerDocument));
+      shadowRoot.querySelector('[data-accordion-trigger]').addEventListener('click', () => {
+        this.open = !this.open;
+        this.dispatchEvent(new CustomEvent(TOGGLE_EVENT, {
+          bubbles: true,
+          composed: true,
+          detail: { open: this.open },
+        }));
+      });
+    }
 
-      const isOpen = item.dataset.state === 'open';
-      if (!allowMultiple) {
-        this.shadowRoot.querySelectorAll('[data-accordion-item][data-state="open"]').forEach((openItem) => {
-          if (openItem !== item) {
-            openItem.dataset.state = 'closed';
-            const openUsageItem = USAGE_ITEM_BY_FRAME.get(openItem);
-            if (openUsageItem) openUsageItem.dataset.state = 'closed';
-            const openTrigger = openItem.querySelector('[data-accordion-trigger]');
-            if (openTrigger) openTrigger.setAttribute('aria-expanded', 'false');
-            const openContent = openItem.querySelector('[data-accordion-content]');
-            if (openContent) openContent.hidden = true;
-          }
-        });
-      }
+    this.open = this.dataset.state === 'open';
+  }
 
-      const nextState = isOpen ? 'closed' : 'open';
-      item.dataset.state = nextState;
-      const usageItem = USAGE_ITEM_BY_FRAME.get(item);
-      if (usageItem) usageItem.dataset.state = nextState;
-      trigger.setAttribute('aria-expanded', String(!isOpen));
-      content.hidden = isOpen;
-    });
+  get open() {
+    return this.dataset.state === 'open';
+  }
+
+  set open(value) {
+    const isOpen = Boolean(value);
+    this.dataset.state = isOpen ? 'open' : 'closed';
+    const trigger = this.shadowRoot?.querySelector('[data-accordion-trigger]');
+    const content = this.shadowRoot?.querySelector('[data-accordion-content]');
+    if (trigger) trigger.setAttribute('aria-expanded', String(isOpen));
+    if (content) content.hidden = !isOpen;
   }
 }
 
 if (!customElements.get('kata-accordion')) {
   customElements.define('kata-accordion', KataAccordionElement);
+}
+
+if (!customElements.get('kata-accordion-item')) {
+  customElements.define('kata-accordion-item', KataAccordionItemElement);
 }

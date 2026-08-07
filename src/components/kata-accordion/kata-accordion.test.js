@@ -1,121 +1,115 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { FakeTemplateElement, FakeHTMLElement, setupGlobals } from '../test-utils/shared-test-helpers.js';
+import { FakeTemplateElement, setupGlobals } from '../test-utils/shared-test-helpers.js';
 
 setupGlobals();
 
-const { KataAccordionElement } = await import('./kata-accordion.js');
+const { KataAccordionElement, KataAccordionItemElement } = await import('./kata-accordion.js');
 
 function createTemplate() {
   return new FakeTemplateElement([{
     tagName: 'DIV',
-    dataset: { accordionItem: '', state: 'closed' },
+    className: 'kata-accordion__item',
     children: [
-      { tagName: 'BUTTON', dataset: { accordionTrigger: '' }, textContent: '' },
+      {
+        tagName: 'BUTTON',
+        dataset: { accordionTrigger: '' },
+        children: [
+          { tagName: 'SLOT', name: 'title' },
+          { tagName: 'SPAN', className: 'kata-accordion__icon' },
+        ],
+      },
       {
         tagName: 'DIV',
         dataset: { accordionContent: '' },
         hidden: true,
-        children: [{ tagName: 'SLOT', dataset: { accordionContentSlot: '' } }],
+        children: [{ tagName: 'SLOT' }],
       },
     ],
   }]);
 }
 
-function createUsageItem(title, state = 'closed') {
-  const item = new FakeHTMLElement();
-  item.setAttribute('data-accordion-title', title);
+function createOwnerDocument(template = createTemplate()) {
+  const parentTemplate = new FakeTemplateElement([{ tagName: 'SLOT' }]);
+  return {
+    getElementById(id) {
+      if (id === 'kata-accordion-template') return parentTemplate;
+      return id === 'kata-accordion-item-template' ? template : null;
+    },
+    createElement: document.createElement,
+  };
+}
+
+function createItem(state = 'closed', ownerDocument = createOwnerDocument()) {
+  const item = new KataAccordionItemElement(ownerDocument);
   item.dataset.state = state;
   return item;
 }
 
-function createAccordion(items, template = createTemplate()) {
-  const ownerDocument = {
-    getElementById(id) {
-      return id === 'kata-accordion-template' ? template : null;
-    },
-  };
-  const element = new KataAccordionElement(ownerDocument);
+function createAccordion(items) {
+  const element = new KataAccordionElement(createOwnerDocument());
   element.children.push(...items);
   return element;
 }
 
-test('kata-accordion clones one common frame per usage-side item', () => {
-  const first = createUsageItem('kata-uiとは何ですか？', 'open');
-  const second = createUsageItem('Reactなしで使えますか？');
-  const element = createAccordion([first, second]);
+test('kata-accordion-item clones one common frame with title and content slots', () => {
+  const item = createItem('open');
 
-  element.connectedCallback();
+  item.connectedCallback();
 
-  const frames = element.shadowRoot.querySelectorAll('[data-accordion-item]');
-  const triggers = element.shadowRoot.querySelectorAll('[data-accordion-trigger]');
-  const contents = element.shadowRoot.querySelectorAll('[data-accordion-content]');
-  const slots = element.shadowRoot.querySelectorAll('[data-accordion-content-slot]');
-  assert.equal(frames.length, 2);
-  assert.deepEqual(triggers.map(({ textContent }) => textContent), [
-    'kata-uiとは何ですか？',
-    'Reactなしで使えますか？',
-  ]);
-  assert.equal(frames[0].dataset.state, 'open');
-  assert.equal(contents[0].hidden, false);
-  assert.equal(contents[1].hidden, true);
-  assert.equal(first.getAttribute('slot'), slots[0].name);
-  assert.equal(second.getAttribute('slot'), slots[1].name);
-  assert.equal(element.dataset.kataUiProjection, 'attributes-and-slots');
-});
-
-test('kata-accordion requires at least one usage-side item', () => {
-  const element = createAccordion([]);
-  assert.throws(() => element.connectedCallback(), /requires at least one usage-side item/);
-});
-
-test('kata-accordion requires a title on every usage-side item', () => {
-  const item = new FakeHTMLElement();
-  const element = createAccordion([item]);
-  assert.throws(() => element.connectedCallback(), /data-accordion-title/);
-});
-
-test('kata-accordion throws when template is missing', () => {
-  const item = createUsageItem('質問');
-  const element = createAccordion([item], null);
-  assert.throws(() => element.connectedCallback(), /kata-accordion-template/);
-});
-
-test('kata-accordion toggle updates frame and usage-side state', () => {
-  const usageItem = createUsageItem('質問');
-  const element = createAccordion([usageItem]);
-  element.connectedCallback();
-
-  const frame = element.shadowRoot.querySelector('[data-accordion-item]');
-  const trigger = element.shadowRoot.querySelector('[data-accordion-trigger]');
-  const content = element.shadowRoot.querySelector('[data-accordion-content]');
-  trigger.closest = (selector) => (
-    selector === '[data-accordion-trigger]' ? trigger : frame
-  );
-
-  const [clickHandler] = element._listeners.get('click');
-  clickHandler({ target: trigger });
-
-  assert.equal(frame.dataset.state, 'open');
-  assert.equal(usageItem.dataset.state, 'open');
+  const trigger = item.shadowRoot.querySelector('[data-accordion-trigger]');
+  const content = item.shadowRoot.querySelector('[data-accordion-content]');
+  assert.equal(item.shadowRoot.querySelector('slot').name, 'title');
+  assert.equal(item.shadowRoot.querySelectorAll('slot').length, 2);
   assert.equal(trigger.getAttribute('aria-expanded'), 'true');
   assert.equal(content.hidden, false);
 });
 
+test('kata-accordion-item updates its own state, aria-expanded, and hidden state', () => {
+  const item = createItem();
+  item.connectedCallback();
+
+  item.open = true;
+
+  assert.equal(item.dataset.state, 'open');
+  assert.equal(
+    item.shadowRoot.querySelector('[data-accordion-trigger]').getAttribute('aria-expanded'),
+    'true',
+  );
+  assert.equal(item.shadowRoot.querySelector('[data-accordion-content]').hidden, false);
+});
+
+test('kata-accordion-item toggles itself and emits its state from the trigger', () => {
+  const item = createItem();
+  item.connectedCallback();
+  let toggleEvent;
+  item.addEventListener('kata-accordion-toggle', (event) => { toggleEvent = event; });
+
+  item.shadowRoot.querySelector('[data-accordion-trigger]').dispatchEvent({ type: 'click' });
+
+  assert.equal(item.open, true);
+  assert.equal(toggleEvent.detail.open, true);
+});
+
 test('kata-accordion normalizes multiple initial open items unless multiple is set', () => {
-  const first = createUsageItem('質問1', 'open');
-  const second = createUsageItem('質問2', 'open');
+  const first = createItem('open');
+  const second = createItem('open');
   const element = createAccordion([first, second]);
+  first.connectedCallback();
+  second.connectedCallback();
 
   element.connectedCallback();
 
   assert.equal(first.dataset.state, 'open');
   assert.equal(second.dataset.state, 'closed');
+  assert.equal(second.shadowRoot?.querySelector('[data-accordion-content]')?.hidden, true);
+  assert.equal(element.dataset.kataUiProjection, 'template-and-slots');
+  assert.ok(element.shadowRoot.querySelector('slot'));
 });
 
 test('kata-accordion keeps multiple initial open items when multiple is set', () => {
-  const first = createUsageItem('質問1', 'open');
-  const second = createUsageItem('質問2', 'open');
+  const first = createItem('open');
+  const second = createItem('open');
   const element = createAccordion([first, second]);
   element.setAttribute('multiple', '');
 
@@ -123,8 +117,38 @@ test('kata-accordion keeps multiple initial open items when multiple is set', ()
 
   assert.equal(first.dataset.state, 'open');
   assert.equal(second.dataset.state, 'open');
-  assert.equal(
-    element.shadowRoot.querySelectorAll('[data-accordion-item][data-state="open"]').length,
-    2,
+});
+
+test('kata-accordion closes sibling items when an item opens', () => {
+  const first = createItem('open');
+  const second = createItem();
+  const element = createAccordion([first, second]);
+  first.connectedCallback();
+  second.connectedCallback();
+  element.connectedCallback();
+
+  second.open = true;
+  element.handleToggle({ target: second, detail: { open: true } });
+
+  assert.equal(first.open, false);
+  assert.equal(second.open, true);
+});
+
+test('kata-accordion requires at least one item and rejects other children', () => {
+  assert.throws(
+    () => createAccordion([]).connectedCallback(),
+    /requires at least one kata-accordion-item/,
   );
+
+  const invalidChild = createItem();
+  invalidChild.localName = 'section';
+  assert.throws(
+    () => createAccordion([invalidChild]).connectedCallback(),
+    /only accepts kata-accordion-item children/,
+  );
+});
+
+test('kata-accordion-item throws when its template is missing', () => {
+  const item = createItem('closed', createOwnerDocument(null));
+  assert.throws(() => item.connectedCallback(), /kata-accordion-item-template/);
 });

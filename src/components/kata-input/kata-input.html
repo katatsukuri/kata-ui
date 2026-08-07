@@ -1,5 +1,5 @@
 <!-- Canonical Shadow DOM fallback templates for <kata-input>. Copy only the templates required by the page. -->
 <template id="kata-input-template">
-    <label for="name-field">名前</label>
+    <label for="name-field"><slot name="label">名前</slot></label>
     <input id="name-field" type="text" name="name" placeholder="山田太郎">
   </template>

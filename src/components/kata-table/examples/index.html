@@ -16,18 +16,28 @@
     <p>GitHub Pages上でも、静的HTML断片をHTMXで取得して表を切り替えられます。</p>
 
     <template id="kata-table-all-users-template">
-      <table class="kata-table">
-        <thead><tr><th scope="col">Name</th><th scope="col">Role</th></tr></thead>
-        <tbody hx-get="./rows.html" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
-      </table>
-    </template>
+        <table class="kata-table">
+          <thead>
+            <tr>
+          <th scope="col"><slot name="column-1">Name</slot></th>
+          <th scope="col"><slot name="column-2">Role</slot></th>
+            </tr>
+          </thead>
+          <tbody hx-get="./rows.html" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+        </table>
+      </template>
 
     <template id="kata-table-maintainers-template">
-      <table class="kata-table">
-        <thead><tr><th scope="col">Maintainer</th><th scope="col">Role</th></tr></thead>
-        <tbody hx-get="./maintainers.html" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
-      </table>
-    </template>
+        <table class="kata-table">
+          <thead>
+            <tr>
+          <th scope="col"><slot name="column-1">Maintainer</slot></th>
+          <th scope="col"><slot name="column-2">Role</slot></th>
+            </tr>
+          </thead>
+          <tbody hx-get="./maintainers.html" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+        </table>
+      </template>
 
     <div role="group" aria-label="表示する表">
       <button type="button" hx-get="./table-all.html" hx-target="#table-host" hx-swap="innerHTML">All users</button>

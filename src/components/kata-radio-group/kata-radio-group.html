@@ -1,18 +1,18 @@
 <!-- Canonical Shadow DOM fallback templates for <kata-radio-group>. Copy only the templates required by the page. -->
 <template id="kata-radio-group-template">
     <fieldset>
-      <legend>性別</legend>
-      <label><input type="radio" name="gender" value="male"> 男性</label>
-      <label><input type="radio" name="gender" value="female"> 女性</label>
-      <label><input type="radio" name="gender" value="other"> その他</label>
+      <legend><slot name="legend">性別</slot></legend>
+      <label><input type="radio" name="gender" value="male"> <slot name="option-1">男性</slot></label>
+      <label><input type="radio" name="gender" value="female"> <slot name="option-2">女性</slot></label>
+      <label><input type="radio" name="gender" value="other"> <slot name="option-3">その他</slot></label>
     </fieldset>
   </template>
 
 <template id="kata-radio-group-color-template">
     <fieldset>
-      <legend>好きな色</legend>
-      <label><input type="radio" name="color" value="red"> 赤</label>
-      <label><input type="radio" name="color" value="blue"> 青</label>
-      <label><input type="radio" name="color" value="green"> 緑</label>
+      <legend><slot name="legend">好きな色</slot></legend>
+      <label><input type="radio" name="color" value="red"> <slot name="option-1">赤</slot></label>
+      <label><input type="radio" name="color" value="blue"> <slot name="option-2">青</slot></label>
+      <label><input type="radio" name="color" value="green"> <slot name="option-3">緑</slot></label>
     </fieldset>
   </template>

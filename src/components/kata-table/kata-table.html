@@ -3,8 +3,8 @@
   <table class="kata-table__table">
     <thead>
       <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Role</th>
+            <th scope="col"><slot name="column-1">Name</slot></th>
+            <th scope="col"><slot name="column-2">Role</slot></th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -15,8 +15,8 @@
         <table class="kata-table">
           <thead>
             <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Role</th>
+          <th scope="col"><slot name="column-1">Name</slot></th>
+          <th scope="col"><slot name="column-2">Role</slot></th>
             </tr>
           </thead>
           <tbody hx-get="/api/rows" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
@@ -27,8 +27,8 @@
         <table class="kata-table">
           <thead>
             <tr>
-              <th scope="col">Maintainer</th>
-              <th scope="col">Role</th>
+          <th scope="col"><slot name="column-1">Maintainer</slot></th>
+          <th scope="col"><slot name="column-2">Role</slot></th>
             </tr>
           </thead>
           <tbody hx-get="/api/maintainers" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>

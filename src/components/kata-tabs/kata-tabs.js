@@ -1,4 +1,4 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { findEventTarget, initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-tabs-template';
 
@@ -13,7 +13,7 @@ export class KataTabsElement extends HTMLElement {
     this.dataset.kataUiInitialized = 'true';
 
     this.shadowRoot.addEventListener('click', (event) => {
-      const trigger = event.target.closest('[data-tabs-trigger]');
+      const trigger = findEventTarget(event, '[data-tabs-trigger]');
       if (!trigger) return;
 
       const targetId = trigger.getAttribute('aria-controls');
@@ -34,7 +34,7 @@ export class KataTabsElement extends HTMLElement {
     });
 
     this.shadowRoot.addEventListener('keydown', (event) => {
-      const trigger = event.target.closest('[data-tabs-trigger]');
+      const trigger = findEventTarget(event, '[data-tabs-trigger]');
       if (!trigger) return;
 
       const triggers = Array.from(queryComponentAll(this, '[data-tabs-trigger]'));

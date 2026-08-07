@@ -1,36 +1,36 @@
 <!-- Canonical Shadow DOM fallback templates for <kata-tooltip>. Copy only the templates required by the page. -->
 <template id="kata-tooltip-template">
     <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-top">
-      上（デフォルト）
+      <slot name="trigger">上（デフォルト）</slot>
     </button>
     <div class="kata-tooltip__content" id="tip-top" role="tooltip" data-side="top">
-      上に表示されます
+      <slot>上に表示されます</slot>
     </div>
   </template>
 
 <template id="kata-tooltip-bottom-template">
     <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-bottom">
-      下
+      <slot name="trigger">下</slot>
     </button>
     <div class="kata-tooltip__content" id="tip-bottom" role="tooltip" data-side="bottom">
-      下に表示されます
+      <slot>下に表示されます</slot>
     </div>
   </template>
 
 <template id="kata-tooltip-left-template">
     <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-left">
-      左
+      <slot name="trigger">左</slot>
     </button>
     <div class="kata-tooltip__content" id="tip-left" role="tooltip" data-side="left">
-      左に表示されます
+      <slot>左に表示されます</slot>
     </div>
   </template>
 
 <template id="kata-tooltip-right-template">
     <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-right">
-      右
+      <slot name="trigger">右</slot>
     </button>
     <div class="kata-tooltip__content" id="tip-right" role="tooltip" data-side="right">
-      右に表示されます
+      <slot>右に表示されます</slot>
     </div>
   </template>

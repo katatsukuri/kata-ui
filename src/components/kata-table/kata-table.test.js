@@ -17,7 +17,7 @@ test('kata-table clones its template into an open shadow root', () => {
 
   assert.equal(element.dataset.kataUiInitialized, 'true');
   assert.ok(element.shadowRoot);
-  assert.equal(element.dataset.kataUiProjection, 'attributes');
+  assert.equal(element.dataset.kataUiProjection, 'template');
 });
 
 test('kata-table uses the template attribute for a server-selected component', () => {
@@ -31,6 +31,23 @@ test('kata-table uses the template attribute for a server-selected component', (
   element.connectedCallback();
 
   assert.ok(element.shadowRoot);
+});
+
+test('kata-table registers its shadow root with HTMX when available', () => {
+  const template = new FakeTemplateElement([{ tagName: 'TABLE' }]);
+  const ownerDocument = {
+    getElementById(id) { return id === 'kata-table-template' ? template : null; },
+  };
+  const element = new KataTableElement(ownerDocument);
+  let processedRoot;
+  globalThis.htmx = { process(root) { processedRoot = root; } };
+
+  try {
+    element.connectedCallback();
+    assert.equal(processedRoot, element.shadowRoot);
+  } finally {
+    delete globalThis.htmx;
+  }
 });
 
 test('kata-table throws when template is missing', () => {

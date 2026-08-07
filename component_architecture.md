@@ -127,21 +127,17 @@ src/components/
 <template id="user-card-template">
   <article class="user-card">
     <header>
-      <h3 class="user-card__name"></h3>
+      <h3 class="user-card__name"><slot name="name">名前</slot></h3>
     </header>
-    <p class="user-card__email"></p>
-    <button type="button" class="user-card__detail">詳細</button>
+    <p class="user-card__email"><slot name="email">メールアドレス</slot></p>
+    <button type="button" class="user-card__detail"><slot name="action">詳細</slot></button>
   </article>
 </template>
 
-<user-card name="山田太郎" email="yamada@example.com"></user-card>
-
-<!-- 構造を利用側で決める場合はdefault slotへHTMLを渡す -->
 <user-card>
-  <article class="user-card">
-    <h3>山田太郎</h3>
-    <p>yamada@example.com</p>
-  </article>
+  <span slot="name">山田太郎</span>
+  <span slot="email">yamada@example.com</span>
+  <span slot="action">詳細を見る</span>
 </user-card>
 ```
 
@@ -529,17 +525,18 @@ body main div article.user-card h3 span
 
 全Componentはopen Shadow DOMを標準とする。通常の外部CSSセレクタを内部DOMから遮断し、利用ページと内部実装の偶発的な結合を防ぐ。
 
-入力契約は次の優先順位とする。
+入力契約は次の規則とする。
 
-1. ラベル、値、状態などの単純データは利用側の属性
-2. 見出し、説明、操作領域など意味を持つHTMLはdefault／named `slot`
-3. 子HTMLがない場合は正規`template`をShadow DOMへ複製し、属性を既定骨格へ反映
+1. 見出し、ラベル、説明、本文、操作名など利用者に見える表示データはdefault／named `slot`
+2. 値、URL、フォーム名、状態、外部ライブラリ設定などの構成値は利用側の属性
+3. 正規`template`は子HTMLの有無にかかわらずShadow DOMへ必ず複製し、UI構造、CSS、ARIAを一元管理する
+4. slot未指定時だけtemplate内のフォールバック内容を表示する
 
 サイトテーマは`--kata-*` CSSカスタムプロパティだけを公開契約としてShadow DOMへ継承する。内部クラス名は公開CSS APIにしない。利用側の装飾が必要な箇所は、必要性を個別仕様へ記載したうえで`part`を限定公開する。
 
 HTMXはComponentホスト全体、またはslotへ渡したLight DOMを更新する。Shadow DOM内部の深い要素は直接交換しない。
 
-繰り返し項目を持つComponentでは、利用側の各子要素をデータ境界とする。Componentは1項目分の共通templateを子要素数だけ複製し、単純値を属性から、項目本文を固有名のslotから受け取る。アコーディオン、タブ、トグルグループのように項目とフレームを分離できる部品へ適用する。
+任意件数の繰り返し項目を持つComponentでは、必要に応じて`<kata-*-item>`をデータ境界とし、各子Componentが1項目分の共通templateと標準slotを所有する。親は排他選択など項目間の制御だけを担当し、項目別slot名をJSで動的生成しない。固定件数のComponentは正規templateに宣言したnamed slotを使用する。
 
 ---
 

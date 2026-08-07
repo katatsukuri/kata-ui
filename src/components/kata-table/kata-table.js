@@ -10,6 +10,7 @@ export class KataTableElement extends HTMLElement {
 
     const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
     initializeShadowComponent(this, templateId, import.meta.url);
+    globalThis.htmx?.process?.(this.shadowRoot);
     this.dataset.kataUiInitialized = 'true';
   }
 }

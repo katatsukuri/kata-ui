@@ -21,6 +21,14 @@ kata-toggle [data-toggle-track] {
   position: relative;
 }
 
+kata-toggle label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kata-space-sm);
+  line-height: normal;
+  cursor: pointer;
+}
+
 kata-toggle [data-toggle-track][data-state="checked"] {
   background-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
 }
@@ -74,6 +82,14 @@ kata-toggle [data-toggle-track][data-state="checked"] [data-toggle-thumb] {
   background-color: var(--kata-color-border, var(--pico-muted-border-color, #cbd5e1));
   transition: background-color 0.2s ease;
   position: relative;
+}
+
+:host label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kata-space-sm);
+  line-height: normal;
+  cursor: pointer;
 }
 
 :host [data-toggle-track][data-state="checked"] {

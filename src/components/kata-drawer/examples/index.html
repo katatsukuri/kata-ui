@@ -11,25 +11,35 @@
   <h1>kata-drawer examples</h1>
 
   <template id="kata-drawer-template">
-    <button type="button" data-drawer-trigger>メニューを開く</button>
+    <button type="button" data-drawer-trigger><slot name="trigger">メニューを開く</slot></button>
     <dialog aria-labelledby="kata-drawer__title">
       <div class="kata-drawer__header">
-        <h2 id="kata-drawer__title" class="kata-drawer__title">メニュー</h2>
+        <h2 id="kata-drawer__title" class="kata-drawer__title"><slot name="title">メニュー</slot></h2>
         <button type="button" data-drawer-close aria-label="閉じる">&times;</button>
       </div>
       <div class="kata-drawer__content">
-        <nav>
+        <slot><nav>
           <ul>
             <li><a href="#">ホーム</a></li>
             <li><a href="#">プロフィール</a></li>
             <li><a href="#">設定</a></li>
           </ul>
-        </nav>
+        </nav></slot>
       </div>
     </dialog>
   </template>
 
-  <kata-drawer data-side="right"></kata-drawer>
+  <kata-drawer data-side="right">
+    <span slot="trigger">メニューを開く</span>
+    <span slot="title">メニュー</span>
+    <nav>
+      <ul>
+        <li><a href="#">ホーム</a></li>
+        <li><a href="#">プロフィール</a></li>
+        <li><a href="#">設定</a></li>
+      </ul>
+    </nav>
+  </kata-drawer>
 
   <script type="module" src="../kata-drawer.js"></script>
 </body>
