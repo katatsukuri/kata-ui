@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-drawer example</title>
+  <link rel="stylesheet" href="../kata-drawer.css">
+</head>
+<body>
+  <h1>kata-drawer examples</h1>
+
+  <template id="kata-drawer-template">
+    <button type="button" data-drawer-trigger>メニューを開く</button>
+    <dialog aria-labelledby="kata-drawer__title">
+      <div class="kata-drawer__header">
+        <h2 id="kata-drawer__title" class="kata-drawer__title">メニュー</h2>
+        <button type="button" data-drawer-close aria-label="閉じる">&times;</button>
+      </div>
+      <div class="kata-drawer__content">
+        <nav>
+          <ul>
+            <li><a href="#">ホーム</a></li>
+            <li><a href="#">プロフィール</a></li>
+            <li><a href="#">設定</a></li>
+          </ul>
+        </nav>
+      </div>
+    </dialog>
+  </template>
+
+  <kata-drawer data-side="right"></kata-drawer>
+
+  <script type="module" src="../kata-drawer.js"></script>
+</body>
+</html>

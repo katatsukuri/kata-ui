@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-badge example</title>
+  <link rel="stylesheet" href="../kata-badge.css">
+</head>
+<body>
+  <h1>kata-badge examples</h1>
+
+  <template id="kata-badge-template">
+    <span class="kata-badge">新着</span>
+  </template>
+  <template id="kata-badge-secondary-template">
+    <span class="kata-badge" data-variant="secondary">Draft</span>
+  </template>
+  <template id="kata-badge-outline-template">
+    <span class="kata-badge" data-variant="outline">タグ</span>
+  </template>
+  <template id="kata-badge-destructive-template">
+    <span class="kata-badge" data-variant="destructive">削除済み</span>
+  </template>
+
+  <p>
+    <kata-badge></kata-badge>
+    <kata-badge template="kata-badge-secondary-template"></kata-badge>
+    <kata-badge template="kata-badge-outline-template"></kata-badge>
+    <kata-badge template="kata-badge-destructive-template"></kata-badge>
+  </p>
+
+  <script type="module" src="../kata-badge.js"></script>
+</body>
+</html>

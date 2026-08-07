@@ -1,0 +1,17 @@
+<!-- Canonical Light DOM templates for <kata-dialog>. Copy only the templates required by the page. -->
+<template id="kata-dialog-template">
+    <button type="button" data-dialog-trigger>ダイアログを開く</button>
+    <dialog aria-labelledby="kata-dialog__title" aria-describedby="dialog-desc">
+      <div class="kata-dialog__header">
+        <h2 id="kata-dialog__title" class="kata-dialog__title">確認</h2>
+        <p id="dialog-desc" class="kata-dialog__description">この操作は元に戻せません。本当に続けますか？</p>
+      </div>
+      <div class="kata-dialog__content">
+        <p>削除するとすべてのデータが失われます。</p>
+      </div>
+      <div class="kata-dialog__footer">
+        <button type="button" data-dialog-close>キャンセル</button>
+        <button type="button" data-dialog-close>削除する</button>
+      </div>
+    </dialog>
+  </template>

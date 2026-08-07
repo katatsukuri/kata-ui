@@ -1,0 +1,36 @@
+<!-- Canonical Light DOM templates for <kata-table>. Copy only the templates required by the page. -->
+<template id="kata-table-template">
+  <table class="kata-table__table">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Role</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</template>
+
+<template id="kata-table-all-users-template">
+        <table class="kata-table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Role</th>
+            </tr>
+          </thead>
+          <tbody hx-get="/api/rows" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+        </table>
+      </template>
+
+<template id="kata-table-maintainers-template">
+        <table class="kata-table">
+          <thead>
+            <tr>
+              <th scope="col">Maintainer</th>
+              <th scope="col">Role</th>
+            </tr>
+          </thead>
+          <tbody hx-get="/api/maintainers" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+        </table>
+      </template>

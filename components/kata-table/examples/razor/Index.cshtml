@@ -1,0 +1,46 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "kata-table example (Razor Pages)";
+}
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2.1.1/css/pico.min.css">
+    {{--
+      wwwroot/kata-ui/ に kata-table.css / kata-table.js を配置してください。
+      asp-append-version でキャッシュバスティングが有効になります。
+    --}}
+    <link rel="stylesheet" href="~/kata-ui/components/kata-table/kata-table.css" asp-append-version="true">
+    <script type="module"  src="~/kata-ui/components/kata-table/kata-table.js"  asp-append-version="true"></script>
+    <script src="https://unpkg.com/htmx.org@@2.0.10/dist/htmx.min.js"></script>
+  </head>
+  <body class="container">
+    <main>
+      <h1>kata-table（Razor Pages）</h1>
+
+      <template id="kata-table-template">
+        <table class="kata-table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Role</th>
+            </tr>
+          </thead>
+          <tbody
+            hx-get="/api/rows"
+            hx-target="this"
+            hx-swap="innerHTML"
+            hx-trigger="load">
+          </tbody>
+        </table>
+      </template>
+
+      <kata-table></kata-table>
+    </main>
+  </body>
+</html>

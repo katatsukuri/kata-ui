@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kata-dropdown-menu example</title>
+  <link rel="stylesheet" href="../kata-dropdown-menu.css">
+</head>
+<body>
+  <h1>kata-dropdown-menu examples</h1>
+
+  <template id="kata-dropdown-menu-template">
+    <button type="button" data-dropdown-trigger
+            aria-haspopup="menu" aria-expanded="false">アカウント ▾</button>
+    <div data-dropdown-content role="menu" hidden>
+      <button type="button" role="menuitem">プロフィール</button>
+      <button type="button" role="menuitem">設定</button>
+      <button type="button" role="menuitem">ログアウト</button>
+    </div>
+  </template>
+
+  <kata-dropdown-menu></kata-dropdown-menu>
+
+  <script type="module" src="../kata-dropdown-menu.js"></script>
+</body>
+</html>

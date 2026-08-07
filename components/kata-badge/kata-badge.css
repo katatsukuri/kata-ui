@@ -1,0 +1,31 @@
+kata-badge {
+  display: inline-block;
+}
+
+kata-badge .kata-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  border-radius: 9999px;
+  background-color: var(--pico-primary-background, #1d4ed8);
+  color: var(--pico-primary-inverse, #fff);
+}
+
+kata-badge .kata-badge[data-variant="secondary"] {
+  background-color: var(--pico-secondary-background, #f1f5f9);
+  color: var(--pico-secondary-inverse, #0f172a);
+}
+
+kata-badge .kata-badge[data-variant="outline"] {
+  background-color: transparent;
+  border: 1px solid var(--pico-muted-border-color, #dfe3e6);
+  color: var(--pico-contrast, #0f172a);
+}
+
+kata-badge .kata-badge[data-variant="destructive"] {
+  background-color: var(--pico-del-color, #dc2626);
+  color: #fff;
+}

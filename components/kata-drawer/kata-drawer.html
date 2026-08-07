@@ -1,0 +1,19 @@
+<!-- Canonical Light DOM templates for <kata-drawer>. Copy only the templates required by the page. -->
+<template id="kata-drawer-template">
+    <button type="button" data-drawer-trigger>メニューを開く</button>
+    <dialog aria-labelledby="kata-drawer__title">
+      <div class="kata-drawer__header">
+        <h2 id="kata-drawer__title" class="kata-drawer__title">メニュー</h2>
+        <button type="button" data-drawer-close aria-label="閉じる">&times;</button>
+      </div>
+      <div class="kata-drawer__content">
+        <nav>
+          <ul>
+            <li><a href="#">ホーム</a></li>
+            <li><a href="#">プロフィール</a></li>
+            <li><a href="#">設定</a></li>
+          </ul>
+        </nav>
+      </div>
+    </dialog>
+  </template>
