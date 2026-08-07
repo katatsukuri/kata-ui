@@ -106,10 +106,45 @@ npm run check
 2. Light DOM、禁止API、BEM、CSSスコープ、依存バージョンのアーキテクチャLint
 3. 初期化、イベント、属性、切断・再接続を含むNode.jsテスト
 
-Component Catalogと全exampleは次で起動できます。
+## Component Catalogの起動
+
+前提としてNode.jsをインストールし、リポジトリのルートで次を実行します。依存パッケージのインストールは不要です。
 
 ```powershell
 npm run docs
+```
+
+npm scriptを使わず直接起動する場合は、同じくリポジトリのルートで`node src/server.js`を実行します。
+
+起動後、ブラウザで次を開きます。
+
+```text
+http://127.0.0.1:3000/
+```
+
+ルートの`index.html`、設計文書、`docs.css`、`assets/`、`src/`以下の全exampleが同じオリジンから配信されます。`.git/`などDocsに不要なリポジトリ内部ファイルは配信しません。終了するときはターミナルで`Ctrl+C`を押してください。
+
+ポートを変更する場合は、起動前に`PORT`を指定します。
+
+```powershell
+$env:PORT=4173
+npm run docs
+```
+
+LANやコンテナの外部から接続する必要がある場合だけ、待受ホストも明示します。
+
+```powershell
+$env:HOST='0.0.0.0'
+$env:PORT=4173
+npm run docs
+```
+
+`HOST`未指定時は安全のため`127.0.0.1`だけで待ち受けます。GitHub Pagesでは静的ファイルが直接配信されるため、このNode.jsサーバーは使用しません。
+
+従来のコマンド名も互換性のため利用できます。
+
+```powershell
+npm run examples
 ```
 
 ## このリポジトリの責任境界
