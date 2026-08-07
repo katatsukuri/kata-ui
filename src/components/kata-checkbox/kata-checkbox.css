@@ -5,8 +5,8 @@ kata-checkbox {
 kata-checkbox label {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
+  gap: var(--kata-space-md);
+  font-size: var(--kata-font-size-sm);
   cursor: pointer;
 }
 

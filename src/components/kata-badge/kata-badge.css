@@ -5,10 +5,10 @@ kata-badge {
 kata-badge .kata-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.125rem 0.625rem;
-  font-size: 0.75rem;
+  padding: var(--kata-space-xs) var(--kata-space-md);
+  font-size: var(--kata-font-size-xs);
   font-weight: 500;
-  line-height: 1.25rem;
+  line-height: var(--kata-line-height-control);
   border-radius: var(--kata-radius-pill, 9999px);
   background-color: var(--kata-color-primary, var(--pico-primary-background, #1d4ed8));
   color: var(--kata-color-on-primary, var(--pico-primary-inverse, #fff));

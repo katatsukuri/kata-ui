@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WinForms 基本コンポーネント サンプル</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --desktop: #d4d0c8;
+      --surface: #f0f0f0;
+      --surface-dark: #e5e5e5;
+      --text: #000;
+      --border: #707070;
+      --focus: #316ac5;
+      --grid-border: #688caf;
+      --disabled-text: #6d6d6d;
+      --win-bg: #f0f0f0;
+      --win-border: #707070;
+      --win-font: "Segoe UI", "Yu Gothic UI", Meiryo, sans-serif;
+      --win-accent: #005a9e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      padding: 28px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.42), transparent 24rem),
+        #b9c1c8;
+      font-family: "Segoe UI", "Yu Gothic UI", Meiryo, sans-serif;
+      font-size: 12px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .desktop-window {
+      width: min(1040px, 100%);
+      margin: 0 auto;
+      border: 1px solid #485b69;
+      border-radius: 6px 6px 0 0;
+      background: var(--surface);
+      box-shadow:
+        0 14px 40px rgba(24, 35, 44, 0.28),
+        0 1px 0 rgba(255, 255, 255, 0.75) inset;
+      overflow: hidden;
+    }
+
+    .title-bar {
+      height: 31px;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      color: #fff;
+      background: linear-gradient(#72a6cf 0%, #3f7dad 46%, #28658f 52%, #4d88b3 100%);
+      border-bottom: 1px solid #31536b;
+      user-select: none;
+    }
+
+    .app-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 7px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      background: linear-gradient(135deg, #fff 0 48%, #7ca9c9 49% 100%);
+      color: #214d70;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .window-title {
+      flex: 1;
+      font-weight: 600;
+      text-shadow: 0 1px rgba(0, 0, 0, 0.55);
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 2px;
+    }
+
+    .window-control {
+      width: 28px;
+      height: 19px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.64);
+      border-radius: 2px;
+      background: linear-gradient(#d8e8f3, #7698af);
+      box-shadow: 0 0 0 1px rgba(20, 51, 72, 0.55);
+      color: #163b55;
+      line-height: 1;
+    }
+
+    .window-control.close {
+      background: linear-gradient(#f5c5b6, #c8523c);
+      color: #fff;
+    }
+
+    .menu-bar {
+      height: 25px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 0 10px;
+      border-bottom: 1px solid #c3c3c3;
+      background: #f4f4f4;
+      user-select: none;
+    }
+
+    .menu-item .access-key,
+    .winforms-label .access-key,
+    .winforms-button .access-key {
+      text-decoration: underline;
+      text-underline-offset: 1px;
+    }
+
+    .window-content {
+      padding: 14px;
+    }
+
+    .intro {
+      margin: 0 0 12px;
+      color: #333;
+      line-height: 1.65;
+    }
+
+    .group-box {
+      position: relative;
+      margin: 0 0 15px;
+      padding: 18px 10px 10px;
+      border: 1px solid #a7a7a7;
+      background: #f0f0f0;
+    }
+
+    .group-title {
+      position: absolute;
+      top: -8px;
+      left: 8px;
+      padding: 0 4px;
+      background: #f0f0f0;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: minmax(105px, 0.55fr) minmax(210px, 1fr) minmax(120px, 0.7fr);
+      gap: 8px 12px;
+      align-items: center;
+    }
+
+    .state-name {
+      color: #4b4b4b;
+    }
+
+    .winforms-label {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .winforms-label.disabled {
+      color: #6d6d6d;
+      text-shadow: 1px 1px #fff;
+    }
+
+    .winforms-textbox {
+      width: 100%;
+      min-width: 0;
+      height: 23px;
+      padding: 2px 4px;
+      border: 1px solid #7f9db9;
+      border-radius: 0;
+      outline: none;
+      background: #fff;
+      color: #000;
+      box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.75) inset;
+    }
+
+    .winforms-textbox:hover {
+      border-color: #5c86ab;
+    }
+
+    .winforms-textbox:focus {
+      border-color: var(--focus);
+      box-shadow: 0 0 0 1px rgba(49, 106, 197, 0.18);
+    }
+
+    .winforms-textbox:disabled,
+    .winforms-textbox[readonly] {
+      border-color: #ababab;
+      background: #e9e9e9;
+      color: var(--disabled-text);
+    }
+
+    .winforms-button {
+      min-width: 82px;
+      height: 23px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      outline: none;
+      background: linear-gradient(to bottom, #f8f8f8 0%, #ececec 47%, #dcdcdc 52%, #d0d0d0 100%);
+      color: #000;
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.85) inset,
+        1px 1px 0 rgba(255, 255, 255, 0.65);
+      cursor: default;
+      user-select: none;
+    }
+
+    .winforms-button:hover:not(:disabled) {
+      border-color: #3c7fb1;
+      background: linear-gradient(to bottom, #fff 0%, #f2f7fa 47%, #e2eff7 52%, #d6e8f3 100%);
+    }
+
+    .winforms-button:focus-visible {
+      outline: 1px dotted #000;
+      outline-offset: -4px;
+      border-color: #3c7fb1;
+    }
+
+    .winforms-button:active:not(:disabled),
+    .winforms-button.is-pressed {
+      padding-top: 1px;
+      padding-left: 13px;
+      padding-right: 11px;
+      border-color: #2c628b;
+      background: linear-gradient(to bottom, #c8c8c8 0%, #d7d7d7 100%);
+      box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.28);
+    }
+
+    .winforms-button:disabled {
+      border-color: #a6a6a6;
+      background: #e6e6e6;
+      color: #777;
+      text-shadow: 1px 1px #fff;
+      box-shadow: 1px 1px 0 #fff inset;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .winforms-checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      user-select: none;
+      cursor: default;
+    }
+
+    .winforms-checkbox input[type="checkbox"] {
+      width: 13px;
+      height: 13px;
+      margin: 0;
+      accent-color: #005a9e;
+      cursor: default;
+    }
+
+    .winforms-checkbox input[type="checkbox"]:focus-visible {
+      outline: 1px dotted #000;
+      outline-offset: 2px;
+    }
+
+    .winforms-checkbox:has(input:disabled) {
+      color: var(--disabled-text);
+      text-shadow: 1px 1px #fff;
+    }
+
+    .search-panel {
+      display: grid;
+      grid-template-columns: auto minmax(180px, 1fr) auto auto auto;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid #b5b5b5;
+      background: linear-gradient(#ededed, #dedede);
+      box-shadow: 1px 1px 0 #fff inset;
+    }
+
+    .result-summary {
+      margin-left: auto;
+      color: #444;
+      white-space: nowrap;
+    }
+
+    .grid-frame {
+      position: relative;
+      max-height: 272px;
+      overflow: auto;
+      border: 1px solid var(--grid-border);
+      background: #fff;
+    }
+
+    .winforms-datagrid {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #fff;
+      table-layout: fixed;
+    }
+
+    .winforms-datagrid th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      height: 25px;
+      padding: 4px 8px;
+      border-right: 1px solid #c7c7c7;
+      border-bottom: 1px solid #888;
+      background: linear-gradient(#fff 0%, #f4f4f4 46%, #e4e4e4 52%, #d7d7d7 100%);
+      box-shadow: 0 1px 0 #fff inset;
+      text-align: left;
+      font-weight: 400;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .winforms-datagrid th:last-child,
+    .winforms-datagrid td:last-child {
+      border-right: 0;
+    }
+
+    .winforms-datagrid th:hover {
+      background: linear-gradient(#fff, #e8f4fb);
+    }
+
+    .winforms-datagrid td {
+      height: 24px;
+      padding: 3px 8px;
+      overflow: hidden;
+      border-right: 1px solid #dedede;
+      border-bottom: 1px solid #e2e2e2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .winforms-datagrid tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    .winforms-datagrid tbody tr:hover:not(.selected) {
+      background: #eaf3f9;
+    }
+
+    .winforms-datagrid tbody tr.selected {
+      background: var(--focus);
+      color: #fff;
+    }
+
+    .winforms-datagrid tbody tr.selected td {
+      border-right-color: #5d87cb;
+      border-bottom-color: #5d87cb;
+    }
+
+    .winforms-datagrid tbody tr:focus {
+      outline: 1px dotted #fff;
+      outline-offset: -3px;
+    }
+
+    .check-column {
+      width: 36px;
+      text-align: center !important;
+    }
+
+    .id-column {
+      width: 90px;
+    }
+
+    .name-column {
+      width: 150px;
+    }
+
+    .department-column {
+      width: 220px;
+    }
+
+    .status-column {
+      width: 100px;
+    }
+
+    .empty-row td {
+      height: 74px;
+      color: #555;
+      text-align: center;
+    }
+
+    .status-bar {
+      height: 24px;
+      display: flex;
+      align-items: center;
+      padding: 0 7px;
+      border-top: 1px solid #a9a9a9;
+      background: linear-gradient(#efefef, #d9d9d9);
+      color: #333;
+    }
+
+    .status-message {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-panel {
+      min-width: 150px;
+      height: 18px;
+      padding: 1px 7px;
+      border-left: 1px solid #aaa;
+      box-shadow: 1px 0 #fff inset;
+      text-align: right;
+    }
+
+    .component-note {
+      margin: 8px 0 0;
+      color: #555;
+      line-height: 1.55;
+    }
+
+    .responsive-demo-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 9px;
+      padding: 7px 8px;
+      border: 1px solid #b5b5b5;
+      background: #e5e5e5;
+    }
+
+    .responsive-demo-toolbar input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+      accent-color: var(--win-accent);
+    }
+
+    .width-output {
+      width: 54px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .responsive-stage-shell {
+      padding: 10px;
+      overflow: auto;
+      border: 1px solid #a7a7a7;
+      background:
+        linear-gradient(45deg, #ededed 25%, transparent 25%) 0 0 / 12px 12px,
+        linear-gradient(45deg, transparent 75%, #ededed 75%) 0 0 / 12px 12px,
+        #f7f7f7;
+    }
+
+    .responsive-stage {
+      width: 100%;
+      min-width: 280px;
+      transition: width 120ms ease-out;
+    }
+
+    win-search-box {
+      display: block;
+      width: 100%;
+      container: search-box / inline-size;
+      font-family: var(--win-font);
+    }
+
+    .win-responsive-panel {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid var(--win-border);
+      background: linear-gradient(#ededed, #dedede);
+      box-shadow: 1px 1px 0 #fff inset;
+    }
+
+    .win-responsive-panel .txt-input {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .component-event-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(210px, 0.7fr);
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .event-box {
+      min-height: 48px;
+      padding: 6px 8px;
+      border: 1px solid #a7a7a7;
+      background: #fff;
+      line-height: 1.55;
+    }
+
+    .event-box-label {
+      display: block;
+      margin-bottom: 2px;
+      color: #555;
+    }
+
+    .event-value {
+      font-family: Consolas, "Courier New", monospace;
+      overflow-wrap: anywhere;
+    }
+
+    @container search-box (max-width: 520px) {
+      .win-responsive-panel {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .win-responsive-panel > * {
+        width: 100%;
+      }
+
+      .win-responsive-panel .winforms-checkbox {
+        min-height: 23px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 10px;
+      }
+
+      .search-panel {
+        grid-template-columns: auto 1fr;
+      }
+
+      .search-panel .winforms-checkbox,
+      .search-panel .button-row,
+      .result-summary {
+        grid-column: 1 / -1;
+      }
+
+      .showcase-grid {
+        grid-template-columns: 90px minmax(0, 1fr);
+      }
+
+      .showcase-grid .button-row {
+        grid-column: 2;
+      }
+
+      .component-event-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="desktop-window" aria-labelledby="windowTitle">
+    <header class="title-bar">
+      <span class="app-icon" aria-hidden="true">WF</span>
+      <span class="window-title" id="windowTitle">WinForms 基本コンポーネント サンプル</span>
+      <span class="window-controls" aria-hidden="true">
+        <span class="window-control">−</span>
+        <span class="window-control">□</span>
+        <span class="window-control close">×</span>
+      </span>
+    </header>
+
+    <nav class="menu-bar" aria-label="メニュー">
+      <span class="menu-item">ファイル(<span class="access-key">F</span>)</span>
+      <span class="menu-item">編集(<span class="access-key">E</span>)</span>
+      <span class="menu-item">表示(<span class="access-key">V</span>)</span>
+      <span class="menu-item">ヘルプ(<span class="access-key">H</span>)</span>
+    </nav>
+
+    <div class="window-content">
+      <p class="intro">
+        クラシックなWinFormsの質感と操作感を再現した基本コンポーネント一覧です。
+        下段の検索フォームと一覧表は実際に操作できます。
+      </p>
+
+      <section class="group-box" aria-labelledby="componentStatesTitle">
+        <span class="group-title" id="componentStatesTitle">基本コンポーネントと状態</span>
+        <div class="showcase-grid">
+          <span class="state-name">Label</span>
+          <label class="winforms-label" for="sampleText">検索キーワード(&amp;<span class="access-key">K</span>):</label>
+          <span class="winforms-label disabled">無効なラベル</span>
+
+          <span class="state-name">TextBox</span>
+          <input class="winforms-textbox" id="sampleText" value="入力可能なテキスト">
+          <input class="winforms-textbox" value="編集できません" disabled aria-label="無効なテキストボックス">
+
+          <span class="state-name">Button</span>
+          <div class="button-row">
+            <button class="winforms-button" type="button">通常</button>
+            <button class="winforms-button is-pressed" type="button">押下状態</button>
+          </div>
+          <button class="winforms-button" type="button" disabled>無効</button>
+
+          <span class="state-name">CheckBox</span>
+          <div class="button-row">
+            <label class="winforms-checkbox"><input type="checkbox">未選択</label>
+            <label class="winforms-checkbox"><input type="checkbox" checked>選択済み</label>
+          </div>
+          <label class="winforms-checkbox"><input type="checkbox" checked disabled>無効</label>
+        </div>
+        <p class="component-note">
+          Tabキーでフォーカスを移動すると、入力欄のフォーカス枠やボタンの点線枠を確認できます。
+        </p>
+      </section>
+
+      <section class="group-box" aria-labelledby="searchTitle">
+        <span class="group-title" id="searchTitle">ユーザー検索</span>
+        <form class="search-panel" id="searchForm">
+          <label class="winforms-label" for="txtSearch">検索キーワード(&amp;<span class="access-key">K</span>):</label>
+          <input
+            class="winforms-textbox"
+            id="txtSearch"
+            name="keyword"
+            type="search"
+            placeholder="例: ユーザーID、氏名、所属部署"
+            autocomplete="off"
+          >
+          <label class="winforms-checkbox">
+            <input type="checkbox" id="chkActiveOnly" checked>
+            有効なデータのみ表示
+          </label>
+          <div class="button-row">
+            <button class="winforms-button" id="btnSearch" type="submit">検索(&amp;<span class="access-key">S</span>)</button>
+            <button class="winforms-button" id="btnReset" type="button">クリア</button>
+          </div>
+          <output class="result-summary" id="resultSummary" aria-live="polite">4件</output>
+        </form>
+      </section>
+
+      <section class="group-box" aria-labelledby="gridTitle">
+        <span class="group-title" id="gridTitle">検索結果（DataGridView風）</span>
+        <div class="grid-frame">
+          <table class="winforms-datagrid" id="dgvResults">
+            <thead>
+              <tr>
+                <th class="check-column">
+                  <input type="checkbox" id="selectAll" aria-label="表示中の行をすべて選択">
+                </th>
+                <th class="id-column" data-sort="id">ID</th>
+                <th class="name-column" data-sort="name">氏名</th>
+                <th class="department-column" data-sort="department">所属部署</th>
+                <th class="status-column" data-sort="status">ステータス</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+          </table>
+        </div>
+        <p class="component-note">
+          行クリックで単一選択、チェックボックスで複数選択。選択行では ↑ / ↓ キーで移動できます。
+        </p>
+      </section>
+
+      <section class="group-box" aria-labelledby="customElementTitle">
+        <span class="group-title" id="customElementTitle">レスポンシブ・カスタムコンポーネント</span>
+        <div class="responsive-demo-toolbar">
+          <label class="winforms-label" for="componentWidth">配置領域の幅:</label>
+          <input id="componentWidth" type="range" min="280" max="980" value="980" step="10">
+          <output class="width-output" id="componentWidthValue" for="componentWidth">980px</output>
+          <button class="winforms-button" id="resetComponentWidth" type="button">最大幅</button>
+        </div>
+
+        <div class="responsive-stage-shell">
+          <div class="responsive-stage" id="responsiveStage">
+            <win-search-box id="responsiveSearchBox"></win-search-box>
+          </div>
+        </div>
+
+        <div class="component-event-panel">
+          <div class="event-box">
+            <span class="event-box-label">カスタムイベント（search）</span>
+            <span class="event-value" id="customEventLog">まだ実行されていません。</span>
+          </div>
+          <div class="event-box">
+            <span class="event-box-label">コンポーネントの状態</span>
+            <span class="event-value" id="componentStateLog">{"keyword":"","activeOnly":true}</span>
+          </div>
+        </div>
+
+        <p class="component-note">
+          スライダーで配置領域を520px以下にすると、画面全体の幅ではなくコンポーネント自身の幅を基準に縦配置へ切り替わります。
+          この部分は標準のCustom Elements、CustomEvent、CSS Container Queriesだけで動作します。
+        </p>
+      </section>
+    </div>
+
+    <footer class="status-bar">
+      <span class="status-message" id="statusMessage" role="status">準備完了</span>
+      <span class="status-panel" id="selectionStatus">選択: 0件</span>
+    </footer>
+  </main>
+
+  <script>
+    class WinComponent extends HTMLElement {
+      constructor() {
+        super();
+        this.state = {};
+        this._isMounted = false;
+      }
+
+      connectedCallback() {
+        this._isMounted = true;
+        this.render();
+      }
+
+      setState(newState) {
+        this.state = { ...this.state, ...newState };
+        if (this._isMounted) this.render();
+      }
+
+      emit(eventName, detail = {}) {
+        this.dispatchEvent(new CustomEvent(eventName, {
+          detail,
+          bubbles: true,
+          composed: true
+        }));
+      }
+
+      render() {}
+    }
+
+    class WinSearchBox extends WinComponent {
+      constructor() {
+        super();
+        this.state = { keyword: "", activeOnly: true };
+      }
+
+      render() {
+        this.replaceChildren();
+
+        const panel = document.createElement("div");
+        panel.className = "win-responsive-panel";
+
+        const label = document.createElement("label");
+        label.className = "winforms-label";
+        label.textContent = "検索キーワード:";
+
+        const textBox = document.createElement("input");
+        textBox.type = "search";
+        textBox.className = "winforms-textbox txt-input";
+        textBox.placeholder = "ID、氏名、所属部署";
+        textBox.value = this.state.keyword;
+        label.htmlFor = `${this.id || "winSearch"}Keyword`;
+        textBox.id = label.htmlFor;
+
+        const activeLabel = document.createElement("label");
+        activeLabel.className = "winforms-checkbox";
+        const activeCheck = document.createElement("input");
+        activeCheck.type = "checkbox";
+        activeCheck.className = "chk-active";
+        activeCheck.checked = this.state.activeOnly;
+        activeLabel.append(activeCheck, document.createTextNode("有効のみ"));
+
+        const searchButton = document.createElement("button");
+        searchButton.type = "button";
+        searchButton.className = "winforms-button btn-search";
+        searchButton.textContent = "検索";
+
+        textBox.addEventListener("input", () => {
+          this.state.keyword = textBox.value;
+          this.emit("statechange", { ...this.state });
+        });
+        activeCheck.addEventListener("change", () => {
+          this.state.activeOnly = activeCheck.checked;
+          this.emit("statechange", { ...this.state });
+        });
+        searchButton.addEventListener("click", () => {
+          this.emit("search", { ...this.state });
+        });
+        textBox.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") searchButton.click();
+        });
+
+        panel.append(label, textBox, activeLabel, searchButton);
+        this.append(panel);
+      }
+    }
+
+    if (!customElements.get("win-search-box")) {
+      customElements.define("win-search-box", WinSearchBox);
+    }
+
+    const users = [
+      { id: "1001", name: "山田 太郎", department: "システム開発部", status: "有効" },
+      { id: "1002", name: "佐藤 花子", department: "総務課", status: "有効" },
+      { id: "1003", name: "鈴木 健太", department: "営業第一部", status: "無効" },
+      { id: "1004", name: "高橋 美咲", department: "カスタマーサポート部", status: "有効" },
+      { id: "1005", name: "伊藤 翔", department: "経理部", status: "有効" },
+      { id: "1006", name: "渡辺 直子", department: "商品企画部", status: "無効" }
+    ];
+
+    const state = {
+      visibleUsers: [],
+      checkedIds: new Set(),
+      selectedId: null,
+      sortKey: null,
+      sortDirection: 1
+    };
+
+    const searchForm = document.getElementById("searchForm");
+    const txtSearch = document.getElementById("txtSearch");
+    const chkActiveOnly = document.getElementById("chkActiveOnly");
+    const btnReset = document.getElementById("btnReset");
+    const selectAll = document.getElementById("selectAll");
+    const resultBody = document.getElementById("resultBody");
+    const resultSummary = document.getElementById("resultSummary");
+    const statusMessage = document.getElementById("statusMessage");
+    const selectionStatus = document.getElementById("selectionStatus");
+    const componentWidth = document.getElementById("componentWidth");
+    const componentWidthValue = document.getElementById("componentWidthValue");
+    const responsiveStage = document.getElementById("responsiveStage");
+    const responsiveSearchBox = document.getElementById("responsiveSearchBox");
+    const customEventLog = document.getElementById("customEventLog");
+    const componentStateLog = document.getElementById("componentStateLog");
+
+    function applySearch(message = "検索が完了しました") {
+      const keyword = txtSearch.value.trim().toLocaleLowerCase("ja");
+      let result = users.filter((user) => {
+        const matchesKeyword = !keyword || Object.values(user).some(
+          (value) => value.toLocaleLowerCase("ja").includes(keyword)
+        );
+        const matchesStatus = !chkActiveOnly.checked || user.status === "有効";
+        return matchesKeyword && matchesStatus;
+      });
+
+      if (state.sortKey) {
+        result = [...result].sort((a, b) => (
+          a[state.sortKey].localeCompare(b[state.sortKey], "ja", { numeric: true }) * state.sortDirection
+        ));
+      }
+
+      state.visibleUsers = result;
+      if (!result.some((user) => user.id === state.selectedId)) {
+        state.selectedId = null;
+      }
+      renderRows();
+      statusMessage.textContent = `${message}（${result.length}件）`;
+    }
+
+    function renderRows() {
+      resultBody.replaceChildren();
+
+      if (state.visibleUsers.length === 0) {
+        const row = document.createElement("tr");
+        row.className = "empty-row";
+        const cell = document.createElement("td");
+        cell.colSpan = 5;
+        cell.textContent = "該当するデータはありません。";
+        row.append(cell);
+        resultBody.append(row);
+      } else {
+        state.visibleUsers.forEach((user) => {
+          const row = document.createElement("tr");
+          row.tabIndex = 0;
+          row.dataset.id = user.id;
+          row.classList.toggle("selected", user.id === state.selectedId);
+          row.setAttribute("aria-selected", String(user.id === state.selectedId));
+
+          const checkCell = document.createElement("td");
+          checkCell.className = "check-column";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = state.checkedIds.has(user.id);
+          checkbox.setAttribute("aria-label", `${user.name}を選択`);
+          checkbox.addEventListener("click", (event) => event.stopPropagation());
+          checkbox.addEventListener("change", () => {
+            checkbox.checked ? state.checkedIds.add(user.id) : state.checkedIds.delete(user.id);
+            updateSelectionStatus();
+          });
+          checkCell.append(checkbox);
+
+          row.append(
+            checkCell,
+            createCell(user.id),
+            createCell(user.name),
+            createCell(user.department),
+            createCell(user.status)
+          );
+          row.addEventListener("click", () => selectRow(user.id, row));
+          row.addEventListener("keydown", handleRowKeydown);
+          resultBody.append(row);
+        });
+      }
+
+      resultSummary.textContent = `${state.visibleUsers.length}件`;
+      updateSelectionStatus();
+    }
+
+    function createCell(text) {
+      const cell = document.createElement("td");
+      cell.textContent = text;
+      cell.title = text;
+      return cell;
+    }
+
+    function selectRow(id, row) {
+      state.selectedId = id;
+      resultBody.querySelectorAll("tr").forEach((item) => {
+        const selected = item.dataset.id === id;
+        item.classList.toggle("selected", selected);
+        item.setAttribute("aria-selected", String(selected));
+      });
+      statusMessage.textContent = `ID ${id} の行を選択しました`;
+      row.focus({ preventScroll: true });
+    }
+
+    function handleRowKeydown(event) {
+      if (!["ArrowUp", "ArrowDown"].includes(event.key)) return;
+      event.preventDefault();
+      const rows = [...resultBody.querySelectorAll("tr[data-id]")];
+      const currentIndex = rows.indexOf(event.currentTarget);
+      const offset = event.key === "ArrowDown" ? 1 : -1;
+      const nextRow = rows[Math.max(0, Math.min(rows.length - 1, currentIndex + offset))];
+      if (nextRow) selectRow(nextRow.dataset.id, nextRow);
+    }
+
+    function updateSelectionStatus() {
+      const visibleIds = state.visibleUsers.map((user) => user.id);
+      const visibleCheckedCount = visibleIds.filter((id) => state.checkedIds.has(id)).length;
+      selectAll.checked = visibleIds.length > 0 && visibleCheckedCount === visibleIds.length;
+      selectAll.indeterminate = visibleCheckedCount > 0 && visibleCheckedCount < visibleIds.length;
+      selectionStatus.textContent = `選択: ${state.checkedIds.size}件`;
+    }
+
+    searchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      applySearch();
+    });
+
+    chkActiveOnly.addEventListener("change", () => applySearch("表示条件を変更しました"));
+
+    btnReset.addEventListener("click", () => {
+      txtSearch.value = "";
+      chkActiveOnly.checked = true;
+      state.checkedIds.clear();
+      state.selectedId = null;
+      state.sortKey = null;
+      state.sortDirection = 1;
+      applySearch("検索条件をクリアしました");
+      txtSearch.focus();
+    });
+
+    selectAll.addEventListener("change", () => {
+      state.visibleUsers.forEach((user) => {
+        selectAll.checked ? state.checkedIds.add(user.id) : state.checkedIds.delete(user.id);
+      });
+      renderRows();
+      statusMessage.textContent = selectAll.checked
+        ? "表示中の行をすべて選択しました"
+        : "表示中の行の選択を解除しました";
+    });
+
+    document.querySelectorAll("[data-sort]").forEach((header) => {
+      header.addEventListener("click", () => {
+        const key = header.dataset.sort;
+        state.sortDirection = state.sortKey === key ? state.sortDirection * -1 : 1;
+        state.sortKey = key;
+        applySearch(`${header.textContent}で${state.sortDirection === 1 ? "昇順" : "降順"}に並べ替えました`);
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (!event.altKey) return;
+      if (event.key.toLocaleLowerCase() === "k") {
+        event.preventDefault();
+        txtSearch.focus();
+        txtSearch.select();
+      }
+      if (event.key.toLocaleLowerCase() === "s") {
+        event.preventDefault();
+        searchForm.requestSubmit();
+      }
+    });
+
+    function updateComponentWidth() {
+      const requestedWidth = Number(componentWidth.value);
+      const availableWidth = document.querySelector(".responsive-stage-shell").clientWidth - 20;
+      const appliedWidth = Math.min(requestedWidth, availableWidth);
+      responsiveStage.style.width = `${appliedWidth}px`;
+      componentWidthValue.textContent = `${requestedWidth}px`;
+    }
+
+    componentWidth.addEventListener("input", updateComponentWidth);
+    document.getElementById("resetComponentWidth").addEventListener("click", () => {
+      componentWidth.value = componentWidth.max;
+      updateComponentWidth();
+    });
+    window.addEventListener("resize", updateComponentWidth);
+
+    responsiveSearchBox.addEventListener("statechange", (event) => {
+      componentStateLog.textContent = JSON.stringify(event.detail);
+    });
+    responsiveSearchBox.addEventListener("search", (event) => {
+      const { keyword, activeOnly } = event.detail;
+      customEventLog.textContent = `keyword="${keyword}", activeOnly=${activeOnly}`;
+      componentStateLog.textContent = JSON.stringify(event.detail);
+      statusMessage.textContent = "カスタムコンポーネントからsearchイベントを受信しました";
+    });
+
+    applySearch("準備完了");
+    updateComponentWidth();
+  </script>
+</body>
+</html>

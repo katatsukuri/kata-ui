@@ -34,25 +34,25 @@ kata-drawer .kata-drawer__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 1.5rem;
+  padding: var(--kata-space-2xl) var(--kata-space-3xl);
   border-bottom: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
 }
 
 kata-drawer .kata-drawer__title {
-  font-size: 1.125rem;
+  font-size: var(--kata-font-size-lg);
   font-weight: 600;
   margin: 0;
 }
 
 kata-drawer .kata-drawer__content {
-  padding: 1.25rem 1.5rem;
-  font-size: 0.875rem;
+  padding: var(--kata-space-2xl) var(--kata-space-3xl);
+  font-size: var(--kata-font-size-sm);
 }
 
 kata-drawer .drawer-footer {
-  padding: 1.25rem 1.5rem;
+  padding: var(--kata-space-2xl) var(--kata-space-3xl);
   display: flex;
   justify-content: flex-end;
-  gap: 0.5rem;
+  gap: var(--kata-space-md);
   border-top: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
 }

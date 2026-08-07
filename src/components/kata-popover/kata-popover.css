@@ -6,8 +6,8 @@ kata-popover [data-popover-content] {
   background-color: var(--kata-color-background, var(--pico-background-color, #fff));
   border: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
   border-radius: var(--kata-radius-md, 0.375rem);
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
+  padding: var(--kata-space-lg) var(--kata-space-xl);
+  font-size: var(--kata-font-size-sm);
   box-shadow: var(--kata-shadow-md, 0 4px 12px rgb(0 0 0 / 0.1));
   min-width: 12rem;
   max-width: 24rem;

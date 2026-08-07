@@ -18,8 +18,8 @@ kata-accordion [data-accordion-trigger] {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 1rem;
-  font-size: 0.875rem;
+  padding: var(--kata-space-lg);
+  font-size: var(--kata-font-size-sm);
   font-weight: 500;
   background: none;
   border: none;
@@ -32,6 +32,6 @@ kata-accordion [data-accordion-trigger]:hover {
 }
 
 kata-accordion [data-accordion-content] {
-  padding: 0 1rem 1rem;
-  font-size: 0.875rem;
+  padding: 0 var(--kata-space-lg) var(--kata-space-lg);
+  font-size: var(--kata-font-size-sm);
 }
