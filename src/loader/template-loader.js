@@ -50,6 +50,15 @@ function createElement(root, name) {
   };
 }
 
+function createComponentShadowRoot(element, moduleUrl) {
+  const shadowRoot = element.attachShadow({ mode: 'open' });
+  const stylesheet = createElement(element.ownerDocument, 'link');
+  stylesheet.setAttribute('rel', 'stylesheet');
+  stylesheet.setAttribute('href', new URL(`./${element.localName}.css`, moduleUrl).href);
+  shadowRoot.append(stylesheet);
+  return shadowRoot;
+}
+
 function setText(root, selector, value) {
   if (value == null) return;
   const target = root.querySelector(selector);
@@ -103,11 +112,7 @@ function applyHostAttributes(element, root) {
 export function initializeShadowComponent(element, templateId, moduleUrl) {
   if (element.shadowRoot) return 'initialized';
 
-  const shadowRoot = element.attachShadow({ mode: 'open' });
-  const stylesheet = createElement(element.ownerDocument, 'link');
-  stylesheet.setAttribute('rel', 'stylesheet');
-  stylesheet.setAttribute('href', new URL(`./${element.localName}.css`, moduleUrl).href);
-  shadowRoot.append(stylesheet);
+  const shadowRoot = createComponentShadowRoot(element, moduleUrl);
 
   const slotNames = COMPONENT_SLOTS[element.localName] ?? [''];
   const hasConsumerContent = [...(element.childNodes ?? [])].some((node) => (
@@ -143,6 +148,22 @@ export function initializeShadowComponent(element, templateId, moduleUrl) {
 
   applyHostAttributes(element, shadowRoot);
   element.dataset.kataUiProjection = hasConsumerContent ? 'slots' : 'attributes';
+  return element.dataset.kataUiProjection;
+}
+
+/** Clones one canonical frame per usage-side item and lets the caller bind attributes and slots. */
+export function initializeShadowCollection(element, templateId, moduleUrl, items, configureItem) {
+  if (element.shadowRoot) return 'initialized';
+  if (items.length === 0) throw new Error(`${element.localName} requires at least one usage-side item.`);
+
+  const shadowRoot = createComponentShadowRoot(element, moduleUrl);
+  for (const [index, item] of items.entries()) {
+    const fragment = instantiateTemplate(templateId, element.ownerDocument);
+    configureItem(fragment, item, index);
+    shadowRoot.append(fragment);
+  }
+
+  element.dataset.kataUiProjection = 'attributes-and-slots';
   return element.dataset.kataUiProjection;
 }
 

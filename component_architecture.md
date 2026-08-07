@@ -539,6 +539,8 @@ body main div article.user-card h3 span
 
 HTMXはComponentホスト全体、またはslotへ渡したLight DOMを更新する。Shadow DOM内部の深い要素は直接交換しない。
 
+繰り返し項目を持つComponentでは、利用側の各子要素をデータ境界とする。Componentは1項目分の共通templateを子要素数だけ複製し、単純値を属性から、項目本文を固有名のslotから受け取る。アコーディオン、タブ、トグルグループのように項目とフレームを分離できる部品へ適用する。
+
 ---
 
 # 12. サーバーとの契約

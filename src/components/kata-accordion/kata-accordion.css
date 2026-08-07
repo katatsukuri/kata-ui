@@ -74,3 +74,8 @@ kata-accordion [data-accordion-content] {
   padding: 0 var(--kata-space-lg) var(--kata-space-lg);
   font-size: var(--kata-font-size-sm);
 }
+
+:host ::slotted([data-accordion-title]) {
+  display: block;
+  margin: 0;
+}
