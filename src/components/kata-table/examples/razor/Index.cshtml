@@ -12,11 +12,11 @@
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2.1.1/css/pico.min.css">
     {{--
-      wwwroot/kata-ui/ に kata-table.css / kata-table.js を配置してください。
+      kata-ui のディレクトリ構成を保ったまま wwwroot/kata-ui/ へ配置してください。
       asp-append-version でキャッシュバスティングが有効になります。
     --}}
-    <link rel="stylesheet" href="~/kata-ui/components/kata-table/kata-table.css" asp-append-version="true">
-    <script type="module"  src="~/kata-ui/components/kata-table/kata-table.js"  asp-append-version="true"></script>
+    <link rel="stylesheet" href="~/kata-ui/src/components/kata-table/kata-table.css" asp-append-version="true">
+    <script type="module"  src="~/kata-ui/src/components/kata-table/kata-table.js"  asp-append-version="true"></script>
     <script src="https://unpkg.com/htmx.org@@2.0.10/dist/htmx.min.js"></script>
   </head>
   <body class="container">

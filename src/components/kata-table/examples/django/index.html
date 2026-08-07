@@ -9,8 +9,8 @@
     {# Django の staticfiles を使って kata-ui アセットを配信してください。 #}
     {# 例: STATICFILES_DIRS に kata-ui ディレクトリを追加する             #}
     {% load static %}
-    <link rel="stylesheet" href="{% static 'kata-ui/components/kata-table/kata-table.css' %}">
-    <script type="module"  src="{% static 'kata-ui/components/kata-table/kata-table.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'kata-ui/src/components/kata-table/kata-table.css' %}">
+    <script type="module"  src="{% static 'kata-ui/src/components/kata-table/kata-table.js' %}"></script>
     <script src="https://unpkg.com/htmx.org@2.0.10/dist/htmx.min.js"></script>
   </head>
   <body class="container">

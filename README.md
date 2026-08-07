@@ -28,16 +28,17 @@ kata-ui/
 ├── architecture.md
 ├── component_architecture.md
 ├── architecture-manifest.json
-├── components/
-│   └── kata-example/
-│       ├── kata-example.spec.md
-│       ├── kata-example.html
-│       ├── kata-example.js
-│       ├── kata-example.css
-│       ├── kata-example.test.js
-│       └── examples/
-├── loader/
-│   └── template-loader.js
+├── src/
+│   ├── components/
+│   │   └── kata-example/
+│   │       ├── kata-example.spec.md
+│   │       ├── kata-example.html
+│   │       ├── kata-example.js
+│   │       ├── kata-example.css
+│   │       ├── kata-example.test.js
+│   │       └── examples/
+│   └── loader/
+│       └── template-loader.js
 └── tools/
     └── architecture-lint.js
 ```
@@ -47,7 +48,7 @@ kata-ui/
 ## 導入例
 
 ```html
-<link rel="stylesheet" href="/kata-ui/components/kata-button/kata-button.css">
+<link rel="stylesheet" href="/kata-ui/src/components/kata-button/kata-button.css">
 
 <template id="kata-button-template">
   <button type="button">保存</button>
@@ -55,7 +56,7 @@ kata-ui/
 
 <kata-button></kata-button>
 
-<script type="module" src="/kata-ui/components/kata-button/kata-button.js"></script>
+<script type="module" src="/kata-ui/src/components/kata-button/kata-button.js"></script>
 ```
 
 独自のtemplateを使用する場合は`template`属性でIDを指定します。

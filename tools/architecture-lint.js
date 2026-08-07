@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const componentsRoot = path.join(repositoryRoot, 'components');
+const componentsRoot = path.join(repositoryRoot, 'src', 'components');
 const manifest = JSON.parse(fs.readFileSync(path.join(repositoryRoot, 'architecture-manifest.json'), 'utf8'));
 const failures = [];
 const definedTags = new Map();
@@ -53,7 +53,7 @@ function verifyPinnedDependencies(file, source) {
 }
 
 if (!fs.existsSync(componentsRoot)) {
-  failures.push('components/: component root is required.');
+  failures.push('src/components/: component root is required.');
 } else {
   const componentNames = fs.readdirSync(componentsRoot, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && entry.name.startsWith('kata-'))
@@ -174,10 +174,10 @@ if (!fs.existsSync(componentsRoot)) {
     const docs = read(docsIndex);
     verifyPageReferences(docsIndex, docs);
     for (const name of componentNames) {
-      if (!docs.includes(`./components/${name}/examples/index.html`)) {
+      if (!docs.includes(`./src/components/${name}/examples/index.html`)) {
         report(docsIndex, `catalog example link is missing for ${name}.`);
       }
-      if (!docs.includes(`./components/${name}/${name}.spec.md`)) {
+      if (!docs.includes(`./src/components/${name}/${name}.spec.md`)) {
         report(docsIndex, `catalog contract link is missing for ${name}.`);
       }
     }

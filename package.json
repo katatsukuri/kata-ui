@@ -6,7 +6,7 @@
     "test": "node --test",
     "lint:architecture": "node tools/architecture-lint.js",
     "check": "npm run lint:architecture && npm test",
-    "docs": "node components/kata-table/examples/server.js",
-    "examples": "node components/kata-table/examples/server.js"
+    "docs": "node src/components/kata-table/examples/server.js",
+    "examples": "node src/components/kata-table/examples/server.js"
   }
 }
