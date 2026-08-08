@@ -5,7 +5,7 @@ import { PageController } from './page-controller.js';
 import { PageState } from './state-manager.js';
 import { ThemeManager } from './theme-manager.js';
 
-test('PageState publishes immutable snapshots only for changes', () => {
+test('PageState publishes read-only top-level snapshots only for changes', () => {
   const state = new PageState({ mode: 'list' });
   const snapshots = [];
   state.subscribe((value) => snapshots.push(value), { immediate: true });
@@ -18,6 +18,9 @@ test('PageState publishes immutable snapshots only for changes', () => {
     { mode: 'detail', selectedId: 'S001' },
   ]);
   assert.notEqual(snapshots[1], state.snapshot());
+  assert.equal(Object.isFrozen(snapshots[1]), true);
+  assert.throws(() => { snapshots[1].mode = 'mutated'; }, TypeError);
+  assert.equal(state.get('mode'), 'detail');
 });
 
 test('PageController releases state subscriptions', () => {

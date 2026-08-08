@@ -124,6 +124,8 @@ themeManager.load();
 
 画面破棄時は`disposeHtmx()`を呼びます。Custom Elementの`connectedCallback()`を利用側から手動実行せず、要素の挿入・除去による標準ライフサイクルへ委ねます。
 
+`PageState.snapshot()`と購読通知はトップレベルを凍結した浅いsnapshotです。配列やオブジェクトのネスト値は直接変更せず、新しい値へ置き換えて`set()`または`update()`してください。
+
 ## テーマ設定
 
 `html`要素の`data-theme`を`default`、`blue`、`dark`、`facility`、`winforms`のいずれかにすると、全コンポーネントへ同じテーマが継承されます。

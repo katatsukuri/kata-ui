@@ -11,7 +11,7 @@ export class PageState {
   }
 
   snapshot() {
-    return { ...this.#state };
+    return Object.freeze({ ...this.#state });
   }
 
   set(key, value) {
