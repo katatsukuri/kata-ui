@@ -1,23 +1,24 @@
+import { ThemeManager } from './runtime/theme-manager.js';
+
 const themeControl = document.querySelector('[data-theme-switcher]');
 const exampleFrames = document.querySelectorAll('.component-card iframe');
-
-function applyTheme(theme) {
-  document.documentElement.dataset.theme = theme;
-
-  for (const frame of exampleFrames) {
-    const frameRoot = frame.contentDocument?.documentElement;
-    if (frameRoot) frameRoot.dataset.theme = theme;
-  }
-}
+const themeManager = new ThemeManager(document);
 
 if (themeControl) {
-  applyTheme(themeControl.value);
-  themeControl.addEventListener('change', () => applyTheme(themeControl.value));
+  const selectedTheme = themeManager.load(themeControl.value);
+  if ([...themeControl.options].some((option) => option.value === selectedTheme)) {
+    themeControl.value = selectedTheme;
+  }
+
+  const applyTheme = () => {
+    themeManager.set(themeControl.value);
+    for (const frame of exampleFrames) themeManager.applyToFrame(frame);
+  };
+
+  applyTheme();
+  themeControl.addEventListener('change', applyTheme);
 
   for (const frame of exampleFrames) {
-    frame.addEventListener('load', () => {
-      const frameRoot = frame.contentDocument?.documentElement;
-      if (frameRoot) frameRoot.dataset.theme = themeControl.value;
-    });
+    frame.addEventListener('load', () => themeManager.applyToFrame(frame));
   }
 }
