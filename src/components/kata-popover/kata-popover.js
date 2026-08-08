@@ -7,6 +7,10 @@ const PLACEMENTS = ['bottom', 'top', 'left', 'right'];
 export class KataPopoverElement extends KataComponent {
   static templateId = DEFAULT_TEMPLATE_ID;
   static moduleUrl = import.meta.url;
+  static templateAliases = Object.fromEntries(PLACEMENTS.map((placement) => [
+    `kata-popover-${placement}-template`,
+    { templateId: DEFAULT_TEMPLATE_ID, attributes: { 'data-placement': placement } },
+  ]));
 
   mount() {
     this.dataset.state = 'closed';

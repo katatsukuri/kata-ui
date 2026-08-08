@@ -69,6 +69,30 @@ test('KataComponent removes tracked listeners when disconnected', () => {
   assert.equal(listeners.has('change'), false);
 });
 
+test('KataComponent maps a removed built-in variant template to canonical attributes', () => {
+  const canonical = new FakeTemplateElement([{ tagName: 'BUTTON', children: [{ tagName: 'SLOT' }] }]);
+  class AliasedComponent extends KataComponent {
+    static templateId = 'kata-test-template';
+    static moduleUrl = import.meta.url;
+    static templateAliases = {
+      'kata-test-disabled-template': {
+        templateId: 'kata-test-template',
+        attributes: { disabled: true },
+      },
+    };
+  }
+  const element = new AliasedComponent({
+    getElementById(id) { return id === 'kata-test-template' ? canonical : null; },
+    createElement: document.createElement,
+  });
+  element.setAttribute('template', 'kata-test-disabled-template');
+
+  element.connectedCallback();
+
+  assert.equal(element.hasAttribute('disabled'), true);
+  assert.ok(element.shadowRoot.querySelector('button'));
+});
+
 test('emitComponentEvent uses the cross-shadow component event contract', () => {
   const element = new FakeHTMLElement();
   let received;

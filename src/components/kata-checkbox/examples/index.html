@@ -17,15 +17,8 @@
     </label>
   </template>
 
-  <template id="kata-checkbox-disabled-template">
-    <label>
-      <input type="checkbox" name="newsletter" disabled>
-      <slot name="label">メールマガジンを受け取る（現在利用不可）</slot>
-    </label>
-  </template>
-
   <p><kata-checkbox><span slot="label">利用規約に同意する</span></kata-checkbox></p>
-  <p><kata-checkbox template="kata-checkbox-disabled-template"><span slot="label">現在利用できません</span></kata-checkbox></p>
+  <p><kata-checkbox name="newsletter" disabled><span slot="label">現在利用できません</span></kata-checkbox></p>
 
   <script type="module" src="../kata-checkbox.js"></script>
 </body>

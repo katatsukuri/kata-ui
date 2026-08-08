@@ -64,11 +64,11 @@ function setAttribute(root, selector, name, value) {
 export function applyHostAttributes(element, root) {
   const values = Object.fromEntries([
     'value', 'name', 'placeholder', 'type',
-    'src', 'alt', 'href', 'min', 'max', 'step',
+    'src', 'alt', 'href', 'min', 'max', 'step', 'rows',
   ].map((name) => [name, element.getAttribute(name)]));
 
   for (const selector of ['input', 'textarea', 'select']) {
-    for (const name of ['name', 'placeholder', 'type', 'min', 'max', 'step']) {
+    for (const name of ['name', 'placeholder', 'type', 'min', 'max', 'step', 'rows']) {
       setAttribute(root, selector, name, values[name]);
     }
   }

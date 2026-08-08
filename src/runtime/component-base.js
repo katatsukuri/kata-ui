@@ -21,7 +21,15 @@ export class KataComponent extends HTMLElement {
   connectedCallback() {
     const state = stateFor(this);
     if (!state.mounted) {
-      const templateId = this.getAttribute('template') || this.constructor.templateId;
+      const requestedTemplateId = this.getAttribute('template') || this.constructor.templateId;
+      const templateExists = this.ownerDocument?.getElementById?.(requestedTemplateId);
+      const alias = templateExists ? null : this.constructor.templateAliases?.[requestedTemplateId];
+      const templateId = typeof alias === 'string' ? alias : alias?.templateId || requestedTemplateId;
+      for (const [name, value] of Object.entries(alias?.attributes ?? {})) {
+        if (this.hasAttribute(name)) continue;
+        if (value === true) this.setAttribute(name, '');
+        else if (value !== false && value != null) this.setAttribute(name, value);
+      }
       if (!templateId) throw new Error(`${this.localName} requires a templateId.`);
       initializeShadowComponent(this, templateId, this.constructor.moduleUrl, {
         stylesheetName: this.constructor.stylesheetName,
