@@ -70,3 +70,19 @@ kata-tabs [data-tabs-panel] {
   padding: var(--kata-space-xl) 0;
   font-size: var(--kata-font-size-sm);
 }
+
+:host ::slotted([data-tabs-trigger]) {
+  padding: var(--kata-space-md) var(--kata-space-xl);
+  font-size: var(--kata-font-size-sm);
+  font-weight: 500;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
+}
+
+:host ::slotted([data-tabs-panel]) {
+  padding: var(--kata-space-xl) 0;
+  font-size: var(--kata-font-size-sm);
+}

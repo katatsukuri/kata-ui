@@ -1,16 +1,10 @@
 <!-- Canonical Shadow DOM fallback templates for <kata-toggle-group>. Copy only the templates required by the page. -->
 <template id="kata-toggle-group-template">
     <div role="group" aria-label="テキスト整形">
-      <button type="button" role="button" data-toggle-item aria-pressed="false"><slot name="item-1">Bold</slot></button>
-      <button type="button" role="button" data-toggle-item aria-pressed="false"><slot name="item-2">Italic</slot></button>
-      <button type="button" role="button" data-toggle-item aria-pressed="false"><slot name="item-3">Underline</slot></button>
-    </div>
-  </template>
-
-<template id="kata-toggle-group-align-template">
-    <div role="group" aria-label="文字揃え">
-      <button type="button" role="button" data-toggle-item aria-pressed="true" data-active><slot name="item-1">左揃え</slot></button>
-      <button type="button" role="button" data-toggle-item aria-pressed="false"><slot name="item-2">中央揃え</slot></button>
-      <button type="button" role="button" data-toggle-item aria-pressed="false"><slot name="item-3">右揃え</slot></button>
+      <slot>
+        <button type="button" data-toggle-item aria-pressed="false">Bold</button>
+        <button type="button" data-toggle-item aria-pressed="false">Italic</button>
+        <button type="button" data-toggle-item aria-pressed="false">Underline</button>
+      </slot>
     </div>
   </template>

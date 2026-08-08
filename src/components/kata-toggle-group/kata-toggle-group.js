@@ -1,4 +1,4 @@
-import { findEventTarget, queryComponentAll } from '../../loader/template-loader.js';
+import { findEventTarget, queryProjectedAll } from '../../loader/template-loader.js';
 import { KataComponent } from '../../runtime/component-base.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-toggle-group-template';
@@ -6,6 +6,9 @@ const DEFAULT_TEMPLATE_ID = 'kata-toggle-group-template';
 export class KataToggleGroupElement extends KataComponent {
   static templateId = DEFAULT_TEMPLATE_ID;
   static moduleUrl = import.meta.url;
+  static templateAliases = {
+    'kata-toggle-group-align-template': DEFAULT_TEMPLATE_ID,
+  };
 
   mount() {
     const isSingle = this.getAttribute('type') === 'single';
@@ -13,7 +16,7 @@ export class KataToggleGroupElement extends KataComponent {
     const toggle = (item) => {
       const isPressed = item.getAttribute('aria-pressed') === 'true';
       if (isSingle) {
-        queryComponentAll(this, '[data-toggle-item]').forEach((i) => {
+        queryProjectedAll(this, '[data-toggle-item]').forEach((i) => {
           i.setAttribute('aria-pressed', 'false');
           delete i.dataset.active;
         });

@@ -100,3 +100,15 @@ kata-dropdown-menu [role="menuitem"]:hover {
 :host [role="menuitem"]:hover {
   background-color: var(--kata-color-surface-muted, var(--pico-muted-background-color, #f8fafc));
 }
+
+:host ::slotted([role="menuitem"]) {
+  display: block;
+  width: 100%;
+  padding: var(--kata-space-md) var(--kata-space-lg);
+  font-size: var(--kata-font-size-sm);
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: var(--kata-radius-sm, 0.25rem);
+  cursor: pointer;
+}

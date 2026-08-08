@@ -131,6 +131,18 @@ export function queryComponentAll(element, selector) {
   ];
 }
 
+/** Uses consumer-provided Light DOM items when present, otherwise canonical template fallbacks. */
+export function queryProjectedAll(element, selector) {
+  const projected = [...element.querySelectorAll(selector)];
+  return projected.length > 0
+    ? projected
+    : [...(element.shadowRoot?.querySelectorAll(selector) ?? [])];
+}
+
+export function queryProjected(element, selector) {
+  return queryProjectedAll(element, selector)[0] ?? null;
+}
+
 export function findEventTarget(event, selector) {
   return event.composedPath?.().find((node) => node?.matches?.(selector))
     ?? event.target?.closest?.(selector)

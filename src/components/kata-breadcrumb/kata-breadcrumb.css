@@ -70,3 +70,7 @@ kata-breadcrumb [data-breadcrumb-separator] {
   color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
   user-select: none;
 }
+
+:host ::slotted(li) {
+  list-style: none;
+}

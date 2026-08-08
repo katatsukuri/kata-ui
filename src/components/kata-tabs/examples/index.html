@@ -12,29 +12,18 @@
 
   <template id="kata-tabs-template">
     <div role="tablist" aria-label="設定">
-      <button type="button" role="tab" data-tabs-trigger
-              aria-selected="true" aria-controls="tab-account" data-active><slot name="tab-1">アカウント</slot></button>
-      <button type="button" role="tab" data-tabs-trigger
-              aria-selected="false" aria-controls="tab-password"><slot name="tab-2">パスワード</slot></button>
-      <button type="button" role="tab" data-tabs-trigger
-              aria-selected="false" aria-controls="tab-notify"><slot name="tab-3">通知</slot></button>
+      <slot name="tab"><button type="button" role="tab" data-tabs-trigger aria-selected="true" aria-controls="tab-account">アカウント</button></slot>
     </div>
-    <div id="tab-account" role="tabpanel" data-tabs-panel>
-      <slot name="panel-1"><p>アカウント情報の設定内容がここに表示されます。</p></slot>
-    </div>
-    <div id="tab-password" role="tabpanel" data-tabs-panel hidden>
-      <slot name="panel-2"><p>パスワード変更フォームがここに表示されます。</p></slot>
-    </div>
-    <div id="tab-notify" role="tabpanel" data-tabs-panel hidden>
-      <slot name="panel-3"><p>通知設定の内容がここに表示されます。</p></slot>
-    </div>
+    <slot name="panel"><div id="tab-account" role="tabpanel" data-tabs-panel>アカウント情報</div></slot>
   </template>
 
   <kata-tabs>
-    <span slot="tab-1">アカウント</span><span slot="tab-2">パスワード</span><span slot="tab-3">通知</span>
-    <p slot="panel-1">アカウント情報の設定内容です。</p>
-    <p slot="panel-2">パスワード変更フォームです。</p>
-    <p slot="panel-3">通知設定の内容です。</p>
+    <button slot="tab" type="button" role="tab" data-tabs-trigger aria-selected="true" aria-controls="tab-account" data-active>アカウント</button>
+    <button slot="tab" type="button" role="tab" data-tabs-trigger aria-selected="false" aria-controls="tab-password">パスワード</button>
+    <button slot="tab" type="button" role="tab" data-tabs-trigger aria-selected="false" aria-controls="tab-notify">通知</button>
+    <div slot="panel" id="tab-account" role="tabpanel" data-tabs-panel>アカウント情報の設定内容です。</div>
+    <div slot="panel" id="tab-password" role="tabpanel" data-tabs-panel hidden>パスワード変更フォームです。</div>
+    <div slot="panel" id="tab-notify" role="tabpanel" data-tabs-panel hidden>通知設定の内容です。</div>
   </kata-tabs>
 
   <script type="module" src="../kata-tabs.js"></script>

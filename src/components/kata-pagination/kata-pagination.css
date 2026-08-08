@@ -94,3 +94,7 @@ kata-pagination [disabled] {
   opacity: 0.4;
   pointer-events: none;
 }
+
+:host ::slotted(li) {
+  list-style: none;
+}
