@@ -61,7 +61,7 @@ function setAttribute(root, selector, name, value) {
   if (target) target.setAttribute(name, value);
 }
 
-function applyHostAttributes(element, root) {
+export function applyHostAttributes(element, root) {
   const values = Object.fromEntries([
     'value', 'name', 'placeholder', 'type',
     'src', 'alt', 'href', 'min', 'max', 'step',
