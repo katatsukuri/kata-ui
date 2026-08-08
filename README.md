@@ -26,7 +26,7 @@
 
 - 業務状態、認証、認可、永続データの正本はサーバーに置く
 - サーバー通信とHTML差し替えはHTMXが担当する
-- 通信不要の局所的な画面状態はAlpine.jsが担当する
+- 通信不要の局所的な画面状態はPage Runtimeが担当する
 - 独立UI部品の内部状態とライフサイクルはWeb Componentが担当する
 - Web Componentはopen Shadow DOMとし、内部骨格は`template`から生成する
 - 利用者に見えるタイトル、ラベル、説明、本文などの表示データはdefault／named `slot`で渡す
@@ -222,13 +222,13 @@ npm run examples
 - 完全HTMLとHTMX用部分HTMLの返し分け
 - `Vary: HX-Request`とキャッシュ制御
 - CSP、CSRF、Cookie、認証切れ、権限エラー処理
-- HTMX、Alpine.js、ブラウザ履歴を含むPlaywright E2E
+- HTMX、Page Runtime、ブラウザ履歴を含むPlaywright E2E
 - サーバーHTMLのエスケープとレスポンス契約テスト
 
 ## 既知の制約
 
 - ビルド時の型検証は行わない
-- Node.js単体テストだけではブラウザDOM、HTMX、Alpine.js、フォーカス動作を完全には証明できない
+- Node.js単体テストだけではブラウザDOM、HTMX、Page Runtime、フォーカス動作を完全には証明できない
 - Chart.jsは任意依存であり、利用側が固定バージョンを読み込む必要がある
 - 実ブラウザのアクセシビリティと主要業務フローは利用側E2Eおよび手動試験を併用する
 

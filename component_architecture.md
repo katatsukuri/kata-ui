@@ -1,7 +1,7 @@
 
 # 1. コンポーネント設計原則
 
-**「利用側の属性とslotを入力契約とし、open Shadow DOMのWeb Componentとして実装し、templateで既定骨格を保持してHTMX・Alpine.jsと協調する」** 原則を採用します。
+**「利用側の属性とslotを入力契約とし、open Shadow DOMのWeb Componentとして実装し、templateで既定骨格を保持してHTMX・共通Web Component Runtimeと協調する」** 原則を採用します。
 コンポーネントは単なるHTML部品ではなく、以下の4点をセットで管理します。
 
 ```text
@@ -324,7 +324,7 @@ Web Component
 所有者：
 
 ```txt
-Alpine.js
+Page Runtime
 ```
 
 ---
@@ -334,7 +334,7 @@ Alpine.js
 ```text
 サーバーデータ
  ↓
-Alpine
+Page Runtime
  ↓
 Web Component
  ↓
@@ -390,39 +390,31 @@ user-card内部の
 
 ---
 
-# 8. Alpine.js連携標準
+# 8. Page Runtime連携標準
 
 ## 原則
 
-Web Component内部でAlpineを大量利用しない。
+Web Component内部へページ状態を持ち込まない。ページ固有の一時状態は`PageState`、表示制御は`LayoutController`、画面単位の購読解除は`PageController`が担当する。
 
 役割分担：
 
 | 処理 | 担当 |
 | - | - |
 | Component内部動作 | Web Component |
-| ページUI状態 | Alpine |
+| ページUI状態 | Page Runtime |
 | サーバー通信 | HTMX |
 
 ---
 
 例：
 
-```html
-<section
- x-data="{open:false}">
+```javascript
+const state = new PageState({ open: false });
+const controller = new PageController(state);
 
- <button
-  @click="open=!open">
-  詳細
- </button>
-
-
- <user-card
-  x-show="open">
- </user-card>
-
-</section>
+controller.subscribe(({ open }) => {
+  LayoutController.setHidden(document.querySelector('user-card'), !open);
+});
 ```
 
 これは良い構成です。
@@ -618,7 +610,7 @@ Playwrightで確認：
 - HTMX差替え
 - 戻る・進む
 - Component再生成
-- Alpine状態
+- Page Runtime状態
 - フォーム送信
 - アクセシビリティ
 
@@ -686,7 +678,7 @@ approval-dialog
 
 7. HTMX連携確認
 
-8. Alpine連携確認
+8. Page Runtime連携確認
 
 9. Contract Test追加
 
@@ -714,7 +706,7 @@ approval-dialog
 | HTMX                          |
 |  └ ページ/部分更新            |
 |                               |
-| Alpine.js                     |
+| Page Runtime                  |
 |  └ 画面状態                   |
 |                               |
 | Web Components                |
