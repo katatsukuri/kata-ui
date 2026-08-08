@@ -121,14 +121,11 @@ export function initializeShadowCollection(element, templateId, moduleUrl, items
 }
 
 export function queryComponent(element, selector) {
-  return element.querySelector(selector) || element.shadowRoot?.querySelector(selector) || null;
+  return element.shadowRoot?.querySelector(selector) || null;
 }
 
 export function queryComponentAll(element, selector) {
-  return [
-    ...element.querySelectorAll(selector),
-    ...(element.shadowRoot?.querySelectorAll(selector) ?? []),
-  ];
+  return [...(element.shadowRoot?.querySelectorAll(selector) ?? [])];
 }
 
 /** Uses consumer-provided Light DOM items when present, otherwise canonical template fallbacks. */

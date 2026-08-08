@@ -528,6 +528,8 @@ body main div article.user-card h3 span
 
 HTMXはComponentホスト全体、またはslotへ渡したLight DOMを更新する。Shadow DOM内部の深い要素は直接交換しない。
 
+Component内部の制御要素はShadow Rootだけから検索する。slotへ渡された表示データが内部用`data-*`やclassと一致しても、内部イベントの結合対象にしない。反復項目など利用者提供データを検索する場合だけ、投影項目専用のquery helperを使用する。
+
 任意件数の繰り返し項目を持つComponentでは、必要に応じて`<kata-*-item>`をデータ境界とし、各子Componentが1項目分の共通templateと標準slotを所有する。親は排他選択など項目間の制御だけを担当し、項目別slot名をJSで動的生成しない。固定件数のComponentは正規templateに宣言したnamed slotを使用する。
 
 ---

@@ -8,7 +8,12 @@ import {
 
 setupGlobals();
 
-const { findEventTarget, initializeShadowComponent } = await import('./template-loader.js');
+const {
+  findEventTarget,
+  initializeShadowComponent,
+  queryComponent,
+  queryComponentAll,
+} = await import('./template-loader.js');
 
 test('findEventTarget crosses a slot boundary through the composed path', () => {
   const trigger = { matches(selector) { return selector === '[data-trigger]'; } };
@@ -62,4 +67,20 @@ test('initializeShadowComponent exposes configuration attributes without replaci
   assert.equal(input.getAttribute('placeholder'), '山田太郎');
   assert.equal(element.dataset.kataUiProjection, 'template');
   assert.equal(element.shadowRoot.querySelector('slot').name, 'label');
+});
+
+test('component queries bind internal controls only inside Shadow DOM', () => {
+  const projectedControl = { source: 'light-dom' };
+  const internalControl = { source: 'shadow-dom' };
+  const element = {
+    querySelector() { return projectedControl; },
+    querySelectorAll() { return [projectedControl]; },
+    shadowRoot: {
+      querySelector() { return internalControl; },
+      querySelectorAll() { return [internalControl]; },
+    },
+  };
+
+  assert.equal(queryComponent(element, '[data-control]'), internalControl);
+  assert.deepEqual(queryComponentAll(element, '[data-control]'), [internalControl]);
 });
