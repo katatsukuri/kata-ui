@@ -2,7 +2,7 @@ import {
   applyHostAttributes,
   initializeShadowComponent,
 } from '../loader/template-loader.js';
-import { emitComponentEvent } from './component-event.js';
+import { emitComponentEvent } from './event-manager.js';
 
 const COMPONENT_STATE = new WeakMap();
 

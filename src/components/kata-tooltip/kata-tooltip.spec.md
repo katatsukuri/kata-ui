@@ -13,7 +13,7 @@
 
 - トリガーへの `mouseenter` / `focusin` でツールチップを表示する（`data-state="open"`）
 - トリガーからの `mouseleave` / `focusout` でツールチップを非表示にする（`data-state="closed"`）
-- `@alpinejs/anchor` など外部ライブラリによる配置制御は `<template>` 内の属性で宣言する
+- 配置方向はホストの`data-side`属性を正規template内へ反映し、コンポーネントCSSで制御する
 
 ## 配置
 
@@ -39,21 +39,6 @@
 </template>
 
 <kata-tooltip></kata-tooltip>
-```
-
-## Alpine.js + @alpinejs/anchor の利用例
-
-```html
-<template id="kata-tooltip-template">
-  <span class="kata-tooltip__trigger" aria-describedby="my-tip"
-        x-ref="trigger">
-    ホバーしてください
-  </span>
-  <div class="kata-tooltip__content" id="my-tip" role="tooltip"
-       x-anchor.top.offset.4="$refs.trigger">
-    ツールチップのテキスト
-  </div>
-</template>
 ```
 
 ## エラー条件

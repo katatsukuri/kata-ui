@@ -1,6 +1,6 @@
 # kata-alert-dialog contract
 
-`<kata-alert-dialog>` は、`<template id="kata-alert-dialog-template">` を既定骨格として open Shadow DOM に展開する Custom Element です。ネイティブの `<dialog>` 要素と `role="alertdialog"` を使用し、`@alpinejs/focus` によるフォーカストラップを提供します。
+`<kata-alert-dialog>` は、`<template id="kata-alert-dialog-template">` を既定骨格として open Shadow DOM に展開する Custom Element です。ネイティブの `<dialog>` 要素と `role="alertdialog"` を使用します。
 
 ## 必須条件
 
@@ -12,7 +12,7 @@
 ## アクセシビリティ
 
 - `<dialog>` 要素に `role="alertdialog"`、`aria-labelledby`、`aria-describedby` を設定すること
-- フォーカストラップは `@alpinejs/focus` プラグインの `x-trap` ディレクティブ、または `<dialog>` 要素のネイティブ `showModal()` によって提供される
+- フォーカストラップは`<dialog>`要素のネイティブ`showModal()`によって提供される
 - アラートダイアログは破壊的操作や重要な確認に使用し、ユーザーが必ずアクションを選択できるようにすること
 - Escape キーによる閉じる操作は無効化する（ユーザーに明示的な選択を強制する）
 
@@ -47,25 +47,6 @@
 </template>
 
 <kata-alert-dialog></kata-alert-dialog>
-```
-
-## Alpine.js + @alpinejs/focus を使う場合
-
-`x-trap` ディレクティブを使用することで、ダイアログが開いている間のフォーカストラップを Alpine.js が管理します。
-
-```html
-<template id="kata-alert-dialog-template">
-  <button type="button" data-alert-dialog-trigger>削除する</button>
-  <dialog
-    role="alertdialog"
-    aria-labelledby="kata-alert-dialog__title"
-    aria-describedby="alert-dialog-desc"
-    x-data="{ open: false }"
-    x-trap="open"
-  >
-    ...
-  </dialog>
-</template>
 ```
 
 ## エラー条件

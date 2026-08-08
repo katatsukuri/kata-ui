@@ -62,8 +62,13 @@ kata-ui/
 │   │       ├── theme-dark.css
 │   │       ├── theme-facility.css
 │   │       └── theme-winforms.css
-│   └── loader/
-│       └── template-loader.js
+│   ├── loader/
+│   │   └── template-loader.js
+│   └── runtime/
+│       ├── component-base.js
+│       ├── htmx-adapter.js
+│       ├── state-manager.js
+│       └── theme-manager.js
 └── tools/
     └── architecture-lint.js
 ```
@@ -100,6 +105,25 @@ kata-ui/
 
 外部CSSの通常セレクタはShadow DOM内部へ入りません。サイト全体のテーマは継承可能な`--kata-*` CSSカスタムプロパティで伝え、公開した装飾点が必要な場合だけ`::part()`を追加します。
 
+## 共通Runtime
+
+`src/runtime/index.js`を公開入口として使います。Component Runtimeは各Custom Elementの初回`mount()`と再接続可能な`connect()`／`disconnect()`、イベント、template読込を共通化します。利用画面の局所状態はPage Runtime、HTMXイベントは`HtmxAdapter`、テーマは`ThemeManager`へ分離します。
+
+```js
+import {
+  HtmxAdapter,
+  PageState,
+  ThemeManager,
+} from '/kata-ui/src/runtime/index.js';
+
+const disposeHtmx = new HtmxAdapter(document).initialize();
+const pageState = new PageState({ sidebarOpen: false });
+const themeManager = new ThemeManager(document);
+themeManager.load();
+```
+
+画面破棄時は`disposeHtmx()`を呼びます。Custom Elementの`connectedCallback()`を利用側から手動実行せず、要素の挿入・除去による標準ライフサイクルへ委ねます。
+
 ## テーマ設定
 
 `html`要素の`data-theme`を`default`、`blue`、`dark`、`facility`、`winforms`のいずれかにすると、全コンポーネントへ同じテーマが継承されます。
@@ -110,10 +134,12 @@ kata-ui/
 <html lang="ja" data-theme="dark">
 ```
 
-実行時の切り替えは属性値の変更だけで行います。選択値をCookie、DB、`localStorage`のどこへ保存するかは利用アプリケーションの責務です。
+実行時の切り替えは`ThemeManager`で行い、既定では`localStorage`へ保存します。CookieやDBを正本にする場合は、利用アプリケーションが初期値を渡します。
 
 ```js
-document.documentElement.dataset.theme = 'blue';
+import { ThemeManager } from '/kata-ui/src/runtime/index.js';
+
+new ThemeManager(document).set('blue');
 ```
 
 ブランドテーマを追加するときは`src/styles/themes/`へテーマCSSを追加し、コンポーネントセレクタではなく`--kata-*`トークンだけを上書きします。詳細は[theming.md](./theming/theming.md)を参照してください。
