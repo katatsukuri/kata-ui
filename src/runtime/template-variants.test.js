@@ -12,6 +12,7 @@ const consolidatedComponents = [
   'kata-checkbox',
   'kata-popover',
   'kata-slider',
+  'kata-sheet',
   'kata-switch',
   'kata-textarea',
   'kata-tooltip',

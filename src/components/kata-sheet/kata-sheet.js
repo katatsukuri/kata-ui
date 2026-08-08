@@ -6,6 +6,12 @@ const DEFAULT_TEMPLATE_ID = 'kata-sheet-template';
 export class KataSheetElement extends KataComponent {
   static templateId = DEFAULT_TEMPLATE_ID;
   static moduleUrl = import.meta.url;
+  static templateAliases = {
+    'kata-sheet-left-template': {
+      templateId: DEFAULT_TEMPLATE_ID,
+      attributes: { side: 'left', 'hide-confirm': true },
+    },
+  };
 
   mount() {
     const side = this.getAttribute('side') || 'right';
@@ -13,6 +19,10 @@ export class KataSheetElement extends KataComponent {
 
     this._panel = queryComponent(this, '[data-sheet-panel]');
     this._overlay = queryComponent(this, '[data-sheet-overlay]');
+    const confirmButton = queryComponent(this, '[data-sheet-confirm]');
+    if (confirmButton && this.hasAttribute('hide-confirm')) {
+      confirmButton.hidden = true;
+    }
 
     queryComponentAll(this, '[data-sheet-trigger]').forEach((trigger) => {
       trigger.addEventListener('click', () => this._open());

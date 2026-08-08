@@ -12,28 +12,8 @@
         </div>
         <div class="kata-sheet__footer">
           <button type="button" data-sheet-close><slot name="cancel">キャンセル</slot></button>
-          <button type="button" data-sheet-close><slot name="confirm">保存</slot></button>
+          <button type="button" data-sheet-confirm data-sheet-close><slot name="confirm">保存</slot></button>
         </div>
       </div>
     </template>
 
-<template id="kata-sheet-left-template">
-      <button type="button" data-sheet-trigger><slot name="trigger">左からシートを開く</slot></button>
-      <div data-sheet-overlay hidden></div>
-      <div role="dialog" aria-modal="true" aria-labelledby="sheet-left-title" data-sheet-panel hidden>
-        <div class="kata-sheet__header">
-          <h2 id="sheet-left-title" class="kata-sheet__title"><slot name="title">メニュー</slot></h2>
-          <button type="button" data-sheet-close aria-label="閉じる">×</button>
-        </div>
-        <div class="kata-sheet__content">
-          <slot><ul>
-            <li><a href="#">ホーム</a></li>
-            <li><a href="#">プロフィール</a></li>
-            <li><a href="#">設定</a></li>
-          </ul></slot>
-        </div>
-        <div class="kata-sheet__footer">
-          <button type="button" data-sheet-close><slot name="cancel">閉じる</slot></button>
-        </div>
-      </div>
-    </template>

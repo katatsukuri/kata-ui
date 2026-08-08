@@ -16,6 +16,9 @@
 |------|----|------|
 | `template` | テンプレート ID | デフォルトは `kata-sheet-template` |
 | `side` | `left` / `right` (デフォルト: `right`) | パネルが出現する方向 |
+| `hide-confirm` | 真偽属性 | 確定ボタンを表示しない |
+
+旧 `template="kata-sheet-left-template"` は互換aliasとして `side="left" hide-confirm` に変換されます。
 
 ## 状態
 
@@ -29,7 +32,7 @@
 - パネル要素に `role="dialog"`, `aria-modal="true"`, `aria-labelledby` を設定すること
 - シートが開いたとき、パネル内の最初のフォーカス可能な要素にフォーカスを移すこと
 - Escape キーでシートを閉じること
-- `@alpinejs/focus` などによるフォーカストラップが推奨される
+- フォーカストラップが必要な利用画面では、Page Runtime側でパネル内にフォーカスを閉じ込める
 
 ## 例
 

@@ -49,6 +49,22 @@ test('kata-sheet sets data-side from attribute', () => {
   assert.equal(element.dataset.side, 'left');
 });
 
+test('kata-sheet maps the removed left template to canonical attributes', () => {
+  const template = new FakeTemplateElement([]);
+  const ownerDocument = {
+    getElementById(id) { return id === 'kata-sheet-template' ? template : null; },
+    addEventListener() {},
+    removeEventListener() {},
+  };
+  const element = new KataSheetElement(ownerDocument);
+  element.setAttribute('template', 'kata-sheet-left-template');
+
+  element.connectedCallback();
+
+  assert.equal(element.getAttribute('side'), 'left');
+  assert.equal(element.hasAttribute('hide-confirm'), true);
+});
+
 test('kata-sheet restores Escape listener after reconnect', () => {
   const template = new FakeTemplateElement([]);
   let added = 0;
