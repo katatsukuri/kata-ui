@@ -1,151 +1,352 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="kata-uiの全コンポーネントと動作例を確認できるカタログ">
-    <title>kata-ui Component Catalog</title>
-    <link rel="stylesheet" href="./src/styles/kata-ui.css">
-    <link rel="stylesheet" href="./docs.css">
-  </head>
-  <body>
-    <a class="skip-link" href="#components">コンポーネント一覧へ移動</a>
 
-    <header class="site-header">
-      <div class="site-header__content">
-        <p class="eyebrow">Shadow DOM Web Components</p>
-        <h1>kata-ui Component Catalog</h1>
-        <p class="lead">
-          サーバー主導型MPA、HTMX、共通Web Component Runtimeと協調する、ビルドレスなUIコンポーネント集です。
-          各項目を開くと、その場で実際のexampleを操作できます。
-        </p>
-        <nav class="header-links" aria-label="関連ドキュメント">
-          <a href="./README.md">はじめに</a>
-          <a href="./architecture.md">全体アーキテクチャ</a>
-          <a href="./component_architecture.md">コンポーネント設計</a>
-          <a href="./theming/theming.md">テーマ設計</a>
-          <a href="https://github.com/katatsukuri/kata-ui">GitHub</a>
-        </nav>
-        <label class="theme-control">
-          <span>表示テーマ</span>
-          <select data-theme-switcher>
-            <option value="default">Default</option>
-            <option value="blue">Blue</option>
-            <option value="dark">Dark</option>
-            <option value="facility">Facility</option>
-            <option value="winforms">WinForms</option>
-          </select>
-        </label>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="kata-uiの全コンポーネントと動作例を確認できるカタログ">
+  <title>kata-ui Component Catalog</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="stylesheet" href="./src/styles/kata-ui.css">
+  <link rel="stylesheet" href="./docs.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#components">コンポーネント一覧へ移動</a>
+
+  <header class="site-header">
+    <div class="site-header__content">
+      <p class="eyebrow">Shadow DOM Web Components</p>
+      <h1>kata-ui Component Catalog</h1>
+      <p class="lead">
+        サーバー主導型MPA、HTMX、共通Web Component Runtimeと協調する、ビルドレスなUIコンポーネント集です。
+        各項目を開くと、その場で実際のexampleを操作できます。
+      </p>
+      <nav class="header-links" aria-label="関連ドキュメント">
+        <a href="./README.md">はじめに</a>
+        <a href="./architecture.md">全体アーキテクチャ</a>
+        <a href="./component_architecture.md">コンポーネント設計</a>
+        <a href="./theming/theming.md">テーマ設計</a>
+        <a href="https://github.com/katatsukuri/kata-ui">GitHub</a>
+      </nav>
+      <label class="theme-control">
+        <span>表示テーマ</span>
+        <select data-theme-switcher>
+          <option value="default">Default</option>
+          <option value="blue">Blue</option>
+          <option value="dark">Dark</option>
+          <option value="facility">Facility</option>
+          <option value="winforms">WinForms</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main id="components" class="catalog">
+    <section aria-labelledby="structure-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Structure</p>
+          <h2 id="structure-heading">ナビゲーションと構造</h2>
+        </div>
+        <p>画面内の情報整理、移動、展開を担当するコンポーネントです。</p>
       </div>
-    </header>
+      <div class="component-grid">
+        <article class="component-card" id="accordion">
+          <details open>
+            <summary><span>Accordion</span><code>&lt;kata-accordion&gt;</code></summary>
+            <p>見出しを操作して、関連する内容を展開・折りたたみします。</p>
+            <div class="component-links"><a href="./src/components/kata-accordion/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-accordion/kata-accordion.spec.md">契約を見る</a></div>
+            <iframe src="./src/components/kata-accordion/examples/index.html" title="Accordionの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="breadcrumb">
+          <details>
+            <summary><span>Breadcrumb</span><code>&lt;kata-breadcrumb&gt;</code></summary>
+            <p>現在位置までの階層を示し、上位ページへの移動を支援します。</p>
+            <div class="component-links"><a href="./src/components/kata-breadcrumb/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-breadcrumb/kata-breadcrumb.spec.md">契約を見る</a></div>
+            <iframe loading="lazy" src="./src/components/kata-breadcrumb/examples/index.html"
+              title="Breadcrumbの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="pagination">
+          <details>
+            <summary><span>Pagination</span><code>&lt;kata-pagination&gt;</code></summary>
+            <p>分割された一覧のページ間を移動する操作領域です。</p>
+            <div class="component-links"><a href="./src/components/kata-pagination/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-pagination/kata-pagination.spec.md">契約を見る</a></div>
+            <iframe loading="lazy" src="./src/components/kata-pagination/examples/index.html"
+              title="Paginationの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card component-card--wide" id="table">
+          <details>
+            <summary><span>Table</span><code>&lt;kata-table&gt;</code></summary>
+            <p>templateで表の骨格を切り替え、HTMXで行データを取得する一覧です。</p>
+            <div class="component-links"><a href="./src/components/kata-table/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-table/kata-table.spec.md">契約を見る</a></div>
+            <iframe class="component-frame--tall" loading="lazy" src="./src/components/kata-table/examples/index.html"
+              title="Tableの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="tabs">
+          <details>
+            <summary><span>Tabs</span><code>&lt;kata-tabs&gt;</code></summary>
+            <p>関連する複数の内容を、キーボード操作可能なタブで切り替えます。</p>
+            <div class="component-links"><a href="./src/components/kata-tabs/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-tabs/kata-tabs.spec.md">契約を見る</a></div>
+            <iframe loading="lazy" src="./src/components/kata-tabs/examples/index.html" title="Tabsの動作例"></iframe>
+          </details>
+        </article>
+      </div>
+    </section>
 
-    <main id="components" class="catalog">
-      <section aria-labelledby="structure-heading">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Structure</p>
-            <h2 id="structure-heading">ナビゲーションと構造</h2>
-          </div>
-          <p>画面内の情報整理、移動、展開を担当するコンポーネントです。</p>
+    <section aria-labelledby="input-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Input</p>
+          <h2 id="input-heading">入力と選択</h2>
         </div>
-        <div class="component-grid">
-          <article class="component-card" id="accordion">
-            <details open>
-              <summary><span>Accordion</span><code>&lt;kata-accordion&gt;</code></summary>
-              <p>見出しを操作して、関連する内容を展開・折りたたみします。</p>
-              <div class="component-links"><a href="./src/components/kata-accordion/examples/index.html">別タブで開く</a><a href="./src/components/kata-accordion/kata-accordion.spec.md">契約を見る</a></div>
-              <iframe src="./src/components/kata-accordion/examples/index.html" title="Accordionの動作例"></iframe>
-            </details>
-          </article>
-          <article class="component-card" id="breadcrumb">
-            <details>
-              <summary><span>Breadcrumb</span><code>&lt;kata-breadcrumb&gt;</code></summary>
-              <p>現在位置までの階層を示し、上位ページへの移動を支援します。</p>
-              <div class="component-links"><a href="./src/components/kata-breadcrumb/examples/index.html">別タブで開く</a><a href="./src/components/kata-breadcrumb/kata-breadcrumb.spec.md">契約を見る</a></div>
-              <iframe loading="lazy" src="./src/components/kata-breadcrumb/examples/index.html" title="Breadcrumbの動作例"></iframe>
-            </details>
-          </article>
-          <article class="component-card" id="pagination">
-            <details>
-              <summary><span>Pagination</span><code>&lt;kata-pagination&gt;</code></summary>
-              <p>分割された一覧のページ間を移動する操作領域です。</p>
-              <div class="component-links"><a href="./src/components/kata-pagination/examples/index.html">別タブで開く</a><a href="./src/components/kata-pagination/kata-pagination.spec.md">契約を見る</a></div>
-              <iframe loading="lazy" src="./src/components/kata-pagination/examples/index.html" title="Paginationの動作例"></iframe>
-            </details>
-          </article>
-          <article class="component-card component-card--wide" id="table">
-            <details>
-              <summary><span>Table</span><code>&lt;kata-table&gt;</code></summary>
-              <p>templateで表の骨格を切り替え、HTMXで行データを取得する一覧です。</p>
-              <div class="component-links"><a href="./src/components/kata-table/examples/index.html">別タブで開く</a><a href="./src/components/kata-table/kata-table.spec.md">契約を見る</a></div>
-              <iframe class="component-frame--tall" loading="lazy" src="./src/components/kata-table/examples/index.html" title="Tableの動作例"></iframe>
-            </details>
-          </article>
-          <article class="component-card" id="tabs">
-            <details>
-              <summary><span>Tabs</span><code>&lt;kata-tabs&gt;</code></summary>
-              <p>関連する複数の内容を、キーボード操作可能なタブで切り替えます。</p>
-              <div class="component-links"><a href="./src/components/kata-tabs/examples/index.html">別タブで開く</a><a href="./src/components/kata-tabs/kata-tabs.spec.md">契約を見る</a></div>
-              <iframe loading="lazy" src="./src/components/kata-tabs/examples/index.html" title="Tabsの動作例"></iframe>
-            </details>
-          </article>
-        </div>
-      </section>
+        <p>標準HTML要素を中心に、入力状態と選択操作を一貫させます。</p>
+      </div>
+      <div class="component-grid">
+        <article class="component-card" id="button">
+          <details>
+            <summary><span>Button</span><code>&lt;kata-button&gt;</code></summary>
+            <p>用途別の見た目を持つ操作ボタンです。</p>
+            <div class="component-links"><a href="./src/components/kata-button/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-button/kata-button.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-button/examples/index.html" title="Buttonの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="checkbox">
+          <details>
+            <summary><span>Checkbox</span><code>&lt;kata-checkbox&gt;</code></summary>
+            <p>複数選択や真偽値の入力に使うチェックボックスです。</p>
+            <div class="component-links"><a href="./src/components/kata-checkbox/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-checkbox/kata-checkbox.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-checkbox/examples/index.html" title="Checkboxの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="input">
+          <details>
+            <summary><span>Input</span><code>&lt;kata-input&gt;</code></summary>
+            <p>ラベルと関連付けられた基本テキスト入力です。</p>
+            <div class="component-links"><a href="./src/components/kata-input/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-input/kata-input.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-input/examples/index.html" title="Inputの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="radio-group">
+          <details>
+            <summary><span>Radio Group</span><code>&lt;kata-radio-group&gt;</code></summary>
+            <p>候補から一つを選ぶラジオボタングループです。</p>
+            <div class="component-links"><a href="./src/components/kata-radio-group/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-radio-group/kata-radio-group.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-radio-group/examples/index.html" title="Radio Groupの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="select">
+          <details>
+            <summary><span>Select</span><code>&lt;kata-select&gt;</code></summary>
+            <p>候補一覧から値を選択するネイティブselectです。</p>
+            <div class="component-links"><a href="./src/components/kata-select/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-select/kata-select.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-select/examples/index.html" title="Selectの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="slider">
+          <details>
+            <summary><span>Slider</span><code>&lt;kata-slider&gt;</code></summary>
+            <p>連続した範囲から値を選択するrange入力です。</p>
+            <div class="component-links"><a href="./src/components/kata-slider/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-slider/kata-slider.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-slider/examples/index.html" title="Sliderの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="switch">
+          <details>
+            <summary><span>Switch</span><code>&lt;kata-switch&gt;</code></summary>
+            <p>設定のオン・オフを切り替えるネイティブ入力です。</p>
+            <div class="component-links"><a href="./src/components/kata-switch/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-switch/kata-switch.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-switch/examples/index.html" title="Switchの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="textarea">
+          <details>
+            <summary><span>Textarea</span><code>&lt;kata-textarea&gt;</code></summary>
+            <p>複数行テキストを入力するラベル付き領域です。</p>
+            <div class="component-links"><a href="./src/components/kata-textarea/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-textarea/kata-textarea.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-textarea/examples/index.html" title="Textareaの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="toggle">
+          <details>
+            <summary><span>Toggle</span><code>&lt;kata-toggle&gt;</code></summary>
+            <p>押下状態を保持し、CustomEventで変更を通知します。</p>
+            <div class="component-links"><a href="./src/components/kata-toggle/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-toggle/kata-toggle.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-toggle/examples/index.html" title="Toggleの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="toggle-group">
+          <details>
+            <summary><span>Toggle Group</span><code>&lt;kata-toggle-group&gt;</code></summary>
+            <p>単一または複数の押下状態をまとめて管理します。</p>
+            <div class="component-links"><a href="./src/components/kata-toggle-group/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-toggle-group/kata-toggle-group.spec.md">契約を見る</a></div><iframe
+              loading="lazy" src="./src/components/kata-toggle-group/examples/index.html"
+              title="Toggle Groupの動作例"></iframe>
+          </details>
+        </article>
+      </div>
+    </section>
 
-      <section aria-labelledby="input-heading">
-        <div class="section-heading">
-          <div><p class="eyebrow">Input</p><h2 id="input-heading">入力と選択</h2></div>
-          <p>標準HTML要素を中心に、入力状態と選択操作を一貫させます。</p>
+    <section aria-labelledby="display-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Display</p>
+          <h2 id="display-heading">表示と可視化</h2>
         </div>
-        <div class="component-grid">
-          <article class="component-card" id="button"><details><summary><span>Button</span><code>&lt;kata-button&gt;</code></summary><p>用途別の見た目を持つ操作ボタンです。</p><div class="component-links"><a href="./src/components/kata-button/examples/index.html">別タブで開く</a><a href="./src/components/kata-button/kata-button.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-button/examples/index.html" title="Buttonの動作例"></iframe></details></article>
-          <article class="component-card" id="checkbox"><details><summary><span>Checkbox</span><code>&lt;kata-checkbox&gt;</code></summary><p>複数選択や真偽値の入力に使うチェックボックスです。</p><div class="component-links"><a href="./src/components/kata-checkbox/examples/index.html">別タブで開く</a><a href="./src/components/kata-checkbox/kata-checkbox.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-checkbox/examples/index.html" title="Checkboxの動作例"></iframe></details></article>
-          <article class="component-card" id="input"><details><summary><span>Input</span><code>&lt;kata-input&gt;</code></summary><p>ラベルと関連付けられた基本テキスト入力です。</p><div class="component-links"><a href="./src/components/kata-input/examples/index.html">別タブで開く</a><a href="./src/components/kata-input/kata-input.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-input/examples/index.html" title="Inputの動作例"></iframe></details></article>
-          <article class="component-card" id="radio-group"><details><summary><span>Radio Group</span><code>&lt;kata-radio-group&gt;</code></summary><p>候補から一つを選ぶラジオボタングループです。</p><div class="component-links"><a href="./src/components/kata-radio-group/examples/index.html">別タブで開く</a><a href="./src/components/kata-radio-group/kata-radio-group.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-radio-group/examples/index.html" title="Radio Groupの動作例"></iframe></details></article>
-          <article class="component-card" id="select"><details><summary><span>Select</span><code>&lt;kata-select&gt;</code></summary><p>候補一覧から値を選択するネイティブselectです。</p><div class="component-links"><a href="./src/components/kata-select/examples/index.html">別タブで開く</a><a href="./src/components/kata-select/kata-select.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-select/examples/index.html" title="Selectの動作例"></iframe></details></article>
-          <article class="component-card" id="slider"><details><summary><span>Slider</span><code>&lt;kata-slider&gt;</code></summary><p>連続した範囲から値を選択するrange入力です。</p><div class="component-links"><a href="./src/components/kata-slider/examples/index.html">別タブで開く</a><a href="./src/components/kata-slider/kata-slider.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-slider/examples/index.html" title="Sliderの動作例"></iframe></details></article>
-          <article class="component-card" id="switch"><details><summary><span>Switch</span><code>&lt;kata-switch&gt;</code></summary><p>設定のオン・オフを切り替えるネイティブ入力です。</p><div class="component-links"><a href="./src/components/kata-switch/examples/index.html">別タブで開く</a><a href="./src/components/kata-switch/kata-switch.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-switch/examples/index.html" title="Switchの動作例"></iframe></details></article>
-          <article class="component-card" id="textarea"><details><summary><span>Textarea</span><code>&lt;kata-textarea&gt;</code></summary><p>複数行テキストを入力するラベル付き領域です。</p><div class="component-links"><a href="./src/components/kata-textarea/examples/index.html">別タブで開く</a><a href="./src/components/kata-textarea/kata-textarea.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-textarea/examples/index.html" title="Textareaの動作例"></iframe></details></article>
-          <article class="component-card" id="toggle"><details><summary><span>Toggle</span><code>&lt;kata-toggle&gt;</code></summary><p>押下状態を保持し、CustomEventで変更を通知します。</p><div class="component-links"><a href="./src/components/kata-toggle/examples/index.html">別タブで開く</a><a href="./src/components/kata-toggle/kata-toggle.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-toggle/examples/index.html" title="Toggleの動作例"></iframe></details></article>
-          <article class="component-card" id="toggle-group"><details><summary><span>Toggle Group</span><code>&lt;kata-toggle-group&gt;</code></summary><p>単一または複数の押下状態をまとめて管理します。</p><div class="component-links"><a href="./src/components/kata-toggle-group/examples/index.html">別タブで開く</a><a href="./src/components/kata-toggle-group/kata-toggle-group.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-toggle-group/examples/index.html" title="Toggle Groupの動作例"></iframe></details></article>
-        </div>
-      </section>
+        <p>状態、人物、まとまり、数値を分かりやすく提示します。</p>
+      </div>
+      <div class="component-grid">
+        <article class="component-card" id="avatar">
+          <details>
+            <summary><span>Avatar</span><code>&lt;kata-avatar&gt;</code></summary>
+            <p>画像またはイニシャルで人物を示します。</p>
+            <div class="component-links"><a href="./src/components/kata-avatar/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-avatar/kata-avatar.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-avatar/examples/index.html" title="Avatarの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="badge">
+          <details>
+            <summary><span>Badge</span><code>&lt;kata-badge&gt;</code></summary>
+            <p>短いラベルで状態や分類を表示します。</p>
+            <div class="component-links"><a href="./src/components/kata-badge/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-badge/kata-badge.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-badge/examples/index.html" title="Badgeの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="card">
+          <details>
+            <summary><span>Card</span><code>&lt;kata-card&gt;</code></summary>
+            <p>関連する見出し、説明、内容、操作を一つにまとめます。</p>
+            <div class="component-links"><a href="./src/components/kata-card/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-card/kata-card.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-card/examples/index.html" title="Cardの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card component-card--wide" id="chart">
+          <details>
+            <summary><span>Chart</span><code>&lt;kata-chart&gt;</code></summary>
+            <p>固定バージョンのChart.jsを利用してデータを可視化します。</p>
+            <div class="component-links"><a href="./src/components/kata-chart/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-chart/kata-chart.spec.md">契約を見る</a></div><iframe
+              class="component-frame--tall" loading="lazy" src="./src/components/kata-chart/examples/index.html"
+              title="Chartの動作例"></iframe>
+          </details>
+        </article>
+      </div>
+    </section>
 
-      <section aria-labelledby="display-heading">
-        <div class="section-heading">
-          <div><p class="eyebrow">Display</p><h2 id="display-heading">表示と可視化</h2></div>
-          <p>状態、人物、まとまり、数値を分かりやすく提示します。</p>
+    <section aria-labelledby="overlay-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Overlay</p>
+          <h2 id="overlay-heading">オーバーレイと補助表示</h2>
         </div>
-        <div class="component-grid">
-          <article class="component-card" id="avatar"><details><summary><span>Avatar</span><code>&lt;kata-avatar&gt;</code></summary><p>画像またはイニシャルで人物を示します。</p><div class="component-links"><a href="./src/components/kata-avatar/examples/index.html">別タブで開く</a><a href="./src/components/kata-avatar/kata-avatar.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-avatar/examples/index.html" title="Avatarの動作例"></iframe></details></article>
-          <article class="component-card" id="badge"><details><summary><span>Badge</span><code>&lt;kata-badge&gt;</code></summary><p>短いラベルで状態や分類を表示します。</p><div class="component-links"><a href="./src/components/kata-badge/examples/index.html">別タブで開く</a><a href="./src/components/kata-badge/kata-badge.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-badge/examples/index.html" title="Badgeの動作例"></iframe></details></article>
-          <article class="component-card" id="card"><details><summary><span>Card</span><code>&lt;kata-card&gt;</code></summary><p>関連する見出し、説明、内容、操作を一つにまとめます。</p><div class="component-links"><a href="./src/components/kata-card/examples/index.html">別タブで開く</a><a href="./src/components/kata-card/kata-card.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-card/examples/index.html" title="Cardの動作例"></iframe></details></article>
-          <article class="component-card component-card--wide" id="chart"><details><summary><span>Chart</span><code>&lt;kata-chart&gt;</code></summary><p>固定バージョンのChart.jsを利用してデータを可視化します。</p><div class="component-links"><a href="./src/components/kata-chart/examples/index.html">別タブで開く</a><a href="./src/components/kata-chart/kata-chart.spec.md">契約を見る</a></div><iframe class="component-frame--tall" loading="lazy" src="./src/components/kata-chart/examples/index.html" title="Chartの動作例"></iframe></details></article>
-        </div>
-      </section>
+        <p>現在の文脈を保ちながら、操作や補足情報を一時的に表示します。</p>
+      </div>
+      <div class="component-grid">
+        <article class="component-card" id="alert-dialog">
+          <details>
+            <summary><span>Alert Dialog</span><code>&lt;kata-alert-dialog&gt;</code></summary>
+            <p>取り消しにくい操作の確認を求めるダイアログです。</p>
+            <div class="component-links"><a href="./src/components/kata-alert-dialog/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-alert-dialog/kata-alert-dialog.spec.md">契約を見る</a></div><iframe
+              loading="lazy" src="./src/components/kata-alert-dialog/examples/index.html"
+              title="Alert Dialogの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="dialog">
+          <details>
+            <summary><span>Dialog</span><code>&lt;kata-dialog&gt;</code></summary>
+            <p>追加情報や操作をモーダルに表示します。</p>
+            <div class="component-links"><a href="./src/components/kata-dialog/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-dialog/kata-dialog.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-dialog/examples/index.html" title="Dialogの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="drawer">
+          <details>
+            <summary><span>Drawer</span><code>&lt;kata-drawer&gt;</code></summary>
+            <p>画面端から補助ナビゲーションや操作領域を表示します。</p>
+            <div class="component-links"><a href="./src/components/kata-drawer/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-drawer/kata-drawer.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-drawer/examples/index.html" title="Drawerの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="dropdown-menu">
+          <details>
+            <summary><span>Dropdown Menu</span><code>&lt;kata-dropdown-menu&gt;</code></summary>
+            <p>トリガーに関連する操作一覧を開閉します。</p>
+            <div class="component-links"><a href="./src/components/kata-dropdown-menu/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-dropdown-menu/kata-dropdown-menu.spec.md">契約を見る</a></div><iframe
+              loading="lazy" src="./src/components/kata-dropdown-menu/examples/index.html"
+              title="Dropdown Menuの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="hover-card">
+          <details>
+            <summary><span>Hover Card</span><code>&lt;kata-hover-card&gt;</code></summary>
+            <p>ホバーまたはフォーカス時に関連情報を表示します。</p>
+            <div class="component-links"><a href="./src/components/kata-hover-card/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-hover-card/kata-hover-card.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-hover-card/examples/index.html" title="Hover Cardの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="popover">
+          <details>
+            <summary><span>Popover</span><code>&lt;kata-popover&gt;</code></summary>
+            <p>トリガー位置を基準として補助内容を表示します。</p>
+            <div class="component-links"><a href="./src/components/kata-popover/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-popover/kata-popover.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-popover/examples/index.html" title="Popoverの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="sheet">
+          <details>
+            <summary><span>Sheet</span><code>&lt;kata-sheet&gt;</code></summary>
+            <p>画面端から設定や詳細操作のパネルを表示します。</p>
+            <div class="component-links"><a href="./src/components/kata-sheet/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-sheet/kata-sheet.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-sheet/examples/index.html" title="Sheetの動作例"></iframe>
+          </details>
+        </article>
+        <article class="component-card" id="tooltip">
+          <details>
+            <summary><span>Tooltip</span><code>&lt;kata-tooltip&gt;</code></summary>
+            <p>ホバーまたはフォーカス時に短い説明を提示します。</p>
+            <div class="component-links"><a href="./src/components/kata-tooltip/examples/index.html">別タブで開く</a><a
+                href="./src/components/kata-tooltip/kata-tooltip.spec.md">契約を見る</a></div><iframe loading="lazy"
+              src="./src/components/kata-tooltip/examples/index.html" title="Tooltipの動作例"></iframe>
+          </details>
+        </article>
+      </div>
+    </section>
+  </main>
 
-      <section aria-labelledby="overlay-heading">
-        <div class="section-heading">
-          <div><p class="eyebrow">Overlay</p><h2 id="overlay-heading">オーバーレイと補助表示</h2></div>
-          <p>現在の文脈を保ちながら、操作や補足情報を一時的に表示します。</p>
-        </div>
-        <div class="component-grid">
-          <article class="component-card" id="alert-dialog"><details><summary><span>Alert Dialog</span><code>&lt;kata-alert-dialog&gt;</code></summary><p>取り消しにくい操作の確認を求めるダイアログです。</p><div class="component-links"><a href="./src/components/kata-alert-dialog/examples/index.html">別タブで開く</a><a href="./src/components/kata-alert-dialog/kata-alert-dialog.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-alert-dialog/examples/index.html" title="Alert Dialogの動作例"></iframe></details></article>
-          <article class="component-card" id="dialog"><details><summary><span>Dialog</span><code>&lt;kata-dialog&gt;</code></summary><p>追加情報や操作をモーダルに表示します。</p><div class="component-links"><a href="./src/components/kata-dialog/examples/index.html">別タブで開く</a><a href="./src/components/kata-dialog/kata-dialog.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-dialog/examples/index.html" title="Dialogの動作例"></iframe></details></article>
-          <article class="component-card" id="drawer"><details><summary><span>Drawer</span><code>&lt;kata-drawer&gt;</code></summary><p>画面端から補助ナビゲーションや操作領域を表示します。</p><div class="component-links"><a href="./src/components/kata-drawer/examples/index.html">別タブで開く</a><a href="./src/components/kata-drawer/kata-drawer.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-drawer/examples/index.html" title="Drawerの動作例"></iframe></details></article>
-          <article class="component-card" id="dropdown-menu"><details><summary><span>Dropdown Menu</span><code>&lt;kata-dropdown-menu&gt;</code></summary><p>トリガーに関連する操作一覧を開閉します。</p><div class="component-links"><a href="./src/components/kata-dropdown-menu/examples/index.html">別タブで開く</a><a href="./src/components/kata-dropdown-menu/kata-dropdown-menu.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-dropdown-menu/examples/index.html" title="Dropdown Menuの動作例"></iframe></details></article>
-          <article class="component-card" id="hover-card"><details><summary><span>Hover Card</span><code>&lt;kata-hover-card&gt;</code></summary><p>ホバーまたはフォーカス時に関連情報を表示します。</p><div class="component-links"><a href="./src/components/kata-hover-card/examples/index.html">別タブで開く</a><a href="./src/components/kata-hover-card/kata-hover-card.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-hover-card/examples/index.html" title="Hover Cardの動作例"></iframe></details></article>
-          <article class="component-card" id="popover"><details><summary><span>Popover</span><code>&lt;kata-popover&gt;</code></summary><p>トリガー位置を基準として補助内容を表示します。</p><div class="component-links"><a href="./src/components/kata-popover/examples/index.html">別タブで開く</a><a href="./src/components/kata-popover/kata-popover.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-popover/examples/index.html" title="Popoverの動作例"></iframe></details></article>
-          <article class="component-card" id="sheet"><details><summary><span>Sheet</span><code>&lt;kata-sheet&gt;</code></summary><p>画面端から設定や詳細操作のパネルを表示します。</p><div class="component-links"><a href="./src/components/kata-sheet/examples/index.html">別タブで開く</a><a href="./src/components/kata-sheet/kata-sheet.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-sheet/examples/index.html" title="Sheetの動作例"></iframe></details></article>
-          <article class="component-card" id="tooltip"><details><summary><span>Tooltip</span><code>&lt;kata-tooltip&gt;</code></summary><p>ホバーまたはフォーカス時に短い説明を提示します。</p><div class="component-links"><a href="./src/components/kata-tooltip/examples/index.html">別タブで開く</a><a href="./src/components/kata-tooltip/kata-tooltip.spec.md">契約を見る</a></div><iframe loading="lazy" src="./src/components/kata-tooltip/examples/index.html" title="Tooltipの動作例"></iframe></details></article>
-        </div>
-      </section>
-    </main>
+  <footer>
+    <p>kata-ui — Web標準を中心にした、長期保守向けのUI境界。</p>
+  </footer>
+  <script type="module" src="./src/theme-switcher.js"></script>
+  <script type="module" src="./src/docs-navigation.js"></script>
+</body>
 
-    <footer>
-      <p>kata-ui — Web標準を中心にした、長期保守向けのUI境界。</p>
-    </footer>
-    <script type="module" src="./src/theme-switcher.js"></script>
-    <script type="module" src="./src/docs-navigation.js"></script>
-  </body>
 </html>
