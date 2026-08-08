@@ -23,7 +23,9 @@ export class KataComponent extends HTMLElement {
     if (!state.mounted) {
       const templateId = this.getAttribute('template') || this.constructor.templateId;
       if (!templateId) throw new Error(`${this.localName} requires a templateId.`);
-      initializeShadowComponent(this, templateId, this.constructor.moduleUrl);
+      initializeShadowComponent(this, templateId, this.constructor.moduleUrl, {
+        stylesheetName: this.constructor.stylesheetName,
+      });
       state.mounted = true;
       this.dataset.kataUiInitialized = 'true';
       this.mount?.();
@@ -36,7 +38,10 @@ export class KataComponent extends HTMLElement {
 
   disconnectedCallback() {
     const state = stateFor(this);
-    if (!state.active) return;
+    if (!state.active) {
+      this.disconnect?.();
+      return;
+    }
     this.disconnect?.();
     for (const cleanup of state.cleanups.splice(0).reverse()) cleanup();
     state.active = false;

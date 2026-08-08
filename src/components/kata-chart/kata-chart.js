@@ -1,9 +1,12 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { queryComponent } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
 
 const OBSERVED_ATTRIBUTES = ['type', 'data', 'options'];
 const DEFAULT_TEMPLATE_ID = 'kata-chart-template';
 
-export class KataChartElement extends HTMLElement {
+export class KataChartElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
   #chart = null;
   #canvas = null;
 
@@ -11,24 +14,18 @@ export class KataChartElement extends HTMLElement {
     return OBSERVED_ATTRIBUTES;
   }
 
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      this.#render();
-      return;
-    }
-
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
+  mount() {
     this.#canvas = queryComponent(this, '[data-chart-canvas]');
     if (!this.#canvas) {
-      throw new Error(`[kata-chart] Template "${templateId}" requires [data-chart-canvas].`);
+      throw new Error('[kata-chart] Template requires [data-chart-canvas].');
     }
+  }
 
-    this.dataset.kataUiInitialized = 'true';
+  connect() {
     this.#render();
   }
 
-  disconnectedCallback() {
+  disconnect() {
     this.destroy();
   }
 

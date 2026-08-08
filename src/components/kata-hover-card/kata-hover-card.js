@@ -1,16 +1,13 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-hover-card-template';
 
-export class KataHoverCardElement extends HTMLElement {
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      return;
-    }
+export class KataHoverCardElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
-    this.dataset.kataUiInitialized = 'true';
+  mount() {
     this.dataset.state = 'closed';
 
     this._content = queryComponent(this, '[data-kata-hover-card__content]');
@@ -45,7 +42,7 @@ export class KataHoverCardElement extends HTMLElement {
     this._closeTimer = null;
   }
 
-  disconnectedCallback() {
+  disconnect() {
     this._cancelClose();
   }
 

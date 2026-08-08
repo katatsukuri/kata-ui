@@ -1,18 +1,13 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-sheet-template';
 
-export class KataSheetElement extends HTMLElement {
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      this._addDocumentListeners();
-      return;
-    }
+export class KataSheetElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
-    this.dataset.kataUiInitialized = 'true';
-
+  mount() {
     const side = this.getAttribute('side') || 'right';
     this.dataset.side = side;
 
@@ -36,18 +31,11 @@ export class KataSheetElement extends HTMLElement {
         this._close();
       }
     };
-    this._addDocumentListeners();
   }
 
-  _addDocumentListeners() {
+  connect() {
     if (this._keydownHandler) {
-      this.ownerDocument.addEventListener('keydown', this._keydownHandler);
-    }
-  }
-
-  disconnectedCallback() {
-    if (this._keydownHandler) {
-      this.ownerDocument.removeEventListener('keydown', this._keydownHandler);
+      this.listen(this.ownerDocument, 'keydown', this._keydownHandler);
     }
   }
 

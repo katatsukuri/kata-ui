@@ -46,11 +46,11 @@ function createElement(root, name) {
   };
 }
 
-function createComponentShadowRoot(element, moduleUrl) {
+function createComponentShadowRoot(element, moduleUrl, stylesheetName = element.localName) {
   const shadowRoot = element.attachShadow({ mode: 'open' });
   const stylesheet = createElement(element.ownerDocument, 'link');
   stylesheet.setAttribute('rel', 'stylesheet');
-  stylesheet.setAttribute('href', new URL(`./${element.localName}.css`, moduleUrl).href);
+  stylesheet.setAttribute('href', new URL(`./${stylesheetName}.css`, moduleUrl).href);
   shadowRoot.append(stylesheet);
   return shadowRoot;
 }
@@ -89,10 +89,10 @@ export function applyHostAttributes(element, root) {
 }
 
 /** Creates an open Shadow Root from the canonical template and projects Light DOM through its slots. */
-export function initializeShadowComponent(element, templateId, moduleUrl) {
+export function initializeShadowComponent(element, templateId, moduleUrl, options = {}) {
   if (element.shadowRoot) return 'initialized';
 
-  const shadowRoot = createComponentShadowRoot(element, moduleUrl);
+  const shadowRoot = createComponentShadowRoot(element, moduleUrl, options.stylesheetName);
   const hasConsumerContent = [...(element.childNodes ?? [])].some((node) => (
     node.nodeType !== 3 || node.textContent?.trim()
   ));

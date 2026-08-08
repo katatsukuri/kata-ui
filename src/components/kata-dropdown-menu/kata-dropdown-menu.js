@@ -1,18 +1,13 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { queryComponent } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-dropdown-menu-template';
 
-export class KataDropdownMenuElement extends HTMLElement {
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      this._addDocumentListeners();
-      return;
-    }
+export class KataDropdownMenuElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
-    this.dataset.kataUiInitialized = 'true';
-
+  mount() {
     this._trigger = queryComponent(this, '[data-dropdown-trigger]');
     this._content = queryComponent(this, '[data-dropdown-content]');
 
@@ -32,17 +27,11 @@ export class KataDropdownMenuElement extends HTMLElement {
       }
     };
 
-    this._addDocumentListeners();
   }
 
-  _addDocumentListeners() {
-    this.ownerDocument.addEventListener('click', this._onOutsideClick);
-    this.ownerDocument.addEventListener('keydown', this._onKeyDown);
-  }
-
-  disconnectedCallback() {
-    this.ownerDocument.removeEventListener('click', this._onOutsideClick);
-    this.ownerDocument.removeEventListener('keydown', this._onKeyDown);
+  connect() {
+    this.listen(this.ownerDocument, 'click', this._onOutsideClick);
+    this.listen(this.ownerDocument, 'keydown', this._onKeyDown);
   }
 
   _toggle() {
