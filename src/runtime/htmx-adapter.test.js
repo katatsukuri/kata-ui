@@ -60,3 +60,18 @@ test('HtmxAdapter tracks loading state and removes listeners on dispose', () => 
   root.dispatch('htmx:beforeRequest');
   assert.equal(root.body.dataset.loading, undefined);
 });
+
+test('HtmxAdapter does not decrement a failed request before afterRequest', () => {
+  const root = fakeRoot();
+  const adapter = new HtmxAdapter(root);
+  adapter.initialize();
+
+  root.dispatch('htmx:beforeRequest');
+  root.dispatch('htmx:beforeRequest');
+  root.dispatch('htmx:responseError', { request: 'first' });
+  root.dispatch('htmx:afterRequest');
+
+  assert.equal(root.body.dataset.loading, 'true');
+  root.dispatch('htmx:afterRequest');
+  assert.equal(root.body.dataset.loading, undefined);
+});

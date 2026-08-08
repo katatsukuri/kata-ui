@@ -30,7 +30,6 @@ export class HtmxAdapter {
     this.#listen('htmx:beforeRequest', () => this.#setLoading(1));
     this.#listen('htmx:afterRequest', () => this.#setLoading(-1));
     this.#listen('htmx:responseError', (event) => {
-      this.#setLoading(-1);
       this.root.dispatchEvent?.(new CustomEvent('kata-htmx-error', {
         detail: event.detail,
         bubbles: true,
