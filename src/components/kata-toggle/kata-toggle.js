@@ -1,42 +1,28 @@
-import { findEventTarget, initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { findEventTarget, queryComponent } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-toggle-template';
 
-export class KataToggleElement extends HTMLElement {
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      // Re-attach listeners if element was moved in the DOM
-      this._attachListeners();
-      return;
-    }
+export class KataToggleElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
-    this.dataset.kataUiInitialized = 'true';
-
-    const track = queryComponent(this, '[data-toggle-track]');
-    if (!track) return;
+  mount() {
+    this._track = queryComponent(this, '[data-toggle-track]');
+    if (!this._track) return;
 
     const isChecked = this.hasAttribute('checked');
     const isDisabled = this.hasAttribute('disabled');
 
-    this._setChecked(track, isChecked);
+    this._setChecked(this._track, isChecked);
 
     if (isDisabled) {
-      track.setAttribute('aria-disabled', 'true');
-      track.setAttribute('tabindex', '-1');
+      this._track.setAttribute('aria-disabled', 'true');
+      this._track.setAttribute('tabindex', '-1');
     }
-
-    this._attachListeners();
   }
 
-  disconnectedCallback() {
-    this._detachListeners();
-  }
-
-  _attachListeners() {
-    if (this._handleClick) return; // already attached
-
+  connect() {
     this._handleClick = (event) => {
       if (this.hasAttribute('disabled')) return;
       const track = findEventTarget(event, '[data-toggle-track]');
@@ -53,17 +39,13 @@ export class KataToggleElement extends HTMLElement {
       this._toggle(track);
     };
 
-    this.shadowRoot.addEventListener('click', this._handleClick);
-    this.shadowRoot.addEventListener('keydown', this._handleKeydown);
+    this.listen(this.shadowRoot, 'click', this._handleClick);
+    this.listen(this.shadowRoot, 'keydown', this._handleKeydown);
   }
 
-  _detachListeners() {
-    if (this._handleClick) {
-      this.shadowRoot.removeEventListener('click', this._handleClick);
-      this.shadowRoot.removeEventListener('keydown', this._handleKeydown);
-      this._handleClick = null;
-      this._handleKeydown = null;
-    }
+  disconnect() {
+    this._handleClick = null;
+    this._handleKeydown = null;
   }
 
   _setChecked(track, checked) {
@@ -74,7 +56,7 @@ export class KataToggleElement extends HTMLElement {
   _toggle(track) {
     const checked = track.dataset.state !== 'checked';
     this._setChecked(track, checked);
-    this.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { checked } }));
+    this.emit('change', { checked }, { composed: false });
   }
 }
 

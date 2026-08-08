@@ -421,15 +421,10 @@ theme.css
 
 # さらに発展：テーマ選択UI
 
-Alpine.jsで簡単にできます。
+Theme Managerで一貫して制御します。
 
 ```html
-<select
- x-data
- @change="
- document.documentElement.dataset.theme =
- $event.target.value
- ">
+<select id="theme-select">
 <option value="facility">
 公共施設
 </option>
@@ -439,6 +434,14 @@ Windows
 </option>
 
 </select>
+
+<script type="module">
+  import { ThemeManager } from '../src/runtime/index.js';
+  const manager = new ThemeManager(document);
+  document.querySelector('#theme-select').addEventListener('change', (event) => {
+    manager.set(event.target.value);
+  });
+</script>
 ```
 
 変更即時反映できます。
@@ -457,7 +460,7 @@ Windows
 
 | 処理 | 技術 |
 |-|-|
-| テーマ選択 | Alpine.js |
+| テーマ選択 | Theme Manager |
 | 保存 | ASP.NET |
 | 初期反映 | Razor |
 | UI変更 | CSS |
@@ -466,13 +469,13 @@ Windows
 
 # 注意点：Web Component
 
-今回の方針ではLight DOMなので問題ありません。
+今回の方針では、利用者の表示データだけをLight DOMのslotとして保持します。
 
 ```html
 <kata-button>
 ```
 
-内部：
+Shadow DOM内部：
 
 ```html
 <button class="kata-button">

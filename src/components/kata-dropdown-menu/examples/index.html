@@ -14,17 +14,15 @@
     <button type="button" data-dropdown-trigger
             aria-haspopup="menu" aria-expanded="false"><slot name="trigger">アカウント ▾</slot></button>
     <div data-dropdown-content role="menu" hidden>
-      <button type="button" role="menuitem"><slot name="item-1">プロフィール</slot></button>
-      <button type="button" role="menuitem"><slot name="item-2">設定</slot></button>
-      <button type="button" role="menuitem"><slot name="item-3">ログアウト</slot></button>
+      <slot><button type="button" role="menuitem">メニュー項目</button></slot>
     </div>
   </template>
 
   <kata-dropdown-menu>
     <span slot="trigger">アカウント ▾</span>
-    <span slot="item-1">プロフィール</span>
-    <span slot="item-2">設定</span>
-    <span slot="item-3">ログアウト</span>
+    <button type="button" role="menuitem">プロフィール</button>
+    <button type="button" role="menuitem">設定</button>
+    <button type="button" role="menuitem">ログアウト</button>
   </kata-dropdown-menu>
 
   <script type="module" src="../kata-dropdown-menu.js"></script>

@@ -11,22 +11,19 @@
 ## 例
 
 ```html
-<template id="kata-checkbox-template">
-  <label>
-    <input type="checkbox" name="agree">
-    利用規約に同意する
-  </label>
-</template>
-
-<kata-checkbox></kata-checkbox>
+<kata-checkbox name="agree">
+  <span slot="label">利用規約に同意する</span>
+</kata-checkbox>
 ```
 
-## カスタムテンプレートの指定
+## 状態属性
 
-`template` 属性で別テンプレートを指定できます。
+`checked`、`disabled`、`required`、`name`をhost属性で指定します。
 
 ```html
-<kata-checkbox template="kata-checkbox-disabled-template"></kata-checkbox>
+<kata-checkbox name="newsletter" disabled>
+  <span slot="label">現在利用できません</span>
+</kata-checkbox>
 ```
 
 ## エラー条件

@@ -1,19 +1,21 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { queryComponent } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-tooltip-template';
 
-export class KataTooltipElement extends HTMLElement {
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      return;
-    }
+export class KataTooltipElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
+  static templateAliases = Object.fromEntries(['bottom', 'left', 'right'].map((side) => [
+    `kata-tooltip-${side}-template`,
+    { templateId: DEFAULT_TEMPLATE_ID, attributes: { side } },
+  ]));
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
-    this.dataset.kataUiInitialized = 'true';
-
+  mount() {
     this._trigger = queryComponent(this, '.kata-tooltip__trigger');
     this._content = queryComponent(this, '.kata-tooltip__content');
+    const side = this.getAttribute('side') || 'top';
+    if (this._content) this._content.dataset.side = side;
 
     if (this._trigger) {
       this._trigger.addEventListener('mouseenter', () => this._show());

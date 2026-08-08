@@ -15,60 +15,25 @@
   <h1>kata-popover examples</h1>
 
   <div class="demo">
-
-    <!-- Bottom (default) -->
-    <template id="kata-popover-bottom-template">
+    <template id="kata-popover-template">
       <button type="button" data-popover-trigger aria-expanded="false">
-        <slot name="trigger">下に表示</slot>
+        <slot name="trigger">詳細</slot>
       </button>
-      <div data-popover-content hidden role="dialog" aria-label="詳細情報（下）">
-        <strong><slot name="title">ポップオーバー（下）</slot></strong>
-        <slot><p>トリガーの下に表示されます。</p></slot>
+      <div data-popover-content hidden role="dialog" aria-label="詳細情報">
+        <strong><slot name="title">ポップオーバー</slot></strong>
+        <slot><p>補足情報を表示します。</p></slot>
       </div>
     </template>
-    <kata-popover template="kata-popover-bottom-template" data-placement="bottom">
+    <kata-popover data-placement="bottom">
       <span slot="trigger">下に表示</span><span slot="title">下の情報</span><p>トリガーの下に表示されます。</p>
     </kata-popover>
-
-    <!-- Top -->
-    <template id="kata-popover-top-template">
-      <button type="button" data-popover-trigger aria-expanded="false">
-        <slot name="trigger">上に表示</slot>
-      </button>
-      <div data-popover-content hidden role="dialog" aria-label="詳細情報（上）">
-        <strong><slot name="title">ポップオーバー（上）</slot></strong>
-        <slot><p>トリガーの上に表示されます。</p></slot>
-      </div>
-    </template>
-    <kata-popover template="kata-popover-top-template" data-placement="top">
+    <kata-popover data-placement="top">
       <span slot="trigger">上に表示</span><span slot="title">上の情報</span><p>トリガーの上に表示されます。</p>
     </kata-popover>
-
-    <!-- Right -->
-    <template id="kata-popover-right-template">
-      <button type="button" data-popover-trigger aria-expanded="false">
-        <slot name="trigger">右に表示</slot>
-      </button>
-      <div data-popover-content hidden role="dialog" aria-label="詳細情報（右）">
-        <strong><slot name="title">ポップオーバー（右）</slot></strong>
-        <slot><p>トリガーの右に表示されます。</p></slot>
-      </div>
-    </template>
-    <kata-popover template="kata-popover-right-template" data-placement="right">
+    <kata-popover data-placement="right">
       <span slot="trigger">右に表示</span><span slot="title">右の情報</span><p>トリガーの右に表示されます。</p>
     </kata-popover>
-
-    <!-- Left -->
-    <template id="kata-popover-left-template">
-      <button type="button" data-popover-trigger aria-expanded="false">
-        <slot name="trigger">左に表示</slot>
-      </button>
-      <div data-popover-content hidden role="dialog" aria-label="詳細情報（左）">
-        <strong><slot name="title">ポップオーバー（左）</slot></strong>
-        <slot><p>トリガーの左に表示されます。</p></slot>
-      </div>
-    </template>
-    <kata-popover template="kata-popover-left-template" data-placement="left">
+    <kata-popover data-placement="left">
       <span slot="trigger">左に表示</span><span slot="title">左の情報</span><p>トリガーの左に表示されます。</p>
     </kata-popover>
 

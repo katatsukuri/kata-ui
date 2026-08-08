@@ -86,3 +86,12 @@ kata-radio-group input[type="radio"]:disabled + * {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+:host ::slotted(label) {
+  display: flex;
+  align-items: center;
+  gap: var(--kata-space-md);
+  padding: var(--kata-space-sm) 0;
+  font-size: var(--kata-font-size-sm);
+  cursor: pointer;
+}

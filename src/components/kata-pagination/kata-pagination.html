@@ -2,13 +2,13 @@
 <template id="kata-pagination-template">
     <nav aria-label="ページネーション">
       <ol>
-        <li><a href="?page=1" aria-label="前のページへ"><slot name="previous">&laquo;</slot></a></li>
-        <li><a href="?page=1"><slot name="page-1">1</slot></a></li>
-        <li><a href="?page=2" aria-current="page"><slot name="page-2">2</slot></a></li>
-        <li><a href="?page=3"><slot name="page-3">3</slot></a></li>
-        <li><a href="?page=4"><slot name="page-4">4</slot></a></li>
-        <li><a href="?page=5"><slot name="page-5">5</slot></a></li>
-        <li><a href="?page=3" aria-label="次のページへ"><slot name="next">&raquo;</slot></a></li>
+        <slot>
+          <li><a href="?page=1" aria-label="前のページへ">&laquo;</a></li>
+          <li><a href="?page=1">1</a></li>
+          <li><a href="?page=2" aria-current="page">2</a></li>
+          <li><a href="?page=3">3</a></li>
+          <li><a href="?page=3" aria-label="次のページへ">&raquo;</a></li>
+        </slot>
       </ol>
     </nav>
   </template>

@@ -1,18 +1,18 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { queryComponent } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-popover-template';
 const PLACEMENTS = ['bottom', 'top', 'left', 'right'];
 
-export class KataPopoverElement extends HTMLElement {
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      this._addDocumentListeners();
-      return;
-    }
+export class KataPopoverElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
+  static templateAliases = Object.fromEntries(PLACEMENTS.map((placement) => [
+    `kata-popover-${placement}-template`,
+    { templateId: DEFAULT_TEMPLATE_ID, attributes: { 'data-placement': placement } },
+  ]));
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
-    this.dataset.kataUiInitialized = 'true';
+  mount() {
     this.dataset.state = 'closed';
 
     this._trigger = queryComponent(this, '[data-popover-trigger]');
@@ -35,18 +35,11 @@ export class KataPopoverElement extends HTMLElement {
       }
     };
 
-    this._addDocumentListeners();
   }
 
-  _addDocumentListeners() {
+  connect() {
     if (this._onOutsideClick) {
-      this.ownerDocument.addEventListener('click', this._onOutsideClick);
-    }
-  }
-
-  disconnectedCallback() {
-    if (this._onOutsideClick) {
-      this.ownerDocument.removeEventListener('click', this._onOutsideClick);
+      this.listen(this.ownerDocument, 'click', this._onOutsideClick);
     }
   }
 

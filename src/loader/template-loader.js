@@ -46,11 +46,11 @@ function createElement(root, name) {
   };
 }
 
-function createComponentShadowRoot(element, moduleUrl) {
+function createComponentShadowRoot(element, moduleUrl, stylesheetName = element.localName) {
   const shadowRoot = element.attachShadow({ mode: 'open' });
   const stylesheet = createElement(element.ownerDocument, 'link');
   stylesheet.setAttribute('rel', 'stylesheet');
-  stylesheet.setAttribute('href', new URL(`./${element.localName}.css`, moduleUrl).href);
+  stylesheet.setAttribute('href', new URL(`./${stylesheetName}.css`, moduleUrl).href);
   shadowRoot.append(stylesheet);
   return shadowRoot;
 }
@@ -61,14 +61,14 @@ function setAttribute(root, selector, name, value) {
   if (target) target.setAttribute(name, value);
 }
 
-function applyHostAttributes(element, root) {
+export function applyHostAttributes(element, root) {
   const values = Object.fromEntries([
     'value', 'name', 'placeholder', 'type',
-    'src', 'alt', 'href', 'min', 'max', 'step',
+    'src', 'alt', 'href', 'min', 'max', 'step', 'rows',
   ].map((name) => [name, element.getAttribute(name)]));
 
   for (const selector of ['input', 'textarea', 'select']) {
-    for (const name of ['name', 'placeholder', 'type', 'min', 'max', 'step']) {
+    for (const name of ['name', 'placeholder', 'type', 'min', 'max', 'step', 'rows']) {
       setAttribute(root, selector, name, values[name]);
     }
   }
@@ -89,10 +89,10 @@ function applyHostAttributes(element, root) {
 }
 
 /** Creates an open Shadow Root from the canonical template and projects Light DOM through its slots. */
-export function initializeShadowComponent(element, templateId, moduleUrl) {
+export function initializeShadowComponent(element, templateId, moduleUrl, options = {}) {
   if (element.shadowRoot) return 'initialized';
 
-  const shadowRoot = createComponentShadowRoot(element, moduleUrl);
+  const shadowRoot = createComponentShadowRoot(element, moduleUrl, options.stylesheetName);
   const hasConsumerContent = [...(element.childNodes ?? [])].some((node) => (
     node.nodeType !== 3 || node.textContent?.trim()
   ));
@@ -121,14 +121,23 @@ export function initializeShadowCollection(element, templateId, moduleUrl, items
 }
 
 export function queryComponent(element, selector) {
-  return element.querySelector(selector) || element.shadowRoot?.querySelector(selector) || null;
+  return element.shadowRoot?.querySelector(selector) || null;
 }
 
 export function queryComponentAll(element, selector) {
-  return [
-    ...element.querySelectorAll(selector),
-    ...(element.shadowRoot?.querySelectorAll(selector) ?? []),
-  ];
+  return [...(element.shadowRoot?.querySelectorAll(selector) ?? [])];
+}
+
+/** Uses consumer-provided Light DOM items when present, otherwise canonical template fallbacks. */
+export function queryProjectedAll(element, selector) {
+  const projected = [...element.querySelectorAll(selector)];
+  return projected.length > 0
+    ? projected
+    : [...(element.shadowRoot?.querySelectorAll(selector) ?? [])];
+}
+
+export function queryProjected(element, selector) {
+  return queryProjectedAll(element, selector)[0] ?? null;
 }
 
 export function findEventTarget(event, selector) {

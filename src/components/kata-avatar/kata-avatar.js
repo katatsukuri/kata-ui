@@ -1,16 +1,21 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
+import { queryComponent } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-avatar-template';
 
-export class KataAvatarElement extends HTMLElement {
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      return;
-    }
+export class KataAvatarElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
+  static templateAliases = {
+    'kata-avatar-initials-template': DEFAULT_TEMPLATE_ID,
+    'kata-avatar-sm-template': { templateId: DEFAULT_TEMPLATE_ID, attributes: { size: 'sm' } },
+    'kata-avatar-lg-template': { templateId: DEFAULT_TEMPLATE_ID, attributes: { size: 'lg' } },
+  };
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
-    this.dataset.kataUiInitialized = 'true';
+  mount() {
+    const avatar = queryComponent(this, '.kata-avatar');
+    const size = this.getAttribute('size');
+    if (avatar && size) avatar.dataset.size = size;
   }
 }
 

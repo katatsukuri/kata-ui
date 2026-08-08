@@ -26,7 +26,7 @@
 
 - 業務状態、認証、認可、永続データの正本はサーバーに置く
 - サーバー通信とHTML差し替えはHTMXが担当する
-- 通信不要の局所的な画面状態はAlpine.jsが担当する
+- 通信不要の局所的な画面状態はPage Runtimeが担当する
 - 独立UI部品の内部状態とライフサイクルはWeb Componentが担当する
 - Web Componentはopen Shadow DOMとし、内部骨格は`template`から生成する
 - 利用者に見えるタイトル、ラベル、説明、本文などの表示データはdefault／named `slot`で渡す
@@ -62,8 +62,13 @@ kata-ui/
 │   │       ├── theme-dark.css
 │   │       ├── theme-facility.css
 │   │       └── theme-winforms.css
-│   └── loader/
-│       └── template-loader.js
+│   ├── loader/
+│   │   └── template-loader.js
+│   └── runtime/
+│       ├── component-base.js
+│       ├── htmx-adapter.js
+│       ├── state-manager.js
+│       └── theme-manager.js
 └── tools/
     └── architecture-lint.js
 ```
@@ -100,6 +105,27 @@ kata-ui/
 
 外部CSSの通常セレクタはShadow DOM内部へ入りません。サイト全体のテーマは継承可能な`--kata-*` CSSカスタムプロパティで伝え、公開した装飾点が必要な場合だけ`::part()`を追加します。
 
+## 共通Runtime
+
+`src/runtime/index.js`を公開入口として使います。Component Runtimeは各Custom Elementの初回`mount()`と再接続可能な`connect()`／`disconnect()`、イベント、template読込を共通化します。利用画面の局所状態はPage Runtime、HTMXイベントは`HtmxAdapter`、テーマは`ThemeManager`へ分離します。
+
+```js
+import {
+  HtmxAdapter,
+  PageState,
+  ThemeManager,
+} from '/kata-ui/src/runtime/index.js';
+
+const disposeHtmx = new HtmxAdapter(document).initialize();
+const pageState = new PageState({ sidebarOpen: false });
+const themeManager = new ThemeManager(document);
+themeManager.load();
+```
+
+画面破棄時は`disposeHtmx()`を呼びます。Custom Elementの`connectedCallback()`を利用側から手動実行せず、要素の挿入・除去による標準ライフサイクルへ委ねます。
+
+`PageState.snapshot()`と購読通知はトップレベルを凍結した浅いsnapshotです。配列やオブジェクトのネスト値は直接変更せず、新しい値へ置き換えて`set()`または`update()`してください。
+
 ## テーマ設定
 
 `html`要素の`data-theme`を`default`、`blue`、`dark`、`facility`、`winforms`のいずれかにすると、全コンポーネントへ同じテーマが継承されます。
@@ -110,10 +136,12 @@ kata-ui/
 <html lang="ja" data-theme="dark">
 ```
 
-実行時の切り替えは属性値の変更だけで行います。選択値をCookie、DB、`localStorage`のどこへ保存するかは利用アプリケーションの責務です。
+実行時の切り替えは`ThemeManager`で行い、既定では`localStorage`へ保存します。CookieやDBを正本にする場合は、利用アプリケーションが初期値を渡します。
 
 ```js
-document.documentElement.dataset.theme = 'blue';
+import { ThemeManager } from '/kata-ui/src/runtime/index.js';
+
+new ThemeManager(document).set('blue');
 ```
 
 ブランドテーマを追加するときは`src/styles/themes/`へテーマCSSを追加し、コンポーネントセレクタではなく`--kata-*`トークンだけを上書きします。詳細は[theming.md](./theming/theming.md)を参照してください。
@@ -222,13 +250,13 @@ npm run examples
 - 完全HTMLとHTMX用部分HTMLの返し分け
 - `Vary: HX-Request`とキャッシュ制御
 - CSP、CSRF、Cookie、認証切れ、権限エラー処理
-- HTMX、Alpine.js、ブラウザ履歴を含むPlaywright E2E
+- HTMX、Page Runtime、ブラウザ履歴を含むPlaywright E2E
 - サーバーHTMLのエスケープとレスポンス契約テスト
 
 ## 既知の制約
 
 - ビルド時の型検証は行わない
-- Node.js単体テストだけではブラウザDOM、HTMX、Alpine.js、フォーカス動作を完全には証明できない
+- Node.js単体テストだけではブラウザDOM、HTMX、Page Runtime、フォーカス動作を完全には証明できない
 - Chart.jsは任意依存であり、利用側が固定バージョンを読み込む必要がある
 - 実ブラウザのアクセシビリティと主要業務フローは利用側E2Eおよび手動試験を併用する
 

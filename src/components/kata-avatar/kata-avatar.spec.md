@@ -9,7 +9,7 @@
 
 ## サイズ
 
-`.kata-avatar` 要素の `data-size` 属性でサイズを切り替えられます。
+hostの `size` 属性でサイズを切り替えられます。Runtimeが内部 `.kata-avatar` の `data-size` へ反映します。
 
 | 値 | 説明 |
 |---|---|
@@ -22,23 +22,14 @@
 ### 画像アバター
 
 ```html
-<template id="kata-avatar-template">
-  <span class="kata-avatar">
-    <img src="/path/to/photo.jpg" alt="ユーザー名">
-  </span>
-</template>
-
-<kata-avatar></kata-avatar>
+<kata-avatar><img src="/path/to/photo.jpg" alt="ユーザー名"></kata-avatar>
 ```
 
 ### イニシャルアバター
 
 ```html
-<template id="kata-avatar-initials-template">
-  <span class="kata-avatar">AB</span>
-</template>
-
-<kata-avatar template="kata-avatar-initials-template"></kata-avatar>
+<kata-avatar>AB</kata-avatar>
+<kata-avatar size="sm">SM</kata-avatar>
 ```
 
 ## エラー条件

@@ -13,15 +13,6 @@
   <template id="kata-avatar-template">
     <span class="kata-avatar"><slot>YN</slot></span>
   </template>
-  <template id="kata-avatar-initials-template">
-    <span class="kata-avatar"><slot>AB</slot></span>
-  </template>
-  <template id="kata-avatar-sm-template">
-    <span class="kata-avatar" data-size="sm"><slot>YN</slot></span>
-  </template>
-  <template id="kata-avatar-lg-template">
-    <span class="kata-avatar" data-size="lg"><slot>YN</slot></span>
-  </template>
 
   <h2>画像アバター</h2>
   <p>
@@ -30,14 +21,14 @@
 
   <h2>イニシャルアバター</h2>
   <p>
-    <kata-avatar template="kata-avatar-initials-template">AB</kata-avatar>
+    <kata-avatar>AB</kata-avatar>
   </p>
 
   <h2>サイズバリエーション</h2>
   <p>
-    <kata-avatar template="kata-avatar-sm-template">SM</kata-avatar>
-    <kata-avatar template="kata-avatar-initials-template">MD</kata-avatar>
-    <kata-avatar template="kata-avatar-lg-template">LG</kata-avatar>
+    <kata-avatar size="sm">SM</kata-avatar>
+    <kata-avatar>MD</kata-avatar>
+    <kata-avatar size="lg">LG</kata-avatar>
   </p>
 
   <script type="module" src="../kata-avatar.js"></script>

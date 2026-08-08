@@ -36,6 +36,6 @@
 - Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
 - 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
 - Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
-- 表示データは次のslotへ投影し、未指定時だけtemplateのフォールバック内容を表示する: `item-1`、`item-2`、`current`
+- 任意件数の`li`をdefault slotへ渡す。リンク先は各`a[href]`、現在地は`li[aria-current="page"]`で表す。
 - `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
 - サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。

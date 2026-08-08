@@ -1,17 +1,13 @@
-import { findEventTarget, initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { findEventTarget, queryProjected, queryProjectedAll } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-tabs-template';
 
-export class KataTabsElement extends HTMLElement {
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      return;
-    }
+export class KataTabsElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
-    this.dataset.kataUiInitialized = 'true';
-
+  mount() {
     this.shadowRoot.addEventListener('click', (event) => {
       const trigger = findEventTarget(event, '[data-tabs-trigger]');
       if (!trigger) return;
@@ -19,17 +15,17 @@ export class KataTabsElement extends HTMLElement {
       const targetId = trigger.getAttribute('aria-controls');
       if (!targetId) return;
 
-      queryComponentAll(this, '[data-tabs-trigger]').forEach((t) => {
+      queryProjectedAll(this, '[data-tabs-trigger]').forEach((t) => {
         t.setAttribute('aria-selected', 'false');
         t.removeAttribute('data-active');
       });
-      queryComponentAll(this, '[data-tabs-panel]').forEach((p) => {
+      queryProjectedAll(this, '[data-tabs-panel]').forEach((p) => {
         p.hidden = true;
       });
 
       trigger.setAttribute('aria-selected', 'true');
       trigger.dataset.active = '';
-      const panel = queryComponent(this, `#${CSS.escape(targetId)}`);
+      const panel = queryProjected(this, `#${CSS.escape(targetId)}`);
       if (panel) panel.hidden = false;
     });
 
@@ -37,7 +33,7 @@ export class KataTabsElement extends HTMLElement {
       const trigger = findEventTarget(event, '[data-tabs-trigger]');
       if (!trigger) return;
 
-      const triggers = Array.from(queryComponentAll(this, '[data-tabs-trigger]'));
+      const triggers = Array.from(queryProjectedAll(this, '[data-tabs-trigger]'));
       const index = triggers.indexOf(trigger);
 
       if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {

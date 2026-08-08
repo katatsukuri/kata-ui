@@ -1,17 +1,13 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-dialog-template';
 
-export class KataDialogElement extends HTMLElement {
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      return;
-    }
+export class KataDialogElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
-    this.dataset.kataUiInitialized = 'true';
-
+  mount() {
     this._dialog = queryComponent(this, 'dialog');
 
     queryComponentAll(this, '[data-dialog-trigger]').forEach((trigger) => {

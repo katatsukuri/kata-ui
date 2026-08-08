@@ -88,3 +88,14 @@ kata-toggle-group [data-toggle-item]:focus-visible {
   z-index: 1;
   position: relative;
 }
+
+:host ::slotted([data-toggle-item]) {
+  padding: var(--kata-space-sm) var(--kata-space-lg);
+  font-size: var(--kata-font-size-sm);
+  font-weight: 500;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--kata-color-border, var(--pico-muted-border-color, #dfe3e6));
+  cursor: pointer;
+  color: var(--kata-color-text-muted, var(--pico-muted-color, #6b7280));
+}

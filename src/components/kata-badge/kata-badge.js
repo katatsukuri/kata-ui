@@ -1,16 +1,20 @@
-import { initializeShadowComponent, queryComponent, queryComponentAll } from '../../loader/template-loader.js';
+import { KataComponent } from '../../runtime/component-base.js';
+import { queryComponent } from '../../loader/template-loader.js';
 
 const DEFAULT_TEMPLATE_ID = 'kata-badge-template';
 
-export class KataBadgeElement extends HTMLElement {
-  connectedCallback() {
-    if (this.dataset.kataUiInitialized === 'true') {
-      return;
-    }
+export class KataBadgeElement extends KataComponent {
+  static templateId = DEFAULT_TEMPLATE_ID;
+  static moduleUrl = import.meta.url;
+  static templateAliases = Object.fromEntries(['secondary', 'outline', 'destructive'].map((variant) => [
+    `kata-badge-${variant}-template`,
+    { templateId: DEFAULT_TEMPLATE_ID, attributes: { variant } },
+  ]));
 
-    const templateId = this.getAttribute('template') || DEFAULT_TEMPLATE_ID;
-    initializeShadowComponent(this, templateId, import.meta.url);
-    this.dataset.kataUiInitialized = 'true';
+  mount() {
+    const badge = queryComponent(this, '.kata-badge');
+    const variant = this.getAttribute('variant');
+    if (badge && variant) badge.dataset.variant = variant;
   }
 }
 

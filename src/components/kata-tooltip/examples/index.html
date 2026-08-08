@@ -13,7 +13,6 @@
 <body>
   <h1 style="width:100%">kata-tooltip examples</h1>
 
-  <!-- Top (default) -->
   <template id="kata-tooltip-template">
     <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-top">
       <slot name="trigger">上（デフォルト）</slot>
@@ -23,40 +22,10 @@
     </div>
   </template>
 
-  <!-- Bottom -->
-  <template id="kata-tooltip-bottom-template">
-    <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-bottom">
-      <slot name="trigger">下</slot>
-    </button>
-    <div class="kata-tooltip__content" id="tip-bottom" role="tooltip" data-side="bottom">
-      <slot>下に表示されます</slot>
-    </div>
-  </template>
-
-  <!-- Left -->
-  <template id="kata-tooltip-left-template">
-    <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-left">
-      <slot name="trigger">左</slot>
-    </button>
-    <div class="kata-tooltip__content" id="tip-left" role="tooltip" data-side="left">
-      <slot>左に表示されます</slot>
-    </div>
-  </template>
-
-  <!-- Right -->
-  <template id="kata-tooltip-right-template">
-    <button type="button" class="kata-tooltip__trigger" aria-describedby="tip-right">
-      <slot name="trigger">右</slot>
-    </button>
-    <div class="kata-tooltip__content" id="tip-right" role="tooltip" data-side="right">
-      <slot>右に表示されます</slot>
-    </div>
-  </template>
-
   <kata-tooltip><span slot="trigger">上</span>上に表示されます</kata-tooltip>
-  <kata-tooltip template="kata-tooltip-bottom-template"><span slot="trigger">下</span>下に表示されます</kata-tooltip>
-  <kata-tooltip template="kata-tooltip-left-template"><span slot="trigger">左</span>左に表示されます</kata-tooltip>
-  <kata-tooltip template="kata-tooltip-right-template"><span slot="trigger">右</span>右に表示されます</kata-tooltip>
+  <kata-tooltip side="bottom"><span slot="trigger">下</span>下に表示されます</kata-tooltip>
+  <kata-tooltip side="left"><span slot="trigger">左</span>左に表示されます</kata-tooltip>
+  <kata-tooltip side="right"><span slot="trigger">右</span>右に表示されます</kata-tooltip>
 
   <script type="module" src="../kata-tooltip.js"></script>
 </body>

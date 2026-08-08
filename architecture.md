@@ -7,7 +7,7 @@
 ```text
 サーバー主導型MPA
   ＋ HTMXによるページ遷移・部分HTML更新
-  ＋ Alpine.jsによる局所的なUI状態管理
+  ＋ Page Runtimeによる局所的なUI状態管理
   ＋ Shadow DOM Web Componentsによる再利用UI部品
   ＋ templateによる部品内部構造・通信不要の要素複製
   ＋ Pico CSSを基礎とした統一スタイル
@@ -29,7 +29,7 @@
 | ページ遷移 | HTMXによる擬似SPA遷移 |
 | 部分更新 | HTMXによるサーバー生成HTMLの差し替え |
 | ページ全体の`template` SPA | 原則禁止 |
-| 局所的なUI状態 | Alpine.js |
+| 局所的なUI状態 | Page Runtime |
 | 再利用UI部品 | Web Components |
 | Web ComponentのDOM | open Shadow DOMを標準 |
 | `template`の用途 | Web Component内部構造、通信不要の要素複製 |
@@ -87,7 +87,7 @@
 │ ├─ DOM差し替え                            │
 │ └─ URL・履歴管理                          │
 │                                           │
-│ Alpine.js                                 │
+│ Page Runtime                              │
 │ ├─ 開閉状態                               │
 │ ├─ 選択状態                               │
 │ ├─ 入力連動                               │
@@ -160,9 +160,9 @@ HTMXは、サーバー通信とHTML差し替えを担当する。
 
 ---
 
-### 5.3 Alpine.js
+### 5.3 Page Runtime
 
-Alpine.jsは、通信を必要としない局所的なUI状態を担当する。
+Page Runtimeは、通信を必要としない局所的なUI状態を担当する。状態は`PageState`、表示属性の反映は`LayoutController`、画面単位の購読と破棄は`PageController`へ分離する。
 
 採用対象は次のとおり。
 
@@ -176,7 +176,7 @@ Alpine.jsは、通信を必要としない局所的なUI状態を担当する。
 - ローディング状態
 - クライアント側プレビュー
 
-次の状態はAlpine.jsへ持たせない。
+次の状態はPage Runtimeへ持たせない。
 
 - DBデータの正本
 - 認可情報
@@ -186,7 +186,7 @@ Alpine.jsは、通信を必要としない局所的なUI状態を担当する。
 - 独自のAPIキャッシュ
 - 大規模なグローバルストア
 
-Alpine.jsからの直接`fetch()`は原則禁止とし、通信はHTMXへ統一する。HTMLでは成立しない明確な理由がある場合のみ、アーキテクチャ例外として承認する。
+Page Runtimeからの直接`fetch()`は原則禁止とし、通信はHTMXへ統一する。HTMLでは成立しない明確な理由がある場合のみ、アーキテクチャ例外として承認する。
 
 ---
 
@@ -340,7 +340,7 @@ Cache-Control: no-store
 避ける差し替え単位：
 
 - Web Component内部の深い要素
-- Alpine.jsが一時状態を保持している途中の要素
+- Page Runtimeが一時状態を保持している途中の要素
 - ページ全体の`body`
 - 入力項目一つだけの過度に細かい差し替え
 
@@ -360,12 +360,12 @@ Web Componentを更新するときは、原則としてCustom Element全体を`o
 | ページ本体 | サーバー＋HTMX |
 | 一覧・検索結果 | サーバー＋HTMX |
 | Web Component内部 | Web Component |
-| 局所的な表示状態 | Alpine.js |
-| 通信不要の明細行 | `template`またはAlpine.jsのどちらか |
+| 局所的な表示状態 | Page Runtime |
+| 通信不要の明細行 | `template`またはWeb Componentのどちらか |
 | モーダル内容 | サーバー＋HTMX |
-| モーダル開閉 | Alpine.jsまたはWeb Component |
+| モーダル開閉 | Page RuntimeまたはWeb Component |
 
-同じ一覧について、HTMXによるHTML差し替えとAlpine.jsの`x-for`による再描画を併用してはならない。
+同じ一覧について、HTMXによるHTML差し替えとPage Runtimeによる再描画を併用してはならない。
 
 ---
 
@@ -376,7 +376,7 @@ Web Componentを更新するときは、原則としてCustom Element全体を`o
   → サーバー
 
 局所的な画面状態
-  → Alpine.js
+  → Page Runtime
 
 独立部品内部の状態
   → Web Component
@@ -414,12 +414,9 @@ HTMXはCustom Element全体、またはslotが所有するLight DOMだけを交�
 | ライブラリ | 基準バージョン |
 | --- | ---: |
 | HTMX | 2.0.10 |
-| Alpine.js | 3.15.12 |
-| Alpine CSP Build | 3.15.12と同一系列 |
 | Pico CSS | 2.1.1 |
 
 HTMX公式ドキュメントは2.0.10を掲載している。citeturn110004search2
-Alpine.js公式リポジトリおよびnpmでは3.15.12が最新安定版として確認できる。citeturn725570search3turn293266search1
 Pico CSS公式リポジトリでは2.1.1が最新リリースとして示されている。citeturn293266search4
 
 実際のプロジェクト開始時には、上記バージョンを再確認する。
@@ -433,7 +430,6 @@ Pico CSS公式リポジトリでは2.1.1が最新リリースとして示され�
 ```text
 wwwroot/vendor/
 ├─ htmx/2.0.10/htmx.min.js
-├─ alpine-csp/3.15.12/cdn.min.js
 └─ pico/2.1.1/pico.min.css
 ```
 
@@ -472,7 +468,7 @@ Chrome Stableは通常、メジャー更新が約4週間ごと、マイナー更
 | Internet Explorer | 対象外 |
 | 古い埋め込みChromium | 対象外 |
 
-HTMX 2.xはInternet Explorer対応を終了しており、Alpine.js 3もIE11を公式サポートしていない。citeturn110004search19turn110004search14
+HTMX 2.xはInternet Explorer対応を終了しているため、Internet Explorerは対象外とする。citeturn110004search19
 
 Pico CSSは最新安定版のChrome、Firefox、Edge、Safariをテスト対象としているため、古いChromeを長期間固定する運用は保証対象外とする。citeturn724783view4
 
@@ -502,7 +498,7 @@ Pico CSSは最新安定版のChrome、Firefox、Edge、Safariをテスト対象�
 - 認証Cookieの保護
 - HTMX履歴キャッシュ制御
 - 部分HTML内の`script`禁止
-- Alpine.jsの`x-html`禁止
+- Page RuntimeによるHTML文字列評価の禁止
 - 独自JavaScriptでの`innerHTML`禁止
 - 外部URLへのHTMXリクエスト禁止
 - 依存ライブラリの固定と脆弱性監視
@@ -514,10 +510,6 @@ Pico CSSは最新安定版のChrome、Firefox、Edge、Safariをテスト対象�
 サーバーテンプレートエンジンの自動エスケープを有効にする。
 
 禁止する実装：
-
-```html
-<div x-html="serverValue"></div>
-```
 
 ```javascript
 element.innerHTML = userInput;
@@ -533,13 +525,11 @@ HTMLを許容する業務要件がある場合は、許可タグと許可属性�
 
 ---
 
-### 10.3 Alpine.jsとCSP
+### 10.3 Page RuntimeとCSP
 
-標準版Alpine.jsは、HTML属性内の式を処理する仕組みが厳格なCSPの`unsafe-eval`制限と競合する。Alpine.jsは、`unsafe-eval`を必要としない公式CSP対応ビルドを提供している。citeturn110004search0
+Page RuntimeはJavaScript moduleとして配布し、HTML属性内の式評価、`eval()`、`new Function()`を使用しない。
 
-本システムでは、原則として`@alpinejs/csp`を採用する。
-
-Alpine式は単純な参照と操作に限定し、複雑な処理は`Alpine.data()`へ抽出する。
+画面固有処理は`PageController`へ明示的に登録し、CSPでインラインscriptとインラインイベント属性を禁止する。
 
 ---
 
@@ -657,14 +647,14 @@ Permissions-Policy: 必要な機能だけ許可
 3. ページ全体の`template` SPAを作らない
 4. 業務状態の正本はサーバーに置く
 5. 一つのDOM領域を複数技術で再生成しない
-6. Alpine.jsは局所的なUI状態だけを管理する
+6. Page Runtimeは局所的なUI状態だけを管理する
 7. Web Componentはopen Shadow DOMを標準とし、属性・slot・templateの入力規約を守る
 8. Ajaxレスポンスへ`script`タグを含めない
 9. 部分HTMLを返すURLは直接アクセス時に完全HTMLを返せること
 10. 完全HTMLと部分HTMLを返し分ける場合は`Vary: HX-Request`を設定する
 11. ライブラリのバージョンを完全固定する
 12. XSS、CSRF、CSP、認証切れ処理を実装する
-13. `x-html`とユーザー入力に対する`innerHTML`を使用しない
+13. ユーザー入力に対する`innerHTML`を使用しない
 14. HTMXリクエストは同一オリジンに限定する
 15. 複雑な例外はADRへ記録する
 
@@ -672,8 +662,8 @@ Permissions-Policy: 必要な機能だけ許可
 
 1. Web Componentsは複数画面で再利用する独立UIに限定する
 2. 通信はHTMXへ統一する
-3. Alpine式は短く保つ
-4. 複雑なAlpine処理は`Alpine.data()`へ抽出する
+3. PageStateは画面単位の一時状態に限定する
+4. PageControllerは購読解除可能な処理だけを登録する
 5. Web Componentから外部へは`CustomEvent`で通知する
 6. 標準HTML入力要素を優先する
 7. Web Componentは内部に通常の`input`を持たせる
@@ -686,12 +676,11 @@ Permissions-Policy: 必要な機能だけ許可
 - 自作SPAルーター
 - `history.pushState()`、`replaceState()`の直接利用
 - Shadow DOM内部を前提とする外部CSSセレクタ
-- Alpine.jsからの無承認`fetch()`
-- `x-html`
+- Page Runtimeからの無承認`fetch()`
 - インラインイベント属性
 - 部分HTML内の`script`
 - CDNの浮動バージョン
-- 同一領域でのHTMXと`x-for`の二重描画
+- 同一領域でのHTMXとPage Runtimeの二重描画
 - Web Component内部の深い要素をHTMXで直接交換
 - サーバー側認可を省略した表示制御
 - JavaScript文字列によるHTML組み立て
@@ -706,7 +695,7 @@ Permissions-Policy: 必要な機能だけ許可
 
 | 検査対象 | 検査内容 |
 | --- | --- |
-| HTML・サーバーテンプレート | `x-html`禁止 |
+| HTML・サーバーテンプレート | インライン式評価禁止 |
 | HTML・サーバーテンプレート | インラインイベント属性禁止 |
 | 部分ビュー | `script`タグ禁止 |
 | HTML | 外部オリジンへの`hx-get`、`hx-post`禁止 |
@@ -737,7 +726,7 @@ Permissions-Policy: 必要な機能だけ許可
 ```text
 architecture-lint
 ├─ partialにscriptがない
-├─ x-htmlがない
+├─ インライン式評価がない
 ├─ 外部URLのhx-*がない
 ├─ page templateによるSPA構造がない
 ├─ pushState利用がない
@@ -795,7 +784,7 @@ Playwrightを使用し、Google Chromeチャネルで次を自動実行する。
 7. 入力エラー
 8. 認証切れ
 9. 排他競合
-10. HTMX差し替え後のAlpine.js動作
+10. HTMX差し替え後のPage Runtime動作
 11. Web Component再接続時のイベント重複
 12. CSP違反の有無
 13. JavaScript例外の有無
@@ -830,7 +819,7 @@ Chrome Stableを必須ジョブとし、Chrome Betaで定期的な先行互換�
 - 既知脆弱性をCIで検査する
 - ライセンスを記録する
 - 更新前後でE2Eテストを実行する
-- HTMX、Alpine.js、Pico CSSを同時にメジャー更新しない
+- HTMX、Common Runtime、Pico CSSを同時に大規模更新しない
 
 ---
 
@@ -842,7 +831,7 @@ Chrome Stableを必須ジョブとし、Chrome Betaで定期的な先行互換�
 | サーバーHTML | 完全HTML、部分HTML、エスケープ |
 | レスポンス契約 | HX-Request、Vary、エラー |
 | Web Component | 初期化、再接続、属性変更、イベント |
-| Alpine.js | 局所状態、開閉、入力連動 |
+| Page Runtime | 局所状態、開閉、入力連動、購読解除 |
 | HTMX | target、swap、履歴、エラー処理 |
 | セキュリティ | CSP、CSRF、XSS、Cookie |
 | E2E | 主要業務フロー |
@@ -850,7 +839,7 @@ Chrome Stableを必須ジョブとし、Chrome Betaで定期的な先行互換�
 
 特に次を回帰テストの必須ケースとする。
 
-- HTMX遷移後もAlpine.jsが動作する
+- HTMX遷移後もPage Runtimeが再接続される
 - Web Componentが再挿入されてもイベントが二重登録されない
 - 戻る・進むで正しい画面が復元される
 - 認証切れ時にログインHTMLが部分挿入されない
@@ -890,7 +879,7 @@ HTMXによる画面差し替えでは、次を明示的に実装する。
 - 大量DOM生成を避ける
 - HTMXの差し替え範囲を適切な大きさにする
 - Web Component内部で不要な再描画を行わない
-- Alpine.jsの大規模な`x-for`を避ける
+- Page Runtimeで大量DOMを再生成しない
 
 ---
 
@@ -961,15 +950,14 @@ exception category
 
 | リスク | 対策 |
 | --- | --- |
-| HTMX、Alpine、Web Componentsの責務重複 | DOM・状態所有者を規約化 |
+| HTMX、Page Runtime、Web Componentsの責務重複 | DOM・状態所有者を規約化 |
 | 自由なHTML属性記述による属人化 | アーキテクチャLint |
-| Alpine式の肥大化 | `Alpine.data()`へ抽出 |
+| PageControllerの肥大化 | 画面単位のControllerへ分割 |
 | Web Componentの乱立 | 採用条件を明示 |
 | HTMX履歴への機密情報保存 | 履歴キャッシュを無効化 |
 | 部分HTMLと完全HTMLのキャッシュ混同 | `Vary: HX-Request` |
 | 認証切れ画面の部分挿入 | 共通エラーハンドラー |
-| XSS | 自動エスケープ、`x-html`禁止、CSP |
-| CSPとAlpine.jsの競合 | Alpine CSP Build採用 |
+| XSS | 自動エスケープ、HTML文字列評価禁止、CSP |
 | Chrome自動更新による不具合 | Stable＋Betaの継続E2E |
 | Pico CSSだけでは不足 | 独自CSS層を正式に許可 |
 | 規約だけで形骸化 | CIで自動検査 |
@@ -985,7 +973,7 @@ exception category
 
 1. サーバーを業務状態の正本とする
 2. ページ遷移をHTMXへ統一する
-3. Alpine.jsを局所状態に限定する
+3. Page Runtimeを局所状態に限定する
 4. Web Componentsを独立UI部品に限定する
 5. `template`をページルーターとして使用しない
 6. 一つのDOM領域の所有者を一つにする
@@ -1004,7 +992,7 @@ exception category
 - `tokens.css`
 - `application.css`
 - HTMX
-- Alpine CSP Build
+- Common Web Component Runtime
 - 共通レイアウト
 - CSP
 - CSRF
@@ -1020,7 +1008,7 @@ exception category
 
 ### フェーズ3：局所UI
 
-- Alpine.jsによる開閉・入力連動
+- Page Runtimeによる開閉・入力連動
 - Web Components
 - `template`
 - CustomEvent
@@ -1052,7 +1040,7 @@ exception category
 ```text
 サーバー主導型MPA
   ＋ HTMXによるページ遷移と部分更新
-  ＋ Alpine.js CSP Buildによる局所的なUI状態
+  ＋ Page Runtimeによる局所的なUI状態
   ＋ Shadow DOM Web Componentsによる再利用UI
   ＋ templateによる部品構造と通信不要の複製
   ＋ Pico CSSおよび業務固有CSS
