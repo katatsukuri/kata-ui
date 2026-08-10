@@ -7,6 +7,7 @@ import test from 'node:test';
 import { createDeployPackage } from './package-deploy.js';
 
 const REQUIRED_ROOT_FILES = [
+  '.htaccess',
   'architecture-manifest.json',
   'docs.css',
   'docs.html',
@@ -47,7 +48,8 @@ test('createDeployPackage copies only deployable static files', async (context) 
   const outputRoot = path.join(fixtureRoot, 'dist', 'onamae');
   const summary = await createDeployPackage({ sourceRoot: fixtureRoot, outputRoot });
 
-  assert.equal(summary.files, 14);
+  assert.equal(summary.files, 15);
+  await assert.doesNotReject(fs.access(path.join(outputRoot, '.htaccess')));
   await assert.doesNotReject(fs.access(path.join(outputRoot, 'index.html')));
   await assert.doesNotReject(fs.access(path.join(outputRoot, 'docs/architecture.md')));
   await assert.doesNotReject(fs.access(path.join(

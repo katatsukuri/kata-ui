@@ -9,6 +9,7 @@ const REPOSITORY_ROOT = path.resolve(path.dirname(CURRENT_FILE), '..');
 const DEFAULT_OUTPUT_ROOT = path.join(REPOSITORY_ROOT, 'dist', 'onamae');
 
 const PUBLIC_ROOT_FILES = [
+  '.htaccess',
   'architecture-manifest.json',
   'docs.css',
   'docs.html',
