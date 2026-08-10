@@ -8,6 +8,7 @@
     "test": "node --test",
     "lint:architecture": "node tools/architecture-lint.js",
     "check": "npm run lint:architecture && npm test",
-    "docs": "node src/server.js"
+    "docs": "node src/server.js",
+    "package:deploy": "node tools/package-deploy.js"
   }
 }
