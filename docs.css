@@ -16,7 +16,7 @@
   --header-decoration: rgba(255, 255, 255, 0.28);
   --header-background:
     radial-gradient(circle at 82% 20%, rgba(100, 170, 255, 0.4), transparent 30%),
-    linear-gradient(135deg, #10245f, #2457d6 58%, #3988da);
+    linear-gradient(135deg, #0333c4a4, #3162dfa9 58%, #93c5fa81);
 }
 
 :root[data-theme="facility"],
