@@ -1,17 +1,103 @@
 Public Repository Audit
 =======================
 
+## Environment
 [PASS] git available
-[PASS] current files secret scan
-[PASS] git history secret scan
+[PASS] node available
+[PASS] npm available
+[WARN] gitleaks not installed
+
+## Secret Scan
+[INFO] gitleaks unavailable; current files and git history scans skipped
+
+## Suspicious Files
+[PASS] no dangerous files
+
+## Secret-like Values
+[PASS] no common secret-like values
+
+## Repository
 [PASS] README.md exists
 [PASS] LICENSE exists
+[PASS] docs/architecture.md exists
+[PASS] docs/components.md exists
+[PASS] docs/theming.md exists
 [PASS] no common temporary files
-[WARN] README missing section: Installation
-[WARN] README missing section: Usage
-[PASS] README contains License
-[WARN] no dotnet solution found
 
-PASS : 7
-WARN : 3
+## Documentation
+[PASS] README contains Installation guidance
+[PASS] README contains Usage guidance
+[PASS] README contains License guidance
+
+## Node Project
+[PASS] package.json exists
+[PASS] package.json is valid JSON
+[PASS] package name
+[PASS] package version
+[PASS] package license
+[PASS] package scripts.check
+
+## Component Contract
+[PASS] kata-accordion component contract
+[PASS] kata-accordion examples
+[PASS] kata-alert-dialog component contract
+[PASS] kata-alert-dialog examples
+[PASS] kata-avatar component contract
+[PASS] kata-avatar examples
+[PASS] kata-badge component contract
+[PASS] kata-badge examples
+[PASS] kata-breadcrumb component contract
+[PASS] kata-breadcrumb examples
+[PASS] kata-button component contract
+[PASS] kata-button examples
+[PASS] kata-card component contract
+[PASS] kata-card examples
+[PASS] kata-chart component contract
+[PASS] kata-chart examples
+[PASS] kata-checkbox component contract
+[PASS] kata-checkbox examples
+[PASS] kata-dialog component contract
+[PASS] kata-dialog examples
+[PASS] kata-drawer component contract
+[PASS] kata-drawer examples
+[PASS] kata-dropdown-menu component contract
+[PASS] kata-dropdown-menu examples
+[PASS] kata-hover-card component contract
+[PASS] kata-hover-card examples
+[PASS] kata-input component contract
+[PASS] kata-input examples
+[PASS] kata-pagination component contract
+[PASS] kata-pagination examples
+[PASS] kata-popover component contract
+[PASS] kata-popover examples
+[PASS] kata-radio-group component contract
+[PASS] kata-radio-group examples
+[PASS] kata-select component contract
+[PASS] kata-select examples
+[PASS] kata-sheet component contract
+[PASS] kata-sheet examples
+[PASS] kata-slider component contract
+[PASS] kata-slider examples
+[PASS] kata-switch component contract
+[PASS] kata-switch examples
+[PASS] kata-table component contract
+[PASS] kata-table examples
+[PASS] kata-tabs component contract
+[PASS] kata-tabs examples
+[PASS] kata-textarea component contract
+[PASS] kata-textarea examples
+[PASS] kata-toggle component contract
+[PASS] kata-toggle examples
+[PASS] kata-toggle-group component contract
+[PASS] kata-toggle-group examples
+[PASS] kata-tooltip component contract
+[PASS] kata-tooltip examples
+
+## Build
+[PASS] npm ci
+[PASS] npm run check
+
+## Result
+PASS : 76
+WARN : 1
 FAIL : 0
