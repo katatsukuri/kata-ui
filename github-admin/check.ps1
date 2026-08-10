@@ -23,14 +23,17 @@ $AllowedOrganizationSettings = @(
     'members_can_create_public_repositories',
     'members_can_create_private_repositories',
     'members_can_create_internal_repositories',
-    'members_can_delete_repositories',
-    'members_can_change_repo_visibility',
-    'members_can_create_teams',
-    'members_can_invite_outside_collaborators',
     'members_can_fork_private_repositories',
     'web_commit_signoff_required',
     'has_organization_projects',
     'has_repository_projects'
+)
+
+$AllowedOrganizationAuditSettings = @(
+    'members_can_delete_repositories',
+    'members_can_change_repo_visibility',
+    'members_can_create_teams',
+    'members_can_invite_outside_collaborators'
 )
 
 $AllowedRepositorySettings = @(
@@ -179,10 +182,10 @@ function Read-AndValidatePolicy {
 
     Assert-PropertyNames -Object $policy -Allowed @(
         'schemaVersion', 'organization', 'repository', 'organizationSettings',
-        'repositorySettings', 'manualChecks', 'rulesets'
+        'organizationAuditSettings', 'repositorySettings', 'manualChecks', 'rulesets'
     ) -Label 'policy.json'
 
-    if ($policy.schemaVersion -ne 1) {
+    if ($policy.schemaVersion -ne 2) {
         throw "未対応のschemaVersionです: $($policy.schemaVersion)"
     }
     if ([string]$policy.organization -notmatch '^[A-Za-z0-9_.-]+$') {
@@ -193,6 +196,7 @@ function Read-AndValidatePolicy {
     }
 
     Assert-PropertyNames $policy.organizationSettings $AllowedOrganizationSettings 'organizationSettings'
+    Assert-PropertyNames $policy.organizationAuditSettings $AllowedOrganizationAuditSettings 'organizationAuditSettings'
     Assert-PropertyNames $policy.repositorySettings $AllowedRepositorySettings 'repositorySettings'
     Assert-PropertyNames $policy.manualChecks $AllowedManualChecks 'manualChecks'
 
@@ -202,6 +206,11 @@ function Read-AndValidatePolicy {
     foreach ($property in $policy.organizationSettings.PSObject.Properties) {
         if ($property.Name -ne 'default_repository_permission' -and $property.Value -isnot [bool]) {
             throw "organizationSettings.$($property.Name) はbooleanでなければなりません。"
+        }
+    }
+    foreach ($property in $policy.organizationAuditSettings.PSObject.Properties) {
+        if ($property.Value -isnot [bool]) {
+            throw "organizationAuditSettings.$($property.Name) はbooleanでなければなりません。"
         }
     }
     foreach ($property in $policy.repositorySettings.PSObject.Properties) {
@@ -346,6 +355,37 @@ function Test-Settings {
     }
 }
 
+function Test-AuditSettings {
+    param(
+        [AllowNull()][object]$Actual,
+        [object]$Expected,
+        [string]$Label,
+        [string]$Endpoint
+    )
+
+    foreach ($property in $Expected.PSObject.Properties) {
+        $resolved = Get-ApiProperty $Actual $Endpoint $property.Name
+        if (-not $resolved.Available) {
+            Write-Warn "$Label.$($property.Name) をAPI結果から取得できません; GitHub UIで手動確認してください"
+            continue
+        }
+
+        $actualJson = ConvertTo-Json $resolved.Value -Compress -Depth 20
+        $expectedJson = ConvertTo-Json $property.Value -Compress -Depth 20
+        if ($actualJson -ceq $expectedJson) {
+            Write-Pass "$Label.$($property.Name) = $expectedJson (audit-only)"
+            continue
+        }
+
+        if ($property.Name -eq 'members_can_invite_outside_collaborators') {
+            Write-Warn "$Label.$($property.Name): actual=$actualJson expected=$expectedJson; REST APIの更新対象外で、招待制限はGitHub Enterprise Cloudで確認してください"
+        }
+        else {
+            Write-Warn "$Label.$($property.Name): actual=$actualJson expected=$expectedJson; REST APIの更新対象外のためGitHub UIで手動確認してください"
+        }
+    }
+}
+
 function Get-RulesetDrift {
     param([object]$Actual, [object]$Expected)
 
@@ -416,6 +456,7 @@ try {
         }
         else {
             Test-Settings $organizationState $policy.organizationSettings 'organization' $organizationEndpoint
+            Test-AuditSettings $organizationState $policy.organizationAuditSettings 'organization' $organizationEndpoint
         }
     }
 

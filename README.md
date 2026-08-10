@@ -291,9 +291,9 @@ pwsh -NoProfile -File ./github-admin/apply.ps1 -Scope Ruleset
 pwsh -NoProfile -File ./github-admin/apply.ps1 -Scope Ruleset -Execute
 ```
 
-`-Scope`には`Organization`、`Repository`、`Ruleset`を複数指定できます。省略時はすべてが対象です。`check.ps1`は、APIから取得できた値がポリシーと異なる場合を`FAIL`、権限やレスポンス差により値を取得できない場合を`WARN`として手動確認へ回します。Ruleset一覧を取得できたうえで対象が存在しない場合は、適用が必要なドリフトとして`FAIL`にします。
+`-Scope`には`Organization`、`Repository`、`Ruleset`を複数指定できます。省略時はすべてが対象です。`check.ps1`は、自動適用可能な設定の不一致を`FAIL`、権限やレスポンス差による取得不能と監査専用設定の不一致を`WARN`として手動確認へ回します。Ruleset一覧を取得できたうえで対象が存在しない場合は、適用が必要なドリフトとして`FAIL`にします。
 
-`apply.ps1`は、Organizationの既定権限とメンバー権限、RepositoryのIssues／Wiki／Projects／merge方式、および`main`の削除・force push禁止Rulesetだけを変更します。取得できない値を推測して更新することはありません。2FA、Owner、GitHub Apps、visibility、default branch、Repository削除・transfer、Organization削除、ライセンス、Contributor権限は監査または表示だけに限定し、自動変更しません。
+`apply.ps1`は、GitHub REST APIで更新可能と明記されたOrganization設定、RepositoryのIssues／Wiki／Projects／merge方式、および`main`の削除・force push禁止Rulesetだけを変更します。OrganizationメンバーによるRepository削除、visibility変更、Team作成、outside collaborator招待はAPIレスポンスで監査できますが、Organization更新APIの入力項目ではないため自動変更しません。outside collaborator招待の制限はGitHub Enterprise Cloud向け機能です。取得できない値を推測して更新することはありません。2FA、Owner、GitHub Apps、visibility、default branch、Repository削除・transfer、Organization削除、ライセンス、Contributor権限も監査または表示だけに限定します。
 
 ## License
 
