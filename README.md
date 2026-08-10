@@ -269,6 +269,26 @@ bash public-audit.sh
 
 結果は`public-audit-report.txt`へ保存されます。`FAIL`は公開を停止する条件です。`WARN`は検査ツール不足や任意成果物の不足を表すため、理由を確認して手動レビューで判断します。特にgitleaksがない環境では秘密情報検査が省略されるため、公開可否を確定してはいけません。
 
+## GitHub管理ポリシー
+
+`github-admin/`は、`katatsukuri/kata-ui`のOrganization設定、Repository設定、`main` Rulesetと、手動判断が必要なセキュリティ項目を監査します。実行にはGitHub CLI、PowerShell 7、Organization Owner権限、およびRepository Administration権限が必要です。
+
+```powershell
+# JSONと適用対象のローカル検証
+pwsh -NoProfile -File ./github-admin/check.ps1 -ValidateOnly
+
+# GitHubの現在値を読み取り監査
+pwsh -NoProfile -File ./github-admin/check.ps1
+
+# 変更予定を表示（GitHubは変更しない）
+pwsh -NoProfile -File ./github-admin/apply.ps1
+
+# 許可リスト内の設定とRulesetだけを適用
+pwsh -NoProfile -File ./github-admin/apply.ps1 -Execute
+```
+
+`apply.ps1`は、Organizationの既定権限とメンバー権限、RepositoryのIssues／Wiki／Projects／merge方式、および`main`の削除・force push禁止Rulesetだけを変更します。2FA、Owner、GitHub Apps、visibility、default branch、Repository削除・transfer、Organization削除、ライセンス、Contributor権限は監査または表示だけに限定し、自動変更しません。
+
 ## License
 
 [MIT](./LICENSE)
