@@ -1,0 +1,17 @@
+Public Repository Audit
+=======================
+
+[PASS] git available
+[PASS] current files secret scan
+[PASS] git history secret scan
+[PASS] README.md exists
+[PASS] LICENSE exists
+[PASS] no common temporary files
+[WARN] README missing section: Installation
+[WARN] README missing section: Usage
+[PASS] README contains License
+[WARN] no dotnet solution found
+
+PASS : 7
+WARN : 3
+FAIL : 0
