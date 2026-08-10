@@ -165,7 +165,7 @@ if (!fs.existsSync(componentsRoot)) {
       [/\bnew\s+Function\s*\(/, 'Function constructor'],
     ];
     for (const [pattern, label] of forbiddenJavaScript) {
-      if (pattern.test(script)) report(scriptFile, `${label} is forbidden by architecture.md.`);
+      if (pattern.test(script)) report(scriptFile, `${label} is forbidden by docs/architecture.md.`);
     }
     if (
       !script.includes('initializeShadowComponent')

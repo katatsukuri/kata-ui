@@ -172,16 +172,16 @@ import { ThemeManager } from '/kata-ui/src/runtime/index.js';
 new ThemeManager(document).set('blue');
 ```
 
-テーマは`--kata-*`セマンティックトークンを上書きします。通常の外部CSSセレクタはShadow DOM内部へ届かないため、公開する装飾点が必要な場合だけ`part`を個別契約として追加します。詳細は[テーマ設計](./theming/theming.md)を参照してください。
+テーマは`--kata-*`セマンティックトークンを上書きします。通常の外部CSSセレクタはShadow DOM内部へ届かないため、公開する装飾点が必要な場合だけ`part`を個別契約として追加します。詳細は[テーマ設計](./docs/theming.md)を参照してください。
 
 ## ドキュメント案内
 
 | 目的 | 文書 |
 | --- | --- |
 | コンポーネントを比較・試用する | [Component Catalog](./index.html) |
-| 全体の責務と技術境界を理解する | [全体アーキテクチャ](./architecture.md) |
-| コンポーネントを実装・レビューする | [コンポーネント設計](./component_architecture.md) |
-| テーマを追加・調整する | [テーマ設計](./theming/theming.md) |
+| 全体の責務と技術境界を理解する | [全体アーキテクチャ](./docs/architecture.md) |
+| コンポーネントを実装・レビューする | [コンポーネント設計](./docs/components.md) |
+| テーマを追加・調整する | [テーマ設計](./docs/theming.md) |
 | 個別コンポーネントの公開契約を確認する | `src/components/kata-*/kata-*.spec.md` |
 
 READMEは導入、アーキテクチャ文書は設計判断、`*.spec.md`は個別の公開契約に責務を限定しています。
@@ -202,8 +202,10 @@ READMEは導入、アーキテクチャ文書は設計判断、`*.spec.md`は個
 ```text
 kata-ui/
 ├── README.md
-├── architecture.md
-├── component_architecture.md
+├── docs/
+│   ├── architecture.md
+│   ├── components.md
+│   └── theming.md
 ├── architecture-manifest.json
 ├── src/
 │   ├── components/
