@@ -3,7 +3,6 @@ const CORE_DOCUMENTS = new Set([
   'architecture.md',
   'component_architecture.md',
   'theming/theming.md',
-  'theming/theming2.md',
 ]);
 
 const statusElement = document.querySelector('[data-docs-status]');

@@ -48,7 +48,7 @@ $env:PORT = 4173
 npm run docs
 ```
 
-互換コマンドの`npm run examples`も同じDocsサーバーを起動します。GitHub PagesではNode.jsサーバーを使用せず、静的ファイルを直接配信します。
+GitHub PagesではNode.jsサーバーを使用せず、静的ファイルを直接配信します。
 
 ## 最小構成
 
@@ -147,9 +147,7 @@ new ThemeManager(document).set('blue');
 | コンポーネントを比較・試用する | [Component Catalog](./index.html) |
 | 全体の責務と技術境界を理解する | [全体アーキテクチャ](./architecture.md) |
 | コンポーネントを実装・レビューする | [コンポーネント設計](./component_architecture.md) |
-| ASP.NET Razor Pagesへの適用例を確認する | リポジトリ内の補足資料`architecture.v2.md` |
 | テーマを追加・調整する | [テーマ設計](./theming/theming.md) |
-| Facility／WinFormsテーマの判断背景を確認する | [テーマ検討記録](./theming/theming2.md) |
 | 個別コンポーネントの公開契約を確認する | `src/components/kata-*/kata-*.spec.md` |
 
 READMEは導入、アーキテクチャ文書は設計判断、`*.spec.md`は個別の公開契約に責務を限定しています。
@@ -171,7 +169,6 @@ READMEは導入、アーキテクチャ文書は設計判断、`*.spec.md`は個
 kata-ui/
 ├── README.md
 ├── architecture.md
-├── architecture.v2.md
 ├── component_architecture.md
 ├── architecture-manifest.json
 ├── src/
