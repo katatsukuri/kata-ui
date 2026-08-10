@@ -5,10 +5,11 @@ Public Repository Audit
 [PASS] git available
 [PASS] node available
 [PASS] npm available
-[WARN] gitleaks not installed
+[PASS] gitleaks available
 
 ## Secret Scan
-[INFO] gitleaks unavailable; current files and git history scans skipped
+[PASS] current files secret scan
+[PASS] git history secret scan
 
 ## Suspicious Files
 [PASS] no dangerous files
@@ -98,6 +99,6 @@ Public Repository Audit
 [PASS] npm run check
 
 ## Result
-PASS : 76
-WARN : 1
+PASS : 79
+WARN : 0
 FAIL : 0
