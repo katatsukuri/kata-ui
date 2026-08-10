@@ -1,31 +1,8 @@
-# kata-radio-group contract
+# kata-radio-group
 
-`<kata-radio-group>` は、`<template id="kata-radio-group-template">` を既定骨格として open Shadow DOM に展開する Custom Element です。
+`<kata-radio-group>`は、関連するradio入力をfieldsetとlegendでまとめるopen Shadow DOM Custom Elementです。
 
-## 必須条件
-
-1. 画面内に `id="kata-radio-group-template"` を持つ `<template>` が1つ存在すること
-2. `<template>` の内容は `<input type="radio">` を1つ以上含むこと
-3. アクセシビリティのため `<fieldset>` と `<legend>` で選択肢をグループ化すること
-
-## 例
-
-```html
-<template id="kata-radio-group-template">
-  <fieldset>
-    <legend>性別</legend>
-    <label><input type="radio" name="gender" value="male"> 男性</label>
-    <label><input type="radio" name="gender" value="female"> 女性</label>
-    <label><input type="radio" name="gender" value="other"> その他</label>
-  </fieldset>
-</template>
-
-<kata-radio-group></kata-radio-group>
-```
-
-## `template` 属性
-
-`template` 属性を指定することで、使用するテンプレート ID を変更できます。
+## 利用例
 
 ```html
 <kata-radio-group>
@@ -35,15 +12,29 @@
 </kata-radio-group>
 ```
 
-## エラー条件
+## 必須要件
 
-- 対応する `<template>` が見つからない場合、初期化時にエラーを送出する
-- デフォルト骨格へのフォールバックは提供しない
-## Shadow DOM・slot・属性契約
+- `kata-radio-group-template`がある
+- template内に`fieldset`、`legend`、default slotがある
+- 利用側は同じ`name`を持つ一つ以上の`input[type="radio"]`を渡す
 
-- Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
-- 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
-- Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
-- 見出しは`legend` slot、任意件数の`label`と`input[type="radio"]`はdefault slotへ渡す。
-- `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
-- サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。
+## slot
+
+| slot | 内容 |
+| --- | --- |
+| `legend` | 選択肢グループの名前 |
+| default | 任意件数のlabelとradio input |
+
+旧`kata-radio-group-color-template`は正規templateへの互換aliasです。
+
+## 責任境界
+
+選択値、disabled、requiredなどは利用側のネイティブinputが所有します。本コンポーネントは選択状態を複製しません。
+
+## アクセシビリティ
+
+各radioはlabelと関連付け、legendだけで選択基準が伝わる文言にします。
+
+## 初期化エラー
+
+対応するtemplateがない場合は初期化時にエラーを送出します。

@@ -1,44 +1,38 @@
-# kata-button contract
+# kata-button
 
-`<kata-button>` は、`<template id="kata-button-template">` を既定骨格として open Shadow DOM に展開する Custom Element です。
+`<kata-button>`は、表示ラベルと外観を統一するopen Shadow DOM Custom Elementです。内部にはネイティブ`button`を保持します。
 
-## 必須条件
-
-1. 画面内に `id="kata-button-template"` を持つ `<template>` が1つ存在すること
-2. `<template>` の内容は少なくとも1つの `<button>` 要素を含むこと
-3. `<button>` には `type` 属性を明示すること（`button` / `submit` / `reset`）
-
-## バリアント
-
-`<button data-variant="...">` でスタイルを切り替えられます。
-
-| 値 | 説明 |
-|---|---|
-| （省略） | Primary（デフォルト） |
-| `secondary` | セカンダリ |
-| `outline` | アウトライン |
-| `ghost` | ゴースト |
-| `destructive` | 破壊的操作 |
-
-## 例
+## 利用例
 
 ```html
-<template id="kata-button-template">
-  <button type="button">保存</button>
-</template>
-
-<kata-button></kata-button>
+<kata-button>保存</kata-button>
+<kata-button variant="secondary">キャンセル</kata-button>
+<kata-button variant="destructive" disabled>削除</kata-button>
 ```
 
-## エラー条件
+## 必須要件
 
-- 対応する `<template>` が見つからない場合、初期化時にエラーを送出する
-- デフォルト骨格へのフォールバックは提供しない
-## Shadow DOM・slot・属性契約
+- 画面内に`id="kata-button-template"`の`<template>`が1つある
+- template内に`type`を明示した`button`とdefault slotがある
 
-- Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
-- 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
-- Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
-- 表示データは次のslotへ投影し、未指定時だけtemplateのフォールバック内容を表示する: default
-- `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
-- サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。
+## 属性
+
+| 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `variant` | `secondary`／`outline`／`ghost`／`destructive` | 省略時はprimary。内部buttonの`data-variant`へ反映する |
+| `disabled` | Boolean属性 | 内部buttonを無効にする |
+| `template` | template ID | 省略時は`kata-button-template` |
+
+旧`kata-button-secondary-template`、`kata-button-destructive-template`、`kata-button-disabled-template`は互換aliasです。
+
+## slot
+
+default slotへ操作名を渡します。アイコンだけの操作にする場合は、利用側がアクセシブル名を指定してください。
+
+## 制約
+
+内部buttonの`type`は正規templateが所有します。現在のRuntimeは`disabled`と`variant`を初回mount時に反映します。hostの`type`、`name`、`value`、接続後の属性変更追従、form-associated custom elementとしての動作は公開契約に含みません。
+
+## 初期化エラー
+
+対応するtemplateがない場合は初期化時にエラーを送出します。

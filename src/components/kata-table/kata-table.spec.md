@@ -1,150 +1,92 @@
-# kata-table contract
+# kata-table
 
-`<kata-table>` は、`<template id="kata-table-template">` を既定骨格として open Shadow DOM に展開する Custom Element です。
+`<kata-table>`は、表の骨格と列見出しを正規templateから生成し、必要に応じてShadow DOM内のtbodyをHTMXで更新するopen Shadow DOM Custom Elementです。
 
-## 必須条件
-
-1. 画面内に、`template` 属性で指定したID（省略時は `kata-table-template`）を持つ `<template>` が1つ存在すること
-2. `<template>` の内容は、少なくとも1つの `<tbody>` を含む `<table>` 構造であること
-3. サーバーは `<kata-table>` の展開後に生成される `<tbody>` へ行 HTML（`<tr>...</tr>`）を返すこと
-4. サーバーが `<kata-table>` 自体を返す場合は、`<tbody>` ではなく、templateを含まない外側の通常コンテナへ挿入すること
-
-## 属性
-
-| 属性名     | 必須 | デフォルト値             | 説明                                   |
-| ---------- | ---- | ------------------------ | -------------------------------------- |
-| `template` | 任意 | `kata-table-template`    | 使用する `<template>` 要素の `id` 値   |
-
-## 基本的な使い方
-
-```html
-<template id="kata-table-template">
-  <table class="kata-table">
-    <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Role</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</template>
-
-<kata-table></kata-table>
-```
-
-## コンポーネントと行の二段階取得
-
-コンポーネントを必要に応じて切り替える場合、次の2リクエストに分けます。
-
-1. コンポーネント取得APIは、外側の交換領域へ `<kata-table template="...">` を返す
-2. 選択されたtemplate内の `<tbody>` が、行取得APIから `<tr>` を取得する
-
-利用候補のtemplateは交換領域の外側に置きます。これにより、コンポーネントを交換しても骨格定義はページ内に残ります。
+## 基本利用例
 
 ```html
 <template id="users-table-template">
   <table class="kata-table">
-    <thead><tr><th scope="col">Name</th><th scope="col">Role</th></tr></thead>
-    <tbody hx-get="/api/users/rows" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
+    <thead>
+      <tr>
+        <th scope="col"><slot name="column-1">Name</slot></th>
+        <th scope="col"><slot name="column-2">Role</slot></th>
+      </tr>
+    </thead>
+    <tbody
+      hx-get="/api/users/rows"
+      hx-trigger="load"
+      hx-target="this"
+      hx-swap="innerHTML"
+    ></tbody>
   </table>
 </template>
 
-<template id="kata-table-maintainers-template">
-  <table class="kata-table">
-    <thead><tr><th scope="col">Maintainer</th><th scope="col">Role</th></tr></thead>
-    <tbody hx-get="/api/maintainers/rows" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></tbody>
-  </table>
-</template>
-
-<button hx-get="/api/table?view=users" hx-target="#table-host" hx-swap="innerHTML">All users</button>
-<button hx-get="/api/table?view=maintainers" hx-target="#table-host" hx-swap="innerHTML">Maintainers</button>
-
-<div id="table-host"
-     hx-get="/api/table?view=users"
-     hx-trigger="load"
-     hx-target="this"
-     hx-swap="innerHTML"></div>
+<kata-table template="users-table-template">
+  <span slot="column-1">氏名</span>
+  <span slot="column-2">役割</span>
+</kata-table>
 ```
 
-コンポーネント取得APIの応答例:
+## 必須要件
+
+- 指定したIDのtemplateが1つある。省略時は`kata-table-template`
+- template内に`table`と`tbody`がある
+- 行取得応答は`tbody`へ挿入できる`tr`だけを返す
+- Custom Element自体を返す応答は、templateを含まない通常の外側コンテナへ挿入する
+
+## 属性とslot
+
+| 契約 | 説明 |
+| --- | --- |
+| `template` | 表の骨格を選ぶtemplate ID |
+| `column-1` | 一列目の表示見出し |
+| `column-2` | 二列目の表示見出し |
+
+列数とslotは選択したtemplateの契約に従います。現在の標準templateは二列です。
+
+## 二段階取得
+
+表の種類をサーバーで切り替える場合は、コンポーネント取得と行取得を分けます。
+
+```text
+外側containerが<kata-table template="...">を取得
+  → Shadow DOMへ選択した表骨格を生成
+  → tbodyのhx-getが<tr>を取得
+```
+
+コンポーネント取得応答へ行を直接含めず、行取得応答から返します。利用候補のtemplateは交換領域の外側に置き、Custom Elementを交換しても定義が残るようにします。
+
+```html
+<button hx-get="/api/table?view=users" hx-target="#table-host">利用者</button>
+<div id="table-host"></div>
+```
+
+コンポーネント取得応答:
 
 ```html
 <kata-table template="users-table-template"></kata-table>
 ```
 
-行取得APIの応答例:
+行取得応答:
 
 ```html
 <tr><td>Alice</td><td>Developer</td></tr>
 <tr><td>Bob</td><td>Designer</td></tr>
 ```
 
-`<kata-table>` の子要素は初期化時にtemplateの内容へ置き換えられます。コンポーネント取得APIの応答へ行を直接含めず、行取得APIから返してください。
+## HTMX連携
 
-## HTMX との組み合わせ
+mount時にShadow Rootを`htmx.process()`へ渡します。行取得URL、target、swapはtemplate内のtbodyが所有します。利用アプリケーションは応答のエスケープ、空状態、エラー状態、ページングを扱います。
 
-`hx-get` / `hx-target` / `hx-swap` を `<tbody>` に付与することで、ページロード時に行データを自動取得できます。
+## アクセシビリティ
 
-```html
-<template id="kata-table-template">
-  <table class="kata-table">
-    <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Role</th>
-      </tr>
-    </thead>
-    <tbody hx-get="/api/rows" hx-target="this" hx-swap="innerHTML" hx-trigger="load"></tbody>
-  </table>
-</template>
+列見出しは`th[scope="col"]`、必要な行見出しは`th[scope="row"]`を使用します。表の目的が周辺文脈で明確でない場合はcaptionをtemplateへ追加してください。
 
-<kata-table></kata-table>
-```
+## CSSトークン
 
-## 複数テーブルを同一ページで使う
+`--kata-table-border-color`、`--kata-table-header-bg`、`--kata-table-hover-bg`を上書きできます。既定値は共通の`--kata-*`セマンティックトークンへ接続されます。
 
-`template` 属性で別の `<template>` を指定することで、1 ページに複数の独立したテーブルを配置できます。
+## 初期化エラー
 
-```html
-<template id="users-table-template"> … </template>
-<template id="orders-table-template"> … </template>
-
-<kata-table template="users-table-template"></kata-table>
-<kata-table template="orders-table-template"></kata-table>
-```
-
-## サーバーサイドテンプレートの利用例
-
-各フレームワークのテンプレートエンジンで `<template>` と `<kata-table>` を出力する例を
-`examples/` フォルダーに用意しています。
-
-| フォルダー          | フレームワーク              |
-| ------------------- | --------------------------- |
-| `examples/static/`  | 静的 HTML（バニラ JS）      |
-| `examples/razor/`   | ASP.NET Core Razor Pages    |
-| `examples/ejs/`     | Express + EJS               |
-| `examples/django/`  | Django テンプレート          |
-
-## エラー条件
-
-- 対応する `<template>` が見つからない場合、初期化時にエラーを送出する
-- デフォルト骨格へのフォールバックは提供しない
-
-## CSS カスタマイズ
-
-`kata-table.css` が提供するスタイルは CSS カスタムプロパティで上書きできます。
-
-| カスタムプロパティ                 | デフォルト値  | 説明                         |
-| ---------------------------------- | ------------- | ---------------------------- |
-| `--kata-table-border-color`        | `--kata-color-border` | セル下境界線の色       |
-| `--kata-table-header-bg`           | `transparent` | ヘッダー行の背景色           |
-| `--kata-table-hover-bg`            | `--kata-color-surface-muted` | 行ホバー時の背景色 |
-## Shadow DOM・slot・属性契約
-
-- Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
-- 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
-- Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
-- 表示データは次のslotへ投影し、未指定時だけtemplateのフォールバック内容を表示する: `column-1`、`column-2`
-- `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
-- サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。
+対応するtemplateがない場合は初期化時にエラーを送出します。

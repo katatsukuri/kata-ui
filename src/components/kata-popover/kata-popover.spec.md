@@ -1,67 +1,41 @@
-# kata-popover contract
+# kata-popover
 
-`<kata-popover>` は、`<template id="kata-popover-template">` を既定骨格として open Shadow DOM に展開する Custom Element です。ネイティブの Popover API (`popover` 属性 / `showPopover()` / `hidePopover()`) を使用します。
+`<kata-popover>`は、trigger操作で補足領域を開閉し、表示位置を計算するopen Shadow DOM Custom Elementです。
 
-## 必須条件
+## 利用例
 
-1. 画面内に `id="kata-popover-template"` を持つ `<template>` が1つ存在すること
-2. `<template>` の内容はポップオーバー本体として機能する要素 (`data-popover-content`) と、それを開くトリガー要素 (`data-popover-trigger`) を含むこと
-3. ポップオーバーを開閉するトリガーは `data-popover-trigger` 属性を持つ要素であること
-4. ポップオーバー本体は `data-popover-content` 属性を持つ要素であること
+```html
+<kata-popover data-placement="bottom">
+  <span slot="trigger">詳細</span>
+  <span slot="title">補足情報</span>
+  <p>操作に関する説明を表示します。</p>
+</kata-popover>
+```
 
-## 動作
+## 必須要件
 
-- トリガーをクリックするとポップオーバーが表示される
-- ポップオーバーが表示されているとき、再度トリガーをクリックすると閉じる（トグル動作）
-- ポップオーバーが表示されているとき、ポップオーバー外をクリックすると閉じる
-- `data-placement` 属性で表示位置を指定できる（`bottom`・`top`・`left`・`right`、デフォルト: `bottom`）
+- `kata-popover-template`がある
+- template内に`data-popover-trigger`と`data-popover-content`がある
+
+## 属性とslot
+
+| 契約 | 説明 |
+| --- | --- |
+| `data-placement` | `top`／`bottom`／`left`／`right`。不正値と省略時はbottom |
+| `trigger` slot | 開く操作の表示名 |
+| `title` slot | contentの見出し |
+| default slot | content本文 |
+
+旧`kata-popover-*-template`は対応する配置へ変換する互換aliasです。
+
+## 状態と動作
+
+triggerで開閉し、外側クリックで閉じます。hostの`data-state`、triggerの`aria-expanded`、contentの`hidden`を同期し、triggerの位置からfixed座標を計算します。
 
 ## アクセシビリティ
 
-- トリガーボタンに `aria-expanded` を設定すること（open 時は `"true"`、closed 時は `"false"`）
-- トリガーボタンに `aria-controls` を設定し、ポップオーバー本体の `id` を参照すること
-- ポップオーバー本体に `role="dialog"` または `role="tooltip"` を設定すること
+triggerの`aria-controls`はcontentのIDへ自動接続します。contentの用途に応じたroleとアクセシブル名はtemplateで定義します。現在の実装はEscape操作とフォーカストラップを提供しません。
 
-## 属性
+## 初期化エラー
 
-| 属性 | デフォルト | 説明 |
-|------|-----------|------|
-| `template` | `"kata-popover-template"` | 使用する `<template>` の `id` |
-| `data-placement` | `"bottom"` | ポップオーバーの表示位置 (`top` / `bottom` / `left` / `right`) |
-
-## data-state
-
-`<kata-popover>` 要素の `data-state` 属性が状態を反映します。
-
-| 値 | 説明 |
-|----|------|
-| `"open"` | ポップオーバーが表示されている |
-| `"closed"` | ポップオーバーが非表示 |
-
-## 例
-
-```html
-<template id="kata-popover-template">
-  <button type="button" data-popover-trigger aria-expanded="false">
-    情報を表示
-  </button>
-  <div data-popover-content role="dialog" aria-label="詳細情報">
-    <p>ここにポップオーバーの内容が入ります。</p>
-  </div>
-</template>
-
-<kata-popover data-placement="bottom"></kata-popover>
-```
-
-## エラー条件
-
-- 対応する `<template>` が見つからない場合、初期化時にエラーを送出する
-- デフォルト骨格へのフォールバックは提供しない
-## Shadow DOM・slot・属性契約
-
-- Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
-- 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
-- Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
-- 表示データは次のslotへ投影し、未指定時だけtemplateのフォールバック内容を表示する: `trigger`、`title`、default
-- `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
-- サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。
+対応するtemplateがない場合は初期化時にエラーを送出します。

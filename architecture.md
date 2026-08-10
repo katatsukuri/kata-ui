@@ -1,541 +1,205 @@
-# フロントエンド・アーキテクチャ提案書
+# kata-ui 全体アーキテクチャ
 
-## 1. 提案概要
+## 目的
 
-本システムのフロントエンドには、次の構成を採用する。
+`kata-ui`は、サーバー主導型MPAに再利用UIを追加するためのコンポーネント境界です。ブラウザへ業務状態の正本や独自ルーターを移さず、HTMX、Page Runtime、Web Componentsの責務を狭く保つことを設計目標とします。
 
 ```text
-サーバー主導型MPA
-  ＋ HTMXによるページ遷移・部分HTML更新
-  ＋ Page Runtimeによる局所的なUI状態管理
-  ＋ Shadow DOM Web Componentsによる再利用UI部品
-  ＋ templateによる部品内部構造・通信不要の要素複製
-  ＋ Pico CSSを基礎とした統一スタイル
+Server-driven MPA
+  + HTMXによるページ遷移と部分HTML更新
+  + Page Runtimeによる通信不要の画面状態
+  + Shadow DOM Web Componentsによる再利用UI
+  + Pico CSSと--kata-*トークンによるテーマ
 ```
 
-本構成は、サーバー側を業務状態・認証・認可・永続データの正本とし、ブラウザ側へ複雑なアプリケーション状態を持たせない。
+この文書はリポジトリ全体の責務、境界、セキュリティ、検証方針を定義します。個別コンポーネントの実装規約は[コンポーネント設計](./component_architecture.md)、公開契約は各`*.spec.md`を参照してください。
 
-ページ遷移にはHTMXを使用し、`template`によるページ全体の自作SPAは原則として採用しない。
+## なぜサーバー主導にするのか
 
-各技術の自由度はアーキテクチャ規約で制限し、静的解析、統合テスト、E2Eテストによって可能な範囲を自動検証する。
+対象は、検索、一覧、登録、編集、詳細表示を中心とし、認証、認可、入力検証、排他制御、永続化をサーバーで行う業務Webシステムです。この種の画面では、URLとサーバールーティングを維持したまま、必要な部分だけHTMLを更新できれば、多くの操作要件を満たせます。
 
----
+クライアント側に同じ業務状態、APIキャッシュ、ルーティングを重ねると、状態の正本とDOMの所有者が分散します。`kata-ui`はこの重複を避け、ブラウザ側の責務をUIに限定します。
 
-## 2. 決定事項
+次が主要要件になる場合は、別のアーキテクチャを再検討します。
 
-| 項目 | 決定 |
-| --- | --- |
-| 基本アーキテクチャ | サーバー主導型MPA |
-| ページ遷移 | HTMXによる擬似SPA遷移 |
-| 部分更新 | HTMXによるサーバー生成HTMLの差し替え |
-| ページ全体の`template` SPA | 原則禁止 |
-| 局所的なUI状態 | Page Runtime |
-| 再利用UI部品 | Web Components |
-| Web ComponentのDOM | open Shadow DOMを標準 |
-| `template`の用途 | Web Component内部構造、通信不要の要素複製 |
-| 基本スタイル | Pico CSS |
-| 業務固有スタイル | 独自CSSを追加 |
-| 業務状態の正本 | サーバー |
-| セキュリティ | CSP、CSRF、XSS対策、履歴キャッシュ制御等を必須化 |
-| バージョン | 導入時点の最新安定版を選定し、固定して使用 |
-| クライアント | 管理されたGoogle Chromeを標準 |
-| 規約検証 | 静的解析、レスポンス検査、Playwright E2EをCIへ組み込む |
-
----
-
-## 3. 適用対象
-
-本構成は、次の特性を持つ業務Webシステムを対象とする。
-
-- 一覧、検索、登録、編集、詳細、削除を中心とする
-- サーバー側に業務ロジックが存在する
-- 認証・認可が必要
-- Webブラウザが主要クライアント
-- 小規模な開発チームで長期保守する
-- React、Vue等による大規模SPAを必要としない
-- ページ遷移を高速化しつつ、URLとサーバールーティングを維持したい
-- 一部の画面にリアクティブな操作が必要
-
-次の要件が主要となった場合は、別アーキテクチャを再検討する。
-
-- オフライン編集
-- リアルタイム共同編集
+- オフライン編集やリアルタイム共同編集
 - 大規模なクライアント状態管理
 - ブラウザ内での大量データ処理
-- Webとモバイルアプリで同じJSON APIを共有
+- Webとモバイルアプリで共有するJSON API
 - フロントエンドとバックエンドの完全な独立リリース
-- 高度なドラッグ＆ドロップやキャンバス操作
+- 高度なキャンバス操作やドラッグ＆ドロップ
 
----
-
-## 4. 全体構成
+## アーキテクチャの全体像
 
 ```text
-┌───────────────────────────────────────────┐
-│ Google Chrome                             │
-│                                           │
-│ Application Shell                         │
-│ ├─ header / navigation                    │
-│ ├─ main#app-content                       │
-│ ├─ dialog                                 │
-│ └─ notification area                      │
-│                                           │
-│ HTMX                                      │
-│ ├─ ページ遷移                             │
-│ ├─ フォーム送信                           │
-│ ├─ HTML断片取得                           │
-│ ├─ DOM差し替え                            │
-│ └─ URL・履歴管理                          │
-│                                           │
-│ Page Runtime                              │
-│ ├─ 開閉状態                               │
-│ ├─ 選択状態                               │
-│ ├─ 入力連動                               │
-│ └─ ローディング表示                       │
-│                                           │
-│ Web Components                            │
-│ ├─ 独立UI部品                             │
-│ ├─ ライフサイクル                         │
-│ ├─ CustomEvent                            │
-│ └─ templateから内部DOM生成                │
-│                                           │
-│ Pico CSS＋application.css                 │
-└────────────────────┬──────────────────────┘
-                     │ HTTP / HTML / Form Data
-┌────────────────────▼──────────────────────┐
-│ サーバー                                  │
-│ ├─ URLルーティング                        │
-│ ├─ 認証・認可                             │
-│ ├─ 業務ロジック                           │
-│ ├─ 入力検証                               │
-│ ├─ 排他制御                               │
-│ ├─ データ永続化                           │
-│ ├─ 完全HTML生成                           │
-│ └─ 部分HTML生成                           │
-└───────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│ Browser                                      │
+│                                              │
+│ Application shell                            │
+│ ├─ HTMX: 通信、HTML差し替え、URL・履歴       │
+│ ├─ Page Runtime: 通信不要の画面状態           │
+│ ├─ Web Components: 独立UIの状態と操作         │
+│ │  └─ Shadow DOM: template、slot、ARIA、CSS   │
+│ └─ Theme: 継承可能な--kata-*トークン          │
+└───────────────────┬──────────────────────────┘
+                    │ HTTP / HTML / Form Data
+┌───────────────────▼──────────────────────────┐
+│ Server                                       │
+│ ├─ URL、認証、認可、業務ルール、入力検証     │
+│ ├─ 排他制御、永続化、監査ログ                 │
+│ └─ 完全HTMLとHTMX用部分HTMLの生成             │
+└──────────────────────────────────────────────┘
 ```
 
----
+## 責務と非責務
 
-## 5. 技術別の責務
+### サーバー
 
-### 5.1 サーバー
+サーバーは業務上の判断と永続状態の正本です。
 
-サーバーは次の責務を持つ。
+- 認証、認可、業務ルール、入力検証、排他制御
+- データベース更新と監査ログ
+- 完全HTMLと部分HTMLの生成
+- エラー分類とCSRF検証
 
-- 認証
-- 認可
-- 業務ルール
-- 入力値検証
-- 排他制御
-- データベース更新
-- 画面表示可否の最終判断
-- 完全HTMLの生成
-- HTMX用部分HTMLの生成
-- エラー分類
-- 監査ログ
-- CSRF検証
+ブラウザ側の表示状態や入力制御だけを、認可や業務判断の根拠にしてはいけません。
 
-ブラウザ側の検証や表示制御だけを、認可・業務判断の根拠としてはならない。
+### HTMX
 
----
+HTMXはサーバー通信とHTML差し替えを担当します。
 
-### 5.2 HTMX
+- ページ遷移、検索、ページング、並べ替え
+- フォーム送信と入力エラーの再表示
+- 一覧、モーダル内容、通知領域の更新
+- URLとブラウザ履歴の更新
 
-HTMXは、サーバー通信とHTML差し替えを担当する。
+HTMXはWeb Component内部のUI状態やShadow DOM内部の深いDOM操作を担当しません。応答は原則としてサーバー生成HTMLとし、部分HTMLへ`script`を含めません。
 
-主な用途は次のとおり。
+### Page Runtime
 
-- ページ遷移
-- 一覧検索
-- ページング
-- 並べ替え
-- フォーム送信
-- 入力エラーの再表示
-- モーダル内容の取得
-- 一覧行の追加・更新・削除
-- サーバー処理後の複数箇所更新
+Page Runtimeは、通信を必要としない画面単位の一時状態を担当します。
 
-サーバーは、HTMXリクエストに対して原則としてJSONではなくHTMLを返す。HTMX公式も、サーバーがHTMLを返す構成を基本モデルとしている。citeturn110004search2
+| 機能 | 担当 |
+| --- | --- |
+| 状態の保持と購読 | `PageState` |
+| `hidden`など表示属性の反映 | `LayoutController` |
+| 画面単位の購読解除 | `PageController` |
 
----
+対象は開閉、選択件数、入力連動、ローディング表示などです。DBデータ、認可情報、ワークフロー状態、独自APIキャッシュ、大規模なグローバルストアは持ちません。通信はHTMXへ統一し、Page Runtimeからの直接`fetch()`はアーキテクチャ例外とします。
 
-### 5.3 Page Runtime
+`PageState.snapshot()`はトップレベルだけを凍結する浅いsnapshotです。ネスト値は直接変更せず、新しい値へ置き換えて`set()`または`update()`します。
 
-Page Runtimeは、通信を必要としない局所的なUI状態を担当する。状態は`PageState`、表示属性の反映は`LayoutController`、画面単位の購読と破棄は`PageController`へ分離する。
+### Web Components
 
-採用対象は次のとおり。
+Web Componentsは、複数画面で再利用し、独立した状態、イベント、初期化または破棄処理を持つUIに使用します。
 
-- 表示・非表示
-- ドロップダウンの開閉
-- タブ切り替え
-- モーダルの開閉
-- 選択件数
-- 入力値に応じた補助表示
-- 確認UI
-- ローディング状態
-- クライアント側プレビュー
+各コンポーネントは次を所有します。
 
-次の状態はPage Runtimeへ持たせない。
+- open Shadow DOM
+- 正規`template`から生成する内部骨格
+- 内部ARIAとイベント処理
+- 接続、切断、再接続可能なライフサイクル
+- `--kata-*`トークンを参照するコンポーネントCSS
 
-- DBデータの正本
-- 認可情報
-- ワークフロー状態
-- 一覧全体の業務データ
-- 複数ページをまたぐ編集状態
-- 独自のAPIキャッシュ
-- 大規模なグローバルストア
+単純な見出し、ラベル、一覧行、通常のボタンは、標準HTMLとCSSを優先します。
 
-Page Runtimeからの直接`fetch()`は原則禁止とし、通信はHTMXへ統一する。HTMLでは成立しない明確な理由がある場合のみ、アーキテクチャ例外として承認する。
+### `template`とslot
 
----
+`template`はWeb Componentの内部骨格と、通信不要の限定的な要素複製に使用します。ページ全体を保持する自作SPA、独自ルーター、サーバーとクライアントによる同一領域の二重生成には使用しません。
 
-### 5.4 Web Components
+利用側との契約は次のとおりです。
 
-Web Componentsは、独立した振る舞いとライフサイクルを持つ再利用UI部品に使用する。
+1. タイトル、ラベル、説明、本文、操作名などの表示データはdefaultまたはnamed `slot`へ渡す
+2. 値、URL、フォーム名、状態、外部ライブラリ設定はCustom Elementの属性へ渡す
+3. 正規`template`はLight DOMの有無にかかわらずShadow DOMへ複製する
+4. slot未指定時だけtemplate内のフォールバック内容を表示する
 
-採用対象の例：
+Light DOMはUI構造の正本ではなく、slotへ投影する利用者データです。外部CSSの通常セレクタをShadow DOM内部へ結合させず、必要な装飾点だけ`part`として公開します。
 
-```html
-<date-range-input></date-range-input>
-<user-autocomplete></user-autocomplete>
-<file-uploader></file-uploader>
-<money-input></money-input>
-```
+## DOMと状態の所有権
 
-採用条件は次のとおり。
-
-- 複数画面で再利用される
-- 内部状態を持つ
-- 初期化・破棄処理がある
-- 属性、プロパティ、イベントによる公開APIを定義できる
-- 内部構造を呼び出し側から隠す価値がある
-
-単純なボタン、見出し、一覧行、ラベル等はWeb Component化しない。
-
----
-
-### 5.5 `template`
-
-`template`は次の用途に限定する。
-
-1. Web Componentの内部HTML構造
-2. 通信不要の明細行追加
-3. 通信不要のウィザード内部ステップ
-4. 通知、ダイアログ等の一時生成
-5. 同一画面内の単純な反復要素
-
-次の用途は禁止する。
-
-- ページ全体を`template`として保持する
-- `history.pushState()`を使用した自作ルーターを作る
-- サーバールーティングと別の画面ルーティングを作る
-- 全画面の`template`を初期HTMLへ埋め込む
-- サーバー生成HTMLとクライアント`template`で同一領域を二重生成する
-
----
-
-### 5.6 Pico CSS
-
-Pico CSSは、次の基本スタイルを提供する。
-
-- タイポグラフィ
-- フォーム
-- ボタン
-- テーブル
-- 基本的な余白
-- コンテナ
-- 配色
-- レスポンシブ対応
-- ライト・ダークテーマ
-
-Pico CSSだけで業務画面全体を完成させようとはせず、次の層を追加する。
-
-```text
-pico.min.css
-  → 標準HTMLの基本スタイル
-
-src/styles/kata-ui.css
-  → tokens.cssと選択可能なTheme CSSの入口
-
-src/styles/tokens.css
-  → Pico CSSとComponent CSSを分離するセマンティック設計変数
-
-src/styles/themes/*.css
-  → data-themeに応じたトークン値
-
-application.css
-  → 画面レイアウト、共通業務スタイル
-
-src/components/*/*.css
-  → 独自コンポーネント
-```
-
-Pico CSS自身も、大規模な画面では追加のCSSまたはSCSS知識が必要な出発点として位置付けられている。citeturn724783view4
-
----
-
-## 6. ページ遷移
-
-### 6.1 基本方式
-
-各画面は、サーバー上に直接アクセス可能なURLを持つ。
-
-```text
-/users
-/users/123
-/orders
-/orders/123
-/orders/123/edit
-```
-
-直接アクセス時には完全HTMLを返し、HTMXリクエスト時には`main`へ挿入する部分HTMLを返す。
-
-```text
-通常リクエスト
-  → レイアウトを含む完全HTML
-
-HX-Request
-  → #app-contentへ挿入する部分HTML
-```
-
-ページ遷移は、HTMXによる`hx-boost`または明示的な`hx-get`、`hx-push-url`を使用する。
-
-URL、履歴、直接アクセス、再読み込み、認証・認可の正本はサーバー側に置く。
-
----
-
-### 6.2 レスポンス契約
-
-同じURLが完全HTMLと部分HTMLを返し分ける場合、次を必須とする。
-
-```http
-Vary: HX-Request
-```
-
-キャッシュによって完全HTMLと部分HTMLが混同されないよう、レスポンスのキャッシュキーを分離する。
-
-認証済み業務画面は、原則として次を指定する。
-
-```http
-Cache-Control: no-store
-```
-
-静的ファイルは、ファイル名へハッシュを付け、長期キャッシュを使用する。
-
----
-
-### 6.3 HTMX差し替え単位
-
-推奨する差し替え単位：
-
-- ページ本体
-- 一覧
-- フォーム
-- 一覧行
-- モーダル内容
-- 通知領域
-- Web Component全体
-
-避ける差し替え単位：
-
-- Web Component内部の深い要素
-- Page Runtimeが一時状態を保持している途中の要素
-- ページ全体の`body`
-- 入力項目一つだけの過度に細かい差し替え
-
-Web Componentを更新するときは、原則としてCustom Element全体を`outerHTML`で交換する。
-
----
-
-## 7. DOMと状態の所有権
-
-### 7.1 必須原則
-
-一つのDOM領域を構造的に生成・再生成する主体は一つとする。
+一つのDOM領域を構造的に生成・再生成する主体は一つにします。
 
 | 領域 | 所有者 |
 | --- | --- |
 | 完全ページ | サーバー |
-| ページ本体 | サーバー＋HTMX |
-| 一覧・検索結果 | サーバー＋HTMX |
+| ページ本体、一覧、検索結果 | サーバーとHTMX |
 | Web Component内部 | Web Component |
-| 局所的な表示状態 | Page Runtime |
-| 通信不要の明細行 | `template`またはWeb Componentのどちらか |
-| モーダル内容 | サーバー＋HTMX |
-| モーダル開閉 | Page RuntimeまたはWeb Component |
+| slotへ渡す利用者データ | 利用側HTML |
+| 通信不要の画面状態 | Page Runtime |
+| 独立部品の内部状態 | Web Component |
 
-同じ一覧について、HTMXによるHTML差し替えとPage Runtimeによる再描画を併用してはならない。
+同じ一覧をHTMXとPage Runtimeの両方で再描画したり、HTMXでShadow DOM内部だけを交換したりしません。Web Componentから外部へ通知するときは`CustomEvent`を発行し、外部DOMを直接変更しません。
 
----
+## ライフサイクルとRuntime
 
-### 7.2 状態の所有者
+共通Runtimeの公開入口は`src/runtime/index.js`です。
 
-```text
-永続的な業務状態
-  → サーバー
-
-局所的な画面状態
-  → Page Runtime
-
-独立部品内部の状態
-  → Web Component
-```
-
-Web Componentから外部へ通知するときは、外部DOMを直接更新せず、`CustomEvent`を発行する。
-
----
-
-## 8. Shadow DOMと利用側契約
-
-Web Componentはopen Shadow DOMを標準とする。内部DOMとComponent CSSを利用ページのセレクタから隔離しつつ、DevTools、イベントのcomposed path、フォーム連携に必要な観測性を保つ。
-
-利用側から渡すデータは次の規則とする。
-
-1. タイトル、ラベル、説明、本文、操作名など利用者に見える表示データはdefaultまたはnamed `slot`
-2. 値、URL、フォーム名、状態、外部ライブラリ設定など、ネイティブ要素またはComponent動作の設定値はCustom Elementの属性
-3. 正規`template`はLight DOMの有無にかかわらずShadow DOMへ必ず複製し、UI構造、CSS、ARIAを所有する
-4. slotにデータがない場合だけ、template内のフォールバック内容を表示する
-
-サイト全体のテーマは、継承可能な`--kata-*` CSSカスタムプロパティでShadow DOMへ伝える。利用側の通常セレクタを内部実装へ結合させない。外部から限定的な装飾点が必要な場合だけ`part`を公開し、`::part()`を契約へ記載する。
-
-HTMXはCustom Element全体、またはslotが所有するLight DOMだけを交換対象とする。Shadow DOM内部の深い要素は交換しない。
-
----
-
-## 9. バージョンおよびクライアント環境
-
-### 9.1 採用バージョン
-
-導入時点の最新安定版を採用する。ただし、本番環境で`latest`やメジャーバージョンだけを指定してはならず、検証済みの完全なバージョン番号へ固定する。
-
-2026年8月7日時点で確認できる安定版は次のとおり。
-
-| ライブラリ | 基準バージョン |
-| --- | ---: |
-| HTMX | 2.0.10 |
-| Pico CSS | 2.1.1 |
-
-HTMX公式ドキュメントは2.0.10を掲載している。citeturn110004search2
-Pico CSS公式リポジトリでは2.1.1が最新リリースとして示されている。citeturn293266search4
-
-実際のプロジェクト開始時には、上記バージョンを再確認する。
-
----
-
-### 9.2 バージョン固定
-
-本番では、次のようにバージョン別ディレクトリへ自ホストする。
+`KataComponent`は初回だけ実行する`mount()`と、再接続可能な`connect()`／`disconnect()`を分離します。Registryはコンポーネントの読込と登録を担当し、`connectedCallback()`を手動実行しません。
 
 ```text
-wwwroot/vendor/
-├─ htmx/2.0.10/htmx.min.js
-└─ pico/2.1.1/pico.min.css
+初回接続: connectedCallback → mount → connect
+切断:     disconnectedCallback → disconnect
+再接続:   connectedCallback → connect
 ```
 
-禁止事項：
+イベントリスナー、timer、observer、外部購読は`disconnect()`で解除できる構造にします。slot由来イベントの対象判定には`event.composedPath()`を使用します。内部制御要素の検索はShadow Rootへ限定し、利用者データを内部要素として誤認しないようにします。
 
-- CDNの`@latest`
-- バージョン番号なしのCDN参照
-- `@2`などメジャーバージョンだけの指定
-- 複数バージョンの混在
-- 検証なしの自動本番更新
+## HTMX連携
 
-CDNを使用する場合は、完全なバージョン固定とSRIを必須とする。ただし、業務システムでは可用性、CSP、サプライチェーン管理を単純にするため、自ホストを標準とする。
+各画面URLは直接アクセス可能な完全HTMLを返し、HTMXリクエストには交換対象の部分HTMLを返します。
 
----
+```text
+通常リクエスト  → レイアウトを含む完全HTML
+HX-Request      → 交換対象の部分HTML
+```
 
-### 9.3 Google Chrome環境
+同じURLで返し分ける場合は`Vary: HX-Request`を設定し、完全HTMLと部分HTMLのキャッシュ混同を防ぎます。認証済み業務画面は、要件に応じて`Cache-Control: no-store`を適用します。
 
-標準クライアントは、企業管理されたGoogle Chrome StableまたはExtended Stableとする。
+推奨する交換単位は、ページ本体、一覧、フォーム、一覧行、モーダル内容、通知領域、Custom Element全体です。Web Componentを更新するときは、原則としてCustom Element全体を交換します。
 
-2026年8月7日時点で公式サイトから確認できる広域StableはChrome 150系であり、Windows/macOSでは`150.0.7871.186/.187`、Linuxでは`150.0.7871.186`である。Chrome 151系は一部利用者向けEarly Stableとして提供されている段階である。citeturn665159search0turn665159search1
+Shadow Root内に`hx-*`があるコンポーネントは、初期化後に`htmx.process(shadowRoot)`を実行します。`HtmxAdapter`はHTMXイベントとRuntimeの境界を担当します。
 
-Chrome Stableは通常、メジャー更新が約4週間ごと、マイナー更新が2〜3週間ごとに行われる。Extended Stableは約8週間ごとの機能更新で、セキュリティ修正は継続して提供される。citeturn846163search12
+## テーマとCSS
 
-初期の受入試験対象は次とする。
+CSSは次の順で責務を分離します。
 
-| 対象 | 方針 |
-| --- | --- |
-| Chrome Stable | 必須対応 |
-| Chrome Extended Stable | 必須対応 |
-| Chrome Stableの一つ前のメジャー | 移行期間として確認 |
-| Chrome Beta | CIまたは事前互換性確認に使用 |
-| Chrome Dev／Canary | 本番対象外 |
-| ChromeOS Stable | 使用端末に含まれる場合は必須 |
-| Android Chrome | モバイル利用が要件にある場合のみ |
-| Android WebView | 原則対象外。必要なら別途バージョン管理 |
-| Internet Explorer | 対象外 |
-| 古い埋め込みChromium | 対象外 |
+```text
+Pico CSS（任意）
+  → src/styles/tokens.css
+  → src/styles/themes/theme-*.css
+  → src/components/*/*.css
+  → 利用アプリケーションCSS
+```
 
-HTMX 2.xはInternet Explorer対応を終了しているため、Internet Explorerは対象外とする。citeturn110004search19
+コンポーネントCSSは色、境界、フォーカス、影、角丸を`--kata-*`セマンティックトークン経由で参照します。特定の`data-theme`へ分岐せず、内部クラス名を外部CSS APIにしません。テーマの追加方法は[テーマ設計](./theming/theming.md)を参照してください。
 
-Pico CSSは最新安定版のChrome、Firefox、Edge、Safariをテスト対象としているため、古いChromeを長期間固定する運用は保証対象外とする。citeturn724783view4
+## セキュリティ境界
 
----
+このリポジトリはUI資産を提供します。利用アプリケーションは次を実装・検証する必要があります。
 
-### 9.4 Chrome更新ポリシー
-
-- Chromeの自動更新を有効にする
-- StableまたはExtended Stableを使用する
-- バージョンを無期限に固定しない
-- 新メジャーバージョン公開前にBetaで主要E2Eテストを実行する
-- 新バージョン展開後、主要業務フローを再確認する
-- ブラウザ起因の障害に備え、直前メジャーでの再現確認手段を残す
-
----
-
-## 10. セキュリティ設計
-
-### 10.1 基本方針
-
-次をセキュリティ上の必須事項とする。
-
-- サーバー側HTMLエスケープ
-- CSRF対策
+- サーバーテンプレートのHTMLエスケープ
+- CSRF対策と更新系リクエストの検証
 - Content Security Policy
 - 同一オリジン通信
-- 認証Cookieの保護
-- HTMX履歴キャッシュ制御
-- 部分HTML内の`script`禁止
-- Page RuntimeによるHTML文字列評価の禁止
-- 独自JavaScriptでの`innerHTML`禁止
-- 外部URLへのHTMXリクエスト禁止
-- 依存ライブラリの固定と脆弱性監視
+- 認証Cookieの`Secure`、`HttpOnly`、適切な`SameSite`
+- 認証切れ、権限不足、排他競合、通信失敗の共通処理
+- HTMX履歴キャッシュと認証済みHTMLの扱い
 
----
+禁止事項は次のとおりです。
 
-### 10.2 XSS対策
+- ユーザー入力を使う`innerHTML`や`insertAdjacentHTML()`
+- `eval()`、`new Function()`、インラインイベント属性
+- 部分HTML内の`script`
+- 外部オリジンへの無承認`hx-*`リクエスト
+- ブラウザ表示だけに依存する認可
+- CDNの浮動バージョン
 
-サーバーテンプレートエンジンの自動エスケープを有効にする。
+認証切れ時にログイン画面のHTMLを現在領域へ部分挿入せず、完全ページ遷移へ切り替えます。
 
-禁止する実装：
+### HTMXの初期設定
 
-```javascript
-element.innerHTML = userInput;
-```
-
-```javascript
-element.insertAdjacentHTML("beforeend", userInput);
-```
-
-Ajaxレスポンス内に`script`タグを含めてはならない。
-
-HTMLを許容する業務要件がある場合は、許可タグと許可属性を限定したサーバー側サニタイザーを使用し、個別のセキュリティレビューを行う。
-
----
-
-### 10.3 Page RuntimeとCSP
-
-Page RuntimeはJavaScript moduleとして配布し、HTML属性内の式評価、`eval()`、`new Function()`を使用しない。
-
-画面固有処理は`PageController`へ明示的に登録し、CSPでインラインscriptとインラインイベント属性を禁止する。
-
----
-
-### 10.4 HTMX設定
-
-初期設定は次を基準とする。
+利用アプリケーションでは、必要なHTMX機能との互換性を確認したうえで、次を初期基準とします。
 
 ```html
 <meta
@@ -548,20 +212,15 @@ Page RuntimeはJavaScript moduleとして配布し、HTML属性内の式評価�
     "historyRestoreAsHxRequest": false,
     "reportValidityOfForms": true,
     "includeIndicatorStyles": false
-  }'>
+  }'
+>
 ```
 
-`allowEval: false`は、利用するHTMX機能が評価系機能へ依存しないことを確認して採用する。
+認証済みHTMLをブラウザストレージへ残さないため、履歴キャッシュは初期状態で無効にします。必要に応じて有効化する場合は、保存されるHTMLと機密情報の境界を個別に評価します。
 
-HTMXには、同一ドメイン通信、動的コンテンツ内の`script`処理、履歴キャッシュ等を制御する設定がある。履歴キャッシュはHTMLをブラウザの`localStorage`へ保存するため、認証済み業務画面では初期段階から無効にする。citeturn846163search15turn110004search1
+### CSPとHTTPヘッダー
 
-HTMX内蔵のインジケーターCSSは使用せず、`application.css`に明示的に定義する。
-
----
-
-### 10.5 Content Security Policy
-
-初期方針は次を基準とし、実際の利用リソースに合わせて調整する。
+初期CSPは同一オリジンを基本とし、実際の利用リソースに合わせて狭く調整します。
 
 ```http
 Content-Security-Policy:
@@ -577,479 +236,147 @@ Content-Security-Policy:
   frame-ancestors 'none';
 ```
 
-本番適用前に、ステージング環境で`Content-Security-Policy-Report-Only`を使用し、違反を収集する。
+本番適用前にReport-Onlyで違反を収集します。`unsafe-eval`は許可せず、`unsafe-inline`が必要な場合は利用箇所、理由、代替不能性をADRへ記録します。
 
-`unsafe-eval`は許可しない。`unsafe-inline`も原則として許可せず、必要な場合は利用箇所と理由をADRへ記録する。
+最低限、HSTS、`X-Content-Type-Options: nosniff`、`Referrer-Policy`、必要機能だけを許可する`Permissions-Policy`を検討します。具体値は利用アプリケーションの公開範囲と運用基準で確定します。
 
----
-
-### 10.6 CSRF
-
-更新系リクエストには、使用するサーバーフレームワークのCSRF対策を適用する。
-
-- CSRFトークンをフォームへ埋め込む
-- または共通ヘッダーとして付与する
-- サーバーで必ず検証する
-- GETで状態を変更しない
-- Cookieに`Secure`、`HttpOnly`、適切な`SameSite`を設定する
-
-HTMX経由のフォーム送信も通常フォームと同一のCSRF保護対象とする。
-
----
-
-### 10.7 セキュリティ関連ヘッダー
-
-最低限、次を設定する。
-
-```http
-Strict-Transport-Security: max-age=31536000; includeSubDomains
-X-Content-Type-Options: nosniff
-Referrer-Policy: strict-origin-when-cross-origin
-Permissions-Policy: 必要な機能だけ許可
-```
-
-クリックジャッキング対策はCSPの`frame-ancestors`を正本とする。
-
----
-
-### 10.8 認証切れ・権限エラー
-
-部分HTMLリクエスト中に認証が切れた場合、ログイン画面のHTMLを現在の画面へ部分挿入してはならない。
-
-認証切れ時は、共通ハンドラーによって完全ページ遷移させる。
-
-標準エラー分類：
+### エラー応答
 
 | 状態 | 処理 |
 | --- | --- |
-| 入力エラー | フォーム部分HTMLを再表示 |
-| 未認証 | ログイン画面へ完全遷移 |
-| 権限不足 | 403画面または共通通知 |
-| 排他競合 | 最新情報と再操作手順を表示 |
-| サーバーエラー | 共通エラー領域を表示 |
-| 通信エラー | 再試行可能な通知 |
-| タイムアウト | 処理結果確認を案内し、安易に再送しない |
+| 入力エラー | フォーム部分HTMLを再表示し、入力値とエラー関係を保つ |
+| 未認証 | ログイン画面へ完全遷移する |
+| 権限不足 | 403画面または共通通知を返す |
+| 排他競合 | 最新情報と再操作手順を表示する |
+| サーバーエラー | 共通エラー領域へ安全な情報だけを表示する |
+| 通信エラー | 再試行可能性を明示する |
+| タイムアウト | 処理結果の確認を案内し、安易な再送を避ける |
 
----
+通常GETと`HX-Request`付きGETの双方について、完全HTML／部分HTML、HTTP status、`Vary`、`script`不在、認証切れ応答を契約テストします。
 
-## 11. アーキテクチャ規約
+## アクセシビリティ
 
-規約の強度を次の3段階で定義する。
+コンポーネントの正規`template`が、ネイティブ要素、role、ARIA関係、初期フォーカスを所有します。利用アプリケーションはHTMXによる画面更新時に次を補います。
 
-- **MUST**：違反を認めない
-- **SHOULD**：原則として従う。例外は理由を記録する
-- **MAY**：必要に応じて選択できる
-
-### 11.1 MUST
-
-1. 各画面URLは直接アクセス可能な完全HTMLを返す
-2. ページ遷移にはHTMXを使用する
-3. ページ全体の`template` SPAを作らない
-4. 業務状態の正本はサーバーに置く
-5. 一つのDOM領域を複数技術で再生成しない
-6. Page Runtimeは局所的なUI状態だけを管理する
-7. Web Componentはopen Shadow DOMを標準とし、属性・slot・templateの入力規約を守る
-8. Ajaxレスポンスへ`script`タグを含めない
-9. 部分HTMLを返すURLは直接アクセス時に完全HTMLを返せること
-10. 完全HTMLと部分HTMLを返し分ける場合は`Vary: HX-Request`を設定する
-11. ライブラリのバージョンを完全固定する
-12. XSS、CSRF、CSP、認証切れ処理を実装する
-13. ユーザー入力に対する`innerHTML`を使用しない
-14. HTMXリクエストは同一オリジンに限定する
-15. 複雑な例外はADRへ記録する
-
-### 11.2 SHOULD
-
-1. Web Componentsは複数画面で再利用する独立UIに限定する
-2. 通信はHTMXへ統一する
-3. PageStateは画面単位の一時状態に限定する
-4. PageControllerは購読解除可能な処理だけを登録する
-5. Web Componentから外部へは`CustomEvent`で通知する
-6. 標準HTML入力要素を優先する
-7. Web Componentは内部に通常の`input`を持たせる
-8. Pico CSSの変数を`tokens.css`で上書きする
-9. HTMX差し替えは業務上意味のある単位とする
-10. 静的ファイルを自ホストする
-
-### 11.3 原則禁止
-
-- 自作SPAルーター
-- `history.pushState()`、`replaceState()`の直接利用
-- Shadow DOM内部を前提とする外部CSSセレクタ
-- Page Runtimeからの無承認`fetch()`
-- インラインイベント属性
-- 部分HTML内の`script`
-- CDNの浮動バージョン
-- 同一領域でのHTMXとPage Runtimeの二重描画
-- Web Component内部の深い要素をHTMXで直接交換
-- サーバー側認可を省略した表示制御
-- JavaScript文字列によるHTML組み立て
-
----
-
-## 12. 規約の自動検証
-
-すべての設計意図を完全に自動判定することはできないが、構文上確認できる規約はCIで検証する。
-
-### 12.1 静的解析
-
-| 検査対象 | 検査内容 |
+| 操作 | 必要な対応 |
 | --- | --- |
-| HTML・サーバーテンプレート | インライン式評価禁止 |
-| HTML・サーバーテンプレート | インラインイベント属性禁止 |
-| 部分ビュー | `script`タグ禁止 |
-| HTML | 外部オリジンへの`hx-get`、`hx-post`禁止 |
-| JavaScript | `innerHTML`、`insertAdjacentHTML`の制限 |
-| JavaScript | `fetch()`の利用箇所制限 |
-| JavaScript | `pushState()`、`replaceState()`禁止 |
-| Web Components | 共通Shadow DOM初期化、template／slot契約 |
-| JavaScript | `eval()`、`Function()`禁止 |
-| Web Components | `customElements.define()`の重複検査 |
-| 依存関係 | 完全バージョン固定 |
-| CSS | `!important`、過度な詳細度等の検査 |
-
-実装方法は次を組み合わせる。
-
-- ESLint
-- Stylelint
-- HTMLHintまたはHTML ASTベースの独自検査
-- Semgrep等のパターン検査
-- サーバーテンプレート向け独自アーキテクチャLint
-- lockfile検査
-
----
-
-### 12.2 独自アーキテクチャLint
-
-プロジェクト固有のCLIを一つ用意し、次を検査する。
-
-```text
-architecture-lint
-├─ partialにscriptがない
-├─ インライン式評価がない
-├─ 外部URLのhx-*がない
-├─ page templateによるSPA構造がない
-├─ pushState利用がない
-├─ Shadow DOM共通初期化と:hostスタイルがある
-├─ Web Component名と定義が対応している
-├─ vendorバージョンとmanifestが一致する
-└─ 禁止APIの利用がない
-```
-
-例外はコード内コメントで抑制せず、次のような中央管理ファイルで承認する。
-
-```yaml
-architecture-exceptions:
-  - rule: no-shadow-dom
-    target: js/components/external-map.js
-    adr: ADR-0012
-    expires: 2027-03-31
-```
-
-例外には、理由、承認者、ADR、期限を必須とする。
-
----
-
-### 12.3 サーバーレスポンス契約テスト
-
-各画面URLについて、次を自動検証する。
-
-```text
-通常GET
-  → <!doctype html>を含む完全HTML
-  → main#app-contentが存在
-  → HTTP 200
-
-HX-Request付きGET
-  → 差し替え対象の部分HTML
-  → 不要なhtml/head/bodyを含まない
-  → scriptタグを含まない
-  → Vary: HX-Requestが存在
-```
-
-認証切れ、403、404、422、500についても、HTMXリクエスト時のレスポンス契約を検証する。
-
----
-
-### 12.4 E2Eテスト
-
-Playwrightを使用し、Google Chromeチャネルで次を自動実行する。
-
-1. URL直接アクセス
-2. HTMXページ遷移
-3. ブラウザの戻る・進む
-4. 再読み込み
-5. 検索・ページング
-6. 登録・編集・削除
-7. 入力エラー
-8. 認証切れ
-9. 排他競合
-10. HTMX差し替え後のPage Runtime動作
-11. Web Component再接続時のイベント重複
-12. CSP違反の有無
-13. JavaScript例外の有無
-14. キーボード操作
-15. フォーカス移動
-
-Chrome Stableを必須ジョブとし、Chrome Betaで定期的な先行互換性試験を実施する。
-
----
-
-### 12.5 アクセシビリティ検査
-
-自動検査にはaxe-core等を使用し、次を確認する。
-
-- ラベル
-- 見出し構造
-- 色コントラスト
-- ARIA属性
-- キーボード操作
-- フォーカス可能要素
-- 重複ID
-
-ただし、動的更新後の読み上げ、フォーカス復帰、操作の理解可能性は自動検査だけでは保証できないため、主要画面について手動試験を併用する。
-
----
-
-### 12.6 依存関係検査
-
-- RenovateまたはDependabotで更新候補をPR化する
-- 本番へ自動マージしない
-- lockfileまたはvendor manifestを検査する
-- 既知脆弱性をCIで検査する
-- ライセンスを記録する
-- 更新前後でE2Eテストを実行する
-- HTMX、Common Runtime、Pico CSSを同時に大規模更新しない
-
----
-
-## 13. テスト戦略
-
-| レイヤー | 主な検証内容 |
-| --- | --- |
-| ドメイン・アプリケーション | 業務ルール、認可、排他 |
-| サーバーHTML | 完全HTML、部分HTML、エスケープ |
-| レスポンス契約 | HX-Request、Vary、エラー |
-| Web Component | 初期化、再接続、属性変更、イベント |
-| Page Runtime | 局所状態、開閉、入力連動、購読解除 |
-| HTMX | target、swap、履歴、エラー処理 |
-| セキュリティ | CSP、CSRF、XSS、Cookie |
-| E2E | 主要業務フロー |
-| アクセシビリティ | キーボード、フォーカス、通知 |
-
-特に次を回帰テストの必須ケースとする。
-
-- HTMX遷移後もPage Runtimeが再接続される
-- Web Componentが再挿入されてもイベントが二重登録されない
-- 戻る・進むで正しい画面が復元される
-- 認証切れ時にログインHTMLが部分挿入されない
-- 入力エラー後に入力値が保持される
-- Web Component全体の交換後に状態が整合する
-- CSP違反が発生しない
-
----
-
-## 14. アクセシビリティ
-
-HTMXによる画面差し替えでは、次を明示的に実装する。
-
-| 操作 | 対応 |
-| --- | --- |
-| ページ相当の遷移 | `main`または先頭見出しへフォーカス |
-| ページ遷移 | `document.title`更新 |
+| ページ相当の遷移 | `document.title`更新と`main`または見出しへのフォーカス |
 | 検索結果更新 | 件数を`aria-live`で通知 |
 | 保存成功 | 成功通知を読み上げ対象にする |
 | 入力エラー | エラー概要と項目を関連付ける |
 | モーダル | 初期フォーカス、フォーカストラップ、復帰 |
-| 削除 | 次の操作対象へフォーカス |
-| 通信中 | `aria-busy`または状態テキスト |
 
-独自入力部品では、可能な限り内部にネイティブな`input`、`select`、`button`を使用する。
+自動検査だけでは動的更新後の読み上げや操作の理解可能性を証明できないため、主要画面はキーボードと支援技術を含む手動試験を併用します。
 
----
+## 依存関係とブラウザ
 
-## 15. 性能設計
+検証済み依存バージョンと対象ブラウザは[architecture-manifest.json](./architecture-manifest.json)を正本とします。実装や文書へ時点依存のバージョンを重複記載しません。
 
-- 初期HTMLへ全画面の`template`を埋め込まない
-- 共通利用しないWeb Componentを全ページで読み込まない
-- ページ固有JavaScriptは必要な画面だけ読み込む
-- 静的ファイルへハッシュを付与する
-- gzipまたはBrotliを有効にする
-- 一覧にはページングを使用する
-- 大量DOM生成を避ける
-- HTMXの差し替え範囲を適切な大きさにする
-- Web Component内部で不要な再描画を行わない
-- Page Runtimeで大量DOMを再生成しない
+- 本番は完全バージョンへ固定する
+- CDNの`latest`やメジャーバージョンだけの指定を使わない
+- 更新候補はテスト後に取り込む
+- 複数の主要依存を一度に大規模更新しない
+- 静的ファイルの自ホストを基本とする
 
----
+## 検証戦略
 
-## 16. ログおよび監視
-
-サーバーログには次を記録する。
-
-```text
-request-id
-trace-id
-user-id
-URL
-HTTP method
-HX-Request
-HX-Target
-HX-Trigger
-response status
-response time
-business result
-exception category
+```powershell
+npm run check
 ```
 
-ブラウザ側では次を収集する。
+リポジトリ内の`npm run check`は、アーキテクチャLintとNode.jsテストを実行します。
 
-- 未処理JavaScript例外
-- HTMX通信エラー
-- Web Component初期化エラー
-- CSP違反
-- 想定外のレスポンス
-- 現在URL
-- サーバーから返された相関ID
-
-個人情報、認証トークン、入力内容全体をログへ記録してはならない。
-
----
-
-## 17. 依存ライブラリ更新方針
-
-「最新版を採用する」は、常に自動的に最新版へ追従することを意味しない。
-
-次の運用とする。
-
-```text
-導入時
-  → 最新安定版を調査
-  → Chrome環境で検証
-  → 完全バージョン固定
-  → 本番リリース
-
-運用中
-  → 更新候補を自動検出
-  → 変更内容を確認
-  → CI・E2E実行
-  → ステージング確認
-  → 本番適用
-```
-
-更新周期：
-
-- 重大なセキュリティ更新：優先対応
-- パッチ更新：月次確認
-- マイナー更新：四半期単位で検討
-- メジャー更新：個別計画とADRを作成
-
----
-
-## 18. 主なリスクと対策
-
-| リスク | 対策 |
+| レイヤー | 主な検証 |
 | --- | --- |
-| HTMX、Page Runtime、Web Componentsの責務重複 | DOM・状態所有者を規約化 |
-| 自由なHTML属性記述による属人化 | アーキテクチャLint |
-| PageControllerの肥大化 | 画面単位のControllerへ分割 |
-| Web Componentの乱立 | 採用条件を明示 |
-| HTMX履歴への機密情報保存 | 履歴キャッシュを無効化 |
-| 部分HTMLと完全HTMLのキャッシュ混同 | `Vary: HX-Request` |
-| 認証切れ画面の部分挿入 | 共通エラーハンドラー |
-| XSS | 自動エスケープ、HTML文字列評価禁止、CSP |
-| Chrome自動更新による不具合 | Stable＋Betaの継続E2E |
-| Pico CSSだけでは不足 | 独自CSS層を正式に許可 |
-| 規約だけで形骸化 | CIで自動検査 |
-| 自動検査できない設計違反 | コードレビューとADR |
+| アーキテクチャLint | 成果物、命名、template／slot、禁止API、CSSスコープ、依存バージョン |
+| コンポーネントテスト | 初期化、属性反映、イベント、切断、再接続 |
+| サーバー契約テスト | 完全HTML、部分HTML、`Vary`、エラー応答、エスケープ |
+| ブラウザE2E | HTMX差し替え、履歴、Shadow DOM、フォーカス、主要業務フロー |
+| アクセシビリティ | 自動検査、キーボード、読み上げ、フォーカス復帰 |
 
----
+Node.jsテストだけでブラウザDOM、HTMX、フォーカス、アクセシビリティを完全には証明しません。特にShadow DOM内HTMX、slot由来イベント、切断後の再接続は実ブラウザでも確認します。
 
-## 19. 成功条件
+## 性能、ログ、運用
 
-本アーキテクチャの成功条件は、使用技術の数ではなく、各技術の適用範囲を狭く維持できることである。
+### 性能
 
-特に次を継続して守る。
+- 初期HTMLへ全画面のtemplateを埋め込まない
+- 利用しないコンポーネント資産を全ページで読み込まない
+- 静的ファイルを圧縮し、適切なキャッシュを設定する
+- 大量一覧はページングし、過剰なDOM生成を避ける
+- HTMXの交換範囲を業務上意味のある単位にする
+- Page RuntimeとWeb Componentで不要な再描画を行わない
 
-1. サーバーを業務状態の正本とする
-2. ページ遷移をHTMXへ統一する
-3. Page Runtimeを局所状態に限定する
-4. Web Componentsを独立UI部品に限定する
-5. `template`をページルーターとして使用しない
-6. 一つのDOM領域の所有者を一つにする
-7. セキュリティ設定を初期実装に含める
-8. 規約違反をCIで検出する
-9. ライブラリとブラウザの更新を継続的に検証する
-10. 例外はADRと期限付き許可リストで管理する
+lazy loadは初期転送量を減らす一方、Loader、失敗処理、テスト対象を増やします。対象資産が小さい場合は静的読込を優先します。
 
----
+### ログ
 
-## 20. 導入手順
-
-### フェーズ1：基盤
-
-- Pico CSS
-- `tokens.css`
-- `application.css`
-- HTMX
-- Common Web Component Runtime
-- 共通レイアウト
-- CSP
-- CSRF
-- 共通エラー処理
-
-### フェーズ2：ページ遷移
-
-- 完全HTMLと部分HTMLの返却
-- HTMXページ遷移
-- `Vary: HX-Request`
-- 履歴・戻る・進む
-- フォーカス制御
-
-### フェーズ3：局所UI
-
-- Page Runtimeによる開閉・入力連動
-- Web Components
-- `template`
-- CustomEvent
-
-### フェーズ4：自動検証
-
-- ESLint
-- Stylelint
-- アーキテクチャLint
-- レスポンス契約テスト
-- Playwright
-- axe-core
-- 依存関係検査
-
-### フェーズ5：運用
-
-- Chrome Stable／Betaでの定期試験
-- CSPレポート監視
-- 依存ライブラリ更新
-- 例外ADRの棚卸し
-- 規約違反状況の確認
-
----
-
-## 21. 最終提案
-
-本システムの標準アーキテクチャとして、次を採用する。
+サーバーログは、秘密情報や入力内容全体を記録せず、必要に応じて次を関連付けます。
 
 ```text
-サーバー主導型MPA
-  ＋ HTMXによるページ遷移と部分更新
-  ＋ Page Runtimeによる局所的なUI状態
-  ＋ Shadow DOM Web Componentsによる再利用UI
-  ＋ templateによる部品構造と通信不要の複製
-  ＋ Pico CSSおよび業務固有CSS
-  ＋ CSP、CSRF、XSS対策
-  ＋ アーキテクチャLintとE2Eによる規約検証
+request-id / trace-id / user-id
+URL / HTTP method / response status / response time
+HX-Request / HX-Target / HX-Trigger
+business result / exception category
 ```
 
-`template`によるページ全体の自作SPAは採用しない。
+ブラウザ側では、未処理例外、HTMX通信エラー、コンポーネント初期化エラー、CSP違反、想定外応答を、サーバーの相関IDと結び付けられるようにします。
 
-設計上の自由度は、アーキテクチャドキュメント、MUST／SHOULD規約、ADR、期限付き例外、CI検査によって制御する。
+### 依存更新
 
-本構成は、フロントエンド専用の大規模フレームワークを導入せず、URL、HTML、フォーム、サーバールーティングというWeb標準を維持しながら、業務システムに必要な操作性と保守性を確保する案とする。
+更新候補はRenovateやDependabotなどで可視化できますが、本番へ自動マージしません。
+
+- 重大なセキュリティ更新は優先して評価する
+- パッチ更新は定期確認する
+- マイナー／メジャー更新は変更点と移行影響を確認する
+- 更新前後でアーキテクチャLint、単体テスト、ブラウザE2Eを実行する
+- 既知脆弱性とライセンスを確認する
+
+利用アプリケーションの標準ブラウザは、組織管理されたChrome Stableを基準とします。更新を無期限に固定せず、必要に応じてBetaで主要フローを先行確認します。
+
+## 設計規約
+
+### MUST
+
+1. 業務状態の正本をサーバーに置く
+2. 一つのDOM領域を複数技術で再生成しない
+3. Web Componentはopen Shadow DOMと正規`template`を使用する
+4. 表示データはslot、構成値は属性へ渡す
+5. Custom Elementのライフサイクルを手動実行しない
+6. 外部通知には`CustomEvent`を使用する
+7. 部分HTMLへ`script`を含めない
+8. 完全HTMLと部分HTMLを返し分ける場合はキャッシュキーを分離する
+9. 依存バージョンを完全固定する
+10. XSS、CSRF、CSP、認証切れを利用アプリケーションで扱う
+
+### SHOULD
+
+1. Web Componentsは独立した再利用UIに限定する
+2. 通信はHTMXへ統一する
+3. Page Runtimeは画面単位の一時状態に限定する
+4. 内部制御要素はShadow Rootから検索する
+5. HTMXは業務上意味のある単位で差し替える
+6. 標準HTML入力要素を優先する
+7. 静的ファイルを自ホストする
+
+例外が必要な場合は、理由、影響、承認、期限をADRまたは中央管理された例外記録へ残します。
+
+## 成功条件
+
+本アーキテクチャの成功条件は、技術の数ではなく、それぞれの適用範囲を狭く維持できることです。
+
+1. サーバーが業務状態の正本である
+2. HTMXが通信とHTML更新を所有する
+3. Page Runtimeが通信不要の画面状態だけを持つ
+4. Web Componentsが独立UIの内部だけを所有する
+5. templateとslotの契約が実装・仕様・テストで一致する
+6. セキュリティ境界を利用アプリケーションが補完する
+7. 規約違反をCIとレビューで継続的に検出する
+
+## 導入順序
+
+1. Pico CSS、トークン、共通レイアウト、CSP、CSRF、エラー処理を整える
+2. 完全HTMLと部分HTMLの応答契約、HTMX遷移、履歴、フォーカスを確立する
+3. Page Runtimeと必要最小限のWeb Componentsを導入する
+4. アーキテクチャLint、レスポンス契約テスト、ブラウザE2E、アクセシビリティ検査をCIへ追加する
+5. ブラウザ更新、CSP違反、依存更新、例外ADRを継続的に棚卸しする
