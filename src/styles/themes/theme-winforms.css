@@ -1,7 +1,7 @@
 :root[data-theme="winforms"] {
   color-scheme: light;
   --kata-font-family: "Segoe UI", "Yu Gothic UI", Meiryo, sans-serif;
-  --kata-font-size-root: 12px;
+  /* --kata-font-size-root: 12px; */
   --kata-font-size-xs: 11px;
   --kata-font-size-sm: 12px;
   --kata-font-size-md: 12px;

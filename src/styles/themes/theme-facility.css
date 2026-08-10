@@ -1,7 +1,7 @@
 :root[data-theme="facility"] {
   color-scheme: light;
   --kata-font-family: "MS Gothic", "ＭＳ ゴシック", "Yu Gothic UI", sans-serif;
-  --kata-font-size-root: 14px;
+  /* --kata-font-size-root: 14px; */
   --kata-font-size-xs: 12px;
   --kata-font-size-sm: 14px;
   --kata-font-size-md: 14px;
