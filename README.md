@@ -257,6 +257,18 @@ Node.jsテストだけでは、実ブラウザ上のHTMX、Shadow DOM、フォ�
 - ブラウザのアクセシビリティと主要業務フローは自動テストだけで完結しない
 - 依存ライブラリの検証基準は[architecture-manifest.json](./architecture-manifest.json)を正本とする
 
+## 公開前監査
+
+公開前には、Git Bash、WSL、macOS、LinuxなどのBash環境から次を実行します。
+
+```bash
+bash public-audit.sh
+```
+
+監査は、実行環境、gitleaksによる現行ファイルとGit履歴の秘密情報、危険ファイル、READMEとLICENSE、`docs/`の設計文書、`package.json`のname／version／license／`scripts.check`、各`kata-*`コンポーネントのspec／template／JavaScript／CSS／test／examplesを確認します。Node.jsプロジェクトでは、lockfileを使った`npm ci`と正式な検証入口である`npm run check`も実行します。
+
+結果は`public-audit-report.txt`へ保存されます。`FAIL`は公開を停止する条件です。`WARN`は検査ツール不足や任意成果物の不足を表すため、理由を確認して手動レビューで判断します。特にgitleaksがない環境では秘密情報検査が省略されるため、公開可否を確定してはいけません。
+
 ## License
 
 [MIT](./LICENSE)
