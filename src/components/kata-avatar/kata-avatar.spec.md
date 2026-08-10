@@ -1,6 +1,6 @@
 # kata-avatar
 
-`<kata-avatar>`は、画像または短い代替文字を円形のアバターとして表示するopen Shadow DOM Custom Elementです。共通規約は[コンポーネント設計](../../../component_architecture.md)を参照してください。
+`<kata-avatar>`は、画像または短い代替文字を円形のアバターとして表示するopen Shadow DOM Custom Elementです。共通規約は[コンポーネント設計](../../../docs/components.md)を参照してください。
 
 ## 利用例
 

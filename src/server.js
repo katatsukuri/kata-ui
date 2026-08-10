@@ -11,15 +11,16 @@ const DEFAULT_HOST = '127.0.0.1';
 const DEFAULT_PORT = 3000;
 const PUBLIC_ROOT_FILES = new Set([
   'architecture-manifest.json',
-  'architecture.md',
-  'component_architecture.md',
+  'docs/architecture.md',
+  'docs/components.md',
+  'docs/theming.md',
   'docs.css',
   'docs.html',
   'index.html',
   'LICENSE',
   'README.md',
 ]);
-const PUBLIC_DIRECTORIES = new Set(['assets', 'src', 'theming']);
+const PUBLIC_DIRECTORIES = new Set(['assets', 'src']);
 
 const MIME_TYPES = {
   '.css': 'text/css; charset=utf-8',

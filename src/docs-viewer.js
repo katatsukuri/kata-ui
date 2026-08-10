@@ -1,8 +1,8 @@
 const CORE_DOCUMENTS = new Set([
   'README.md',
-  'architecture.md',
-  'component_architecture.md',
-  'theming/theming.md',
+  'docs/architecture.md',
+  'docs/components.md',
+  'docs/theming.md',
 ]);
 
 const statusElement = document.querySelector('[data-docs-status]');

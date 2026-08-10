@@ -28,7 +28,15 @@ test('docs server serves the repository index and component assets', async (t) =
   assert.equal(docsResponse.status, 200);
   assert.match(await docsResponse.text(), /data-docs-content/);
 
-  const themeGuideResponse = await fetch(`${origin}/theming/theming.md`);
+  const architectureGuideResponse = await fetch(`${origin}/docs/architecture.md`);
+  assert.equal(architectureGuideResponse.status, 200);
+  assert.match(architectureGuideResponse.headers.get('content-type'), /^text\/markdown/);
+
+  const componentGuideResponse = await fetch(`${origin}/docs/components.md`);
+  assert.equal(componentGuideResponse.status, 200);
+  assert.match(componentGuideResponse.headers.get('content-type'), /^text\/markdown/);
+
+  const themeGuideResponse = await fetch(`${origin}/docs/theming.md`);
   assert.equal(themeGuideResponse.status, 200);
   assert.match(themeGuideResponse.headers.get('content-type'), /^text\/markdown/);
 
@@ -65,6 +73,15 @@ test('docs server supports HEAD and blocks files outside the public surface', as
 
   const repositoryMetadataResponse = await fetch(`${origin}/.git/config`);
   assert.equal(repositoryMetadataResponse.status, 403);
+
+  for (const previousDocumentPath of [
+    '/architecture.md',
+    '/component_architecture.md',
+    '/theming/theming.md',
+  ]) {
+    const previousDocumentResponse = await fetch(`${origin}${previousDocumentPath}`);
+    assert.equal(previousDocumentResponse.status, 403);
+  }
 });
 
 test('docs server preserves kata-table example APIs', async (t) => {
