@@ -1,68 +1,55 @@
-# kata-chart contract
+# kata-chart
 
-`<kata-chart>` は Chart.js を使用したグラフ描画 Custom Element です。  
-`data` 属性（JSON）または `setData()` メソッドでデータを渡すと、template内の `<canvas>` へグラフを描画します。
+`<kata-chart>`は、利用側が読み込んだChart.jsを使ってShadow DOM内のcanvasへグラフを描画するCustom Elementです。Chart.jsは本コンポーネントへ同梱しません。
 
-## 必須条件
-
-1. 画面内に `id="kata-chart-template"` を持つ `<template>` が存在すること
-2. template内に `data-chart-canvas` 属性を持つ `<canvas>` が存在すること
-3. `type` 属性でグラフ種別を指定すること（未指定時は `bar`）
-4. `data` 属性に Chart.js の `data` オブジェクト（JSON 文字列）を渡すこと
-5. ページに Chart.js が読み込まれていること（`window.Chart` で解決）
-
-## 属性
-
-| 属性 | 型 | デフォルト | 説明 |
-|---|---|---|---|
-| `type` | string | `bar` | Chart.js のグラフ種別（`bar`, `line`, `pie`, `doughnut`, `radar`, `polarArea`, `bubble`, `scatter`） |
-| `data` | string (JSON) | — | Chart.js `data` オブジェクトの JSON 文字列 |
-| `options` | string (JSON) | `{}` | Chart.js `options` オブジェクトの JSON 文字列 |
-| `template` | string | `kata-chart-template` | 使用するtemplateのID |
-
-## メソッド
-
-| メソッド | 説明 |
-|---|---|
-| `setData(data)` | グラフデータを更新して再描画する |
-| `setOptions(options)` | グラフオプションを更新して再描画する |
-| `destroy()` | Chart.js インスタンスを破棄する |
-
-## observedAttributes
-
-`type`, `data`, `options` 属性の変更は `attributeChangedCallback` で検知され、グラフが自動的に更新されます。
-
-## 例
+## 利用例
 
 ```html
-<template id="kata-chart-template">
-  <canvas data-chart-canvas></canvas>
-</template>
-
 <kata-chart
   type="bar"
   data='{
     "labels": ["1月", "2月", "3月"],
-    "datasets": [{
-      "label": "売上",
-      "data": [100, 200, 150]
-    }]
+    "datasets": [{ "label": "売上", "data": [100, 200, 150] }]
   }'
-></kata-chart>
-
-<script type="module" src="/kata-ui/src/components/kata-chart/kata-chart.js"></script>
+>
+  <span slot="fallback">グラフを表示できません。</span>
+</kata-chart>
 ```
 
-## エラー条件
+## 必須要件
 
-- `data` 属性に不正な JSON が渡された場合、コンソールにエラーを出力してグラフを描画しない
-- Chart.js（`window.Chart`）が見つからない場合、コンソールにエラーを出力する
-- 対応するtemplateまたは`data-chart-canvas`が見つからない場合、初期化時にエラーを送出する
-## Shadow DOM・slot・属性契約
+- `kata-chart-template`がある
+- template内に`canvas[data-chart-canvas]`がある
+- `globalThis.Chart`としてChart.jsを解決できる
+- 利用側が[architecture-manifest.json](../../../architecture-manifest.json)と同じ検証済みバージョンを固定して読み込む
 
-- Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
-- 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
-- Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
-- 表示データは次のslotへ投影し、未指定時だけtemplateのフォールバック内容を表示する: `fallback`
-- `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
-- サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。
+## 属性
+
+| 属性 | 既定値 | 説明 |
+| --- | --- | --- |
+| `type` | `bar` | Chart.jsへ渡すグラフ種別 |
+| `data` | 空のlabels／datasets | Chart.jsのdataを表すJSON文字列 |
+| `options` | `{}` | Chart.jsのoptionsを表すJSON文字列 |
+| `template` | `kata-chart-template` | 使用するtemplate ID |
+
+`type`、`data`、`options`の変更は`attributeChangedCallback()`で検知し、接続済みであれば再描画します。
+
+## slot
+
+`fallback` slotはcanvasの代替内容です。グラフが伝える要点や同じデータの表を周辺にも提供し、視覚的なグラフだけを情報の唯一の手段にしないでください。
+
+## メソッド
+
+| メソッド | 動作 |
+| --- | --- |
+| `setData(data)` | 既存Chartインスタンスのdataを更新する |
+| `setOptions(options)` | 既存Chartインスタンスのoptionsを更新する |
+| `destroy()` | Chartインスタンスを破棄する |
+
+切断時は`destroy()`を呼び、再接続時に現在属性から描画し直します。
+
+## エラー
+
+- templateまたはcanvasがない場合は初期化エラーを送出する
+- Chart.jsがない場合はconsole errorを出力し、描画しない
+- `data`または`options`が不正なJSONの場合はconsole errorを出力し、描画しない

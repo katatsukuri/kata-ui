@@ -1,42 +1,33 @@
-# kata-badge contract
+# kata-badge
 
-`<kata-badge>` は、`<template id="kata-badge-template">` を既定骨格として open Shadow DOM に展開する Custom Element です。
+`<kata-badge>`は、状態や分類を短いラベルで表示するopen Shadow DOM Custom Elementです。
 
-## 必須条件
-
-1. 画面内に `id="kata-badge-template"` を持つ `<template>` が1つ存在すること
-2. `<template>` の内容は `.kata-badge` クラスを持つ要素を含むこと
-
-## バリアント
-
-`data-variant` 属性でスタイルを切り替えられます。
-
-| 値 | 説明 |
-|---|---|
-| （省略） | Primary（デフォルト） |
-| `secondary` | セカンダリ |
-| `outline` | アウトライン |
-| `destructive` | 破壊的操作 |
-
-## 例
+## 利用例
 
 ```html
-<template id="kata-badge-template">
-  <span class="kata-badge">新着</span>
-</template>
-
-<kata-badge></kata-badge>
+<kata-badge>新着</kata-badge>
+<kata-badge variant="secondary">下書き</kata-badge>
+<kata-badge variant="destructive">期限超過</kata-badge>
 ```
 
-## エラー条件
+## 必須要件
 
-- 対応する `<template>` が見つからない場合、初期化時にエラーを送出する
-- デフォルト骨格へのフォールバックは提供しない
-## Shadow DOM・slot・属性契約
+- 画面内に`id="kata-badge-template"`の`<template>`が1つある
+- template内に`.kata-badge`を持つ要素とdefault slotがある
 
-- Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
-- 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
-- Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
-- 表示データは次のslotへ投影し、未指定時だけtemplateのフォールバック内容を表示する: default
-- `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
-- サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。
+## 属性
+
+| 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `variant` | `secondary`／`outline`／`destructive` | 省略時はprimary。内部要素の`data-variant`へ反映する |
+| `template` | template ID | 省略時は`kata-badge-template` |
+
+旧`kata-badge-*-template`は対応する`variant`へ変換する互換aliasです。
+
+## slot
+
+default slotへ表示ラベルを渡します。badgeだけで伝わらない状態は、周辺テキストまたはアクセシブル名で補足してください。
+
+## 初期化エラー
+
+対応するtemplateがない場合は初期化時にエラーを送出します。

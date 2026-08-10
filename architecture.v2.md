@@ -1,65 +1,101 @@
-## 結論
+# サーバー主導画面への適用例
 
-方針を統合すると、最終アーキテクチャは以下になります。
+## この文書の位置付け
 
-**ASP.NET Razor Pagesを中心としたサーバー主導型アプリケーション + HTMX + Web Components + template + Component Loader方式**
+この文書は、[kata-ui全体アーキテクチャ](./architecture.md)をASP.NET Core Razor Pagesの検索・詳細画面へ適用する例です。リポジトリ共通の正本ではなく、次の要件を持つ利用アプリケーション向けの設計例として扱います。
 
-特に今回の要件では、以下を正式採用します。
+- 検索条件をサーバーへ送信する
+- 一覧を部分HTMLとして取得する
+- 選択行をURLへ反映する
+- 詳細領域を必要時に取得する
+- 再検索または選択変更時に古い詳細データを破棄する
 
-- 検索：HTMXフォーム送信
-- 一覧：サーバー生成HTMLをHTMX取得
-- 行選択：`/facility/F001`形式でURL反映
-- 詳細画面：Component単位でlazy load
-- 詳細HTML：HTMXレスポンスとしてComponent + データを返却
-- 詳細画面：表示切替で保持
-- 再検索・行変更：詳細データDOM破棄、template/Component資産は保持
-- Component CSS：外部CSSファイル管理（template内styleは禁止）
-- Alpine.js：廃止
-- UI状態：Web Component / 共通Runtimeで管理
+アプリケーション固有のURL、Handler、認可、キャッシュ、エラー処理は、利用プロジェクトの要件に合わせて確定してください。
 
----
+## 採用する構成
 
-# ASP.NET Razor PagesでのHTMX検索パラメータ受取例
+```text
+ASP.NET Core Razor Pages
+  └─ 業務状態、検索、入力検証、HTML生成
+       ↓
+HTMX
+  └─ 検索送信、一覧・詳細HTMLの取得、URL更新
+       ↓
+kata-ui Web Components
+  └─ 詳細UIの骨格、状態、イベント、ライフサイクル
+```
 
-## 1. Razor Page
+この例ではAlpine.jsを使用しません。通信不要の画面状態は`PageState`などの共通Runtime、独立UIの状態は各Web Componentが担当します。
 
-画面：
+## 画面とURL
 
-`Pages/Facility/Index.cshtml`
+施設検索画面を例にします。
+
+| URL | 意味 |
+| --- | --- |
+| `/facility` | 検索画面 |
+| `/facility/F001` | 施設`F001`の選択状態 |
+| `/facility/F001/basic` | 基本情報の部分HTML |
+| `/facility/F001/building` | 建物情報の部分HTML |
+
+各URLは直接アクセス時に意味のある完全HTMLを返せる構成にします。HTMXリクエストへ部分HTMLを返し分ける場合は、`Vary: HX-Request`と適切なキャッシュ制御を設定します。
+
+## 画面構造
+
+```text
+FacilitySearchPage
+├─ SearchArea
+├─ FacilityList
+│  └─ HTMXが検索結果を交換
+├─ FunctionMenu
+└─ DetailContainer
+   ├─ facility-basic-info
+   ├─ facility-building-info
+   └─ その他の詳細コンポーネント
+```
+
+検索結果と詳細領域はサーバーとHTMXが所有します。詳細コンポーネントのShadow DOM内部はWeb Componentが所有します。
+
+## 検索フロー
+
+```text
+検索条件入力
+  → HTMX GET
+  → Razor Page Handler
+  → サービスで検索
+  → 一覧の部分HTML
+  → #facility-listを交換
+```
+
+### Razor Page
 
 ```html
 <form
-    hx-get="/Facility?handler=Search"
-    hx-target="#facility-list"
-    hx-swap="innerHTML">
+  hx-get="/Facility?handler=Search"
+  hx-target="#facility-list"
+  hx-swap="innerHTML"
+>
+  <label>
+    施設名称
+    <input type="text" name="name">
+  </label>
 
-    <input
-        type="text"
-        name="name"
-        value=""
-        placeholder="施設名称">
-
+  <label>
+    分類
     <select name="category">
-        <option value="">全て</option>
-        <option value="culture">文化施設</option>
-        <option value="sport">スポーツ施設</option>
+      <option value="">すべて</option>
+      <option value="culture">文化施設</option>
+      <option value="sport">スポーツ施設</option>
     </select>
+  </label>
 
-    <button type="submit">
-        検索
-    </button>
-
+  <button type="submit">検索</button>
 </form>
 
-<div id="facility-list">
-</div>
+<div id="facility-list" aria-live="polite"></div>
 ```
 
----
-
-## 2. PageModel
-
-`Pages/Facility/Index.cshtml.cs`
+### PageModel
 
 ```csharp
 using Microsoft.AspNetCore.Mvc;
@@ -69,727 +105,152 @@ public class IndexModel : PageModel
 {
     private readonly IFacilityService _service;
 
-    public IndexModel(
-        IFacilityService service)
+    public IndexModel(IFacilityService service)
     {
         _service = service;
     }
 
-
-    public void OnGet()
+    public IActionResult OnGetSearch(string? name, string? category)
     {
-    }
-
-
-    public IActionResult OnGetSearch(
-        string? name,
-        string? category)
-    {
-        var facilities =
-            _service.Search(
-                name,
-                category);
-
-
-        return Partial(
-            "_FacilityList",
-            facilities);
+        var facilities = _service.Search(name, category);
+        return Partial("_FacilityList", facilities);
     }
 }
 ```
 
----
+例では説明を簡潔にするため、認可、入力検証、例外処理を省略しています。実装時はサーバー側で必ず補ってください。
 
-## 3. 返却Partial
-
-`Pages/Facility/Shared/_FacilityList.cshtml`
+### 一覧Partial
 
 ```html
 <table>
-<thead>
-<tr>
-<th>番号</th>
-<th>施設名</th>
-</tr>
-</thead>
-
-<tbody>
-
-@foreach(var item in Model)
-{
-<tr
- hx-get="/facility/@item.Id"
- hx-push-url="true"
- hx-target="#app-state">
-
-<td>
- @item.Id
-</td>
-
-<td>
- @item.Name
-</td>
-
-</tr>
-}
-
-</tbody>
+  <thead>
+    <tr>
+      <th scope="col">番号</th>
+      <th scope="col">施設名</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Model)
+    {
+      <tr>
+        <td>
+          <a
+            href="/facility/@item.Id"
+            hx-get="/facility/@item.Id"
+            hx-push-url="true"
+            hx-target="#app-state"
+          >@item.Id</a>
+        </td>
+        <td>@item.Name</td>
+      </tr>
+    }
+  </tbody>
 </table>
 ```
 
----
+操作可能な行全体へクリック処理を持たせる場合も、キーボード操作とリンク先を失わない設計にします。上の例では直接アクセス可能な`a[href]`を使用しています。
 
-# URL設計
+## 詳細フロー
 
-今回採用：
-
+```text
+詳細操作
+  → 必要なコンポーネント資産を確認
+  → HTMXで詳細HTMLを取得
+  → DetailContainerへCustom Elementを挿入
+  → ブラウザがconnectedCallbackを実行
 ```
-/facility/F001
-```
-
-とする。
-
-役割：
-
-|URL|意味|
-|-|-|
-|/facility|検索画面|
-|/facility/F001|施設選択状態|
-|/facility/F001/basic|基本情報|
-|/facility/F001/building|建物情報|
-
----
-
-## 行選択
-
-HTMX：
-
-```html
-<tr
- hx-get="/facility/F001"
- hx-push-url="true"
- hx-target="#app-state">
-```
-
-↓
-
-ブラウザURL：
-
-```
-https://example.com/facility/F001
-```
-
-になる。
-
----
-
-## Razor側
-
-```csharp
-public IActionResult OnGet(
-    string id)
-{
-    ViewData["SelectedId"] = id;
-
-    return Partial(
-        "_FacilitySelected",
-        id);
-}
-```
-
----
-
-# 詳細画面取得
-
-例：
-
-「基本情報」ボタン。
 
 ```html
 <button
- hx-get="/facility/F001/basic"
- hx-target="#detail-container">
-基本情報
+  type="button"
+  hx-get="/facility/F001/basic"
+  hx-target="#detail-container"
+  hx-swap="innerHTML"
+>
+  基本情報
 </button>
+
+<div id="detail-container"></div>
 ```
 
-サーバー返却：
+サーバーはコンポーネント内部の骨格ではなく、Custom Elementとslotへ投影する表示データを返します。
 
 ```html
-<facility-basic-info
-    facility-id="F001">
-
-    <div>
-        施設名称
-        <span>
-          中央市民センター
-        </span>
-    </div>
-
+<facility-basic-info facility-id="F001">
+  <span slot="name">中央市民センター</span>
+  <span slot="category">文化施設</span>
 </facility-basic-info>
 ```
 
-HTMX：
+`facility-id`は動作上の構成値なので属性、施設名称と分類は利用者に見える表示データなのでslotです。
 
-```
-HTML取得
- ↓
-DOM追加
- ↓
-Custom Element生成
- ↓
-connectedCallback()
-```
+## コンポーネント資産の読込
 
-となります。
+利用アプリケーションがlazy loadを必要とする場合、Loaderの責務を次に限定します。
 
----
+- JavaScript、CSS、正規`template`の存在確認と読込
+- Custom Elementの登録確認
+- 同一資産の重複読込防止
 
-# 最新アーキテクチャ資料
+Loaderは次を行いません。
 
-# 1. 概要
+- `connectedCallback()`の手動実行
+- コンポーネント内部のrender
+- 業務データ取得
+- Page Runtime状態の所有
 
-## 名称
+資産を事前に読み込める画面では、lazy loadを導入せず静的な`link`と`script type="module"`を優先します。読込機構の複雑さは、初期転送量とのトレードオフです。
 
-**Server Driven Component Architecture**
+## 再検索と選択変更
 
-## 技術構成
+| 対象 | 方針 |
+| --- | --- |
+| Component JavaScript | ブラウザのmodule cacheを利用 |
+| Component CSS | 一度読み込んだものを保持 |
+| 正規`template` | ページ内またはLoader cacheに保持 |
+| 検索結果HTML | 再検索時に交換 |
+| 詳細HTML | 選択変更時に交換 |
+| 入力途中の詳細状態 | 破棄前に確認が必要ならアプリケーション側で制御 |
 
-```
-ASP.NET Razor Pages
-        |
-        |
-      HTMX
-        |
-        |
-Web Components
-        |
-        |
-template
-        |
-        |
-Component CSS
-        |
-        |
-Theme CSS
+コンポーネントが除去されると`disconnectedCallback()`が実行されます。再挿入時にイベントが重複しないよう、`mount()`と`connect()`／`disconnect()`を分離します。
+
+## テーマ
+
+テーマはHTMX応答ごとに差し替えません。完全HTMLの`html[data-theme]`と`--kata-*`トークンを正本にし、Shadow DOMへ継承します。
+
+```html
+<html lang="ja" data-theme="facility">
 ```
 
----
+ユーザー設定をDBに保存する場合は、サーバーが完全HTMLへ初期テーマを出力します。即時切り替えには`ThemeManager`を使用します。
 
-# 2. 設計思想
+## エラーとセキュリティ
 
-## サーバーを正本とする
+利用アプリケーションは少なくとも次を扱います。
 
-管理対象：
+- 検索条件のサーバー側検証
+- 認証切れ時の完全ページ遷移
+- 権限不足、排他競合、通信失敗の共通表示
+- CSRF対策
+- サーバー生成HTMLのエスケープ
+- 部分HTMLへの`script`混入防止
+- `Vary: HX-Request`と認証済みHTMLのキャッシュ制御
 
-- 業務データ
-- 権限
-- 表示可否
-- 入力検証
-- 更新結果
+## 検証観点
 
-ブラウザ：
+1. 検索条件がHandlerへ正しく渡る
+2. 通常アクセスとHTMXアクセスで応答契約が一致する
+3. 一覧更新後もリンクとキーボード操作が機能する
+4. 選択URLを直接開いて同じ状態を復元できる
+5. 詳細切り替え時に古いコンポーネントが切断される
+6. 再挿入後にイベントが重複しない
+7. テーマが部分更新後も維持される
+8. 認証切れ画面が部分領域へ挿入されない
+9. フォーカスと`aria-live`通知が更新内容を伝える
 
-- UI状態
-- Component状態
-- 表示状態
+## 適用判断
 
-のみ管理する。
+この方式は、サーバー側に業務ロジックがあり、検索・一覧・詳細をHTML中心に組み立てる画面に適します。画面全体をクライアント状態へ複製せず、必要な詳細だけを遅延取得できることが利点です。
 
----
-
-# 3. 画面構造
-
-今回の代表画面：
-
-```
-FacilitySearchPage
-
-├ SearchArea
-│
-├ FacilityList
-│    └ HTMX
-│
-├ FunctionMenu
-│
-├ TemplateContainer
-│
-└ DetailContainer
-
-     ├ facility-basic-info
-     ├ facility-building-info
-     ├ facility-repair-history
-     └ ...
-```
-
----
-
-# 4. 検索フロー
-
-```
-入力
-
-↓
-
-HTMX GET
-
-↓
-
-Razor Handler
-
-↓
-
-DB検索
-
-↓
-
-Partial HTML
-
-↓
-
-一覧更新
-```
-
----
-
-# 5. 詳細フロー
-
-## 初回
-
-```
-詳細ボタン
-
-↓
-
-ComponentLoader
-
-↓
-
-JSロード
-
-↓
-
-CSSロード
-
-↓
-
-templateロード
-
-↓
-
-customElements.define確認
-
-↓
-
-HTMX詳細取得
-
-↓
-
-Component HTML追加
-
-↓
-
-connectedCallback
-```
-
----
-
-## 2回目以降
-
-```
-template
-保持
-
-Component
-必要なら再生成
-
-データ
-再取得
-```
-
----
-
-# 6. TemplateContainer
-
-責務：
-
-```
-template管理
-```
-
-機能：
-
-- template存在確認
-- lazy取得
-- cache
-- clone補助
-
-非責務：
-
-- Component生成
-- connectedCallback実行
-- render
-
----
-
-# 7. Component Loader
-
-責務：
-
-```
-Component実行環境準備
-```
-
-管理：
-
-```
-facility-basic-info
-
-├ js
-├ css
-└ template
-```
-
-Manifest例：
-
-```json
-{
- "facility-basic-info":{
-   "tag":"facility-basic-info",
-   "js":
-   "/components/facility-basic.js",
-   "css":
-   "/components/facility-basic.css",
-   "template":
-   "/components/facility-basic.html"
- }
-}
-```
-
----
-
-# 8. Web Component設計
-
-## 基本構造
-
-```
-component/
-
-├ component.js
-├ component.css
-├ component.html
-└ component.spec.md
-```
-
----
-
-## Component責務
-
-担当：
-
-- DOM操作
-- UI状態
-- イベント
-- 表示制御
-
-非担当：
-
-- DBアクセス
-- 業務判断
-- API設計
-
----
-
-# 9. Lifecycle
-
-ブラウザ標準を利用する。
-
-```
-constructor()
-
-↓
-
-connectedCallback()
-
-↓
-
-attributeChangedCallback()
-
-↓
-
-disconnectedCallback()
-```
-
-禁止：
-
-```javascript
-element.connectedCallback();
-```
-
-手動呼出は禁止。
-
----
-
-# 10. HTMX責務
-
-担当：
-
-- 検索
-- 部分HTML取得
-- 更新処理
-- URL更新
-- Component HTML取得
-
-非担当：
-
-- UI状態管理
-- DOM内部制御
-
----
-
-# 11. CSS設計
-
-## 構成
-
-```
-pico.css
-
-+
-
-theme.css
-
-+
-
-component.css
-
-+
-
-application.css
-```
-
----
-
-## Component CSS
-
-外部ファイル管理。
-
-例：
-
-```
-facility-basic-info.css
-```
-
-理由：
-
-- source map
-- cache
-- 保守性
-- テーマ分離
-
----
-
-## template内style
-
-採用しない。
-
-理由：
-
-- CSS管理分離
-- テーマ適用困難
-- ビルド管理困難
-
----
-
-# 12. テーマ
-
-構成：
-
-```
-Base CSS
-
-↓
-
-Design Token
-
-↓
-
-Theme
-
-↓
-
-Component CSS
-```
-
-例：
-
-```
-theme-default.css
-
-theme-winforms.css
-
-theme-public.css
-```
-
----
-
-# 13. キャッシュ戦略
-
-## 保持
-
-|対象|保持|
-|-|-|
-|Component JS|○|
-|Component CSS|○|
-|template|○|
-|theme CSS|○|
-
----
-
-## 破棄
-
-|対象|破棄|
-|-|-|
-|検索結果|再検索時|
-|詳細HTML|選択変更時|
-|入力途中状態|再検索時|
-
----
-
-# 14. Component Loaderとtemplateロード
-
-推奨順序：
-
-```
-ユーザー操作
-
-↓
-
-ComponentLoader
-
-↓
-
-JS存在確認
-
-↓
-
-CSSロード
-
-↓
-
-templateロード
-
-↓
-
-customElements確認
-
-↓
-
-HTMX詳細取得
-
-↓
-
-DOM追加
-
-```
-
----
-
-# 15. 自動検証
-
-CI対象：
-
-## Component契約
-
-```
-spec.md
- ↓
-HTML検証
-```
-
----
-
-## 静的検査
-
-禁止：
-
-- innerHTML乱用
-- eval
-- connectedCallback手動呼出
-- inline script
-- template未定義
-
----
-
-## E2E
-
-確認：
-
-- 検索
-- 行選択
-- URL変更
-- 詳細切替
-- 再検索
-- Component再生成
-- CSSテーマ変更
-
----
-
-# 16. 最終アーキテクチャ
-
-```
-                 ASP.NET Razor Pages
-
-                         |
-                         |
-
-                        HTMX
-
-                         |
-          +--------------+---------------+
-          |                              |
-
-    Search/List                  Detail Area
-
-
-          |                              |
-
-    Partial HTML              Component HTML
-
-
-                                         |
-
-                              Component Loader
-
-                                         |
-
-                           +-------------+-------------+
-                           |             |             |
-
-                         JS            CSS        Template
-
-
-                                         |
-
-                              Web Component
-
-
-                                         |
-
-                                   Browser Lifecycle
-
-                                         |
-
-                               connectedCallback()
-```
-
----
-
-## 最終判断
-
-今回の要件では、React/Vue型SPAではなく、
-
-**「サーバー主導型 + Component Lazy Load + HTMX Partial Rendering + Web Component View保持」**
-
-が最も適しています。
-
-20画面程度の詳細機能を持つ業務システムでは、初期ロード性能・保守性・状態管理のバランスが良い構成です。
+一方、コンポーネント資産のlazy loadはLoader、エラー処理、テスト対象を増やします。対象画面数や初期転送量が小さい場合は、静的読込の方が保守しやすい選択です。

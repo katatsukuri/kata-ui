@@ -1,48 +1,40 @@
-# kata-toggle-group contract
+# kata-toggle-group
 
-`<kata-toggle-group>` は、`<template id="kata-toggle-group-template">` を既定骨格として open Shadow DOM に展開する Custom Element です。
+`<kata-toggle-group>`は、利用側が渡す任意件数のtoggle buttonを単一選択または複数選択として管理するopen Shadow DOM Custom Elementです。
 
-## 必須条件
+## 利用例
 
-1. 画面内に `id="kata-toggle-group-template"` を持つ `<template>` が1つ存在すること
-2. 各トグルボタンは `data-toggle-item` 属性を持つこと
-3. 各トグルボタンは `role="button"` と `aria-pressed` 属性を持つこと
-4. グループ全体は `role="group"` を持つ要素でマークアップすること
+```html
+<kata-toggle-group type="single">
+  <button type="button" data-toggle-item aria-pressed="true" data-active>左揃え</button>
+  <button type="button" data-toggle-item aria-pressed="false">中央揃え</button>
+  <button type="button" data-toggle-item aria-pressed="false">右揃え</button>
+</kata-toggle-group>
+```
 
-## 動作
+## 必須要件
 
-- `data-toggle-item` をクリックすると `aria-pressed` が `"true"` / `"false"` でトグルされる
-- `type="single"` 属性がグループに付与されている場合、同時に押せる項目は1つのみ（他はすべて解除される）
-- `type` 属性が省略された場合は複数選択を許可する（`type="multiple"` と同等）
+- `kata-toggle-group-template`がある
+- template内に`role="group"`とdefault slotがある
+- 各項目が`button[data-toggle-item]`と`aria-pressed`を持つ
+
+## 属性
+
+| `type` | 動作 |
+| --- | --- |
+| `single` | 同時に一項目だけ選択。選択済み項目の再操作で未選択にもできる |
+| `multiple`または省略 | 複数項目を独立して切り替える |
+
+旧`kata-toggle-group-align-template`は正規templateへの互換aliasです。
+
+## 状態と動作
+
+click、Space、Enterで対象項目の`aria-pressed`と`data-active`を同期します。キーボード操作から生成されるclickによる二重反転を防止します。
 
 ## アクセシビリティ
 
-- トグルボタンは `role="button"` と `tabindex` を持つこと
-- `Space` / `Enter` キーでもトグル操作が可能なこと
+グループに目的を表すアクセシブル名を付け、各項目はネイティブbuttonを使用します。利用側項目のイベント対象は`composedPath()`で識別します。
 
-## 例
+## 初期化エラー
 
-```html
-<template id="kata-toggle-group-template">
-  <div role="group" aria-label="テキスト整形">
-    <button type="button" role="button" data-toggle-item aria-pressed="false">Bold</button>
-    <button type="button" role="button" data-toggle-item aria-pressed="false">Italic</button>
-    <button type="button" role="button" data-toggle-item aria-pressed="false">Underline</button>
-  </div>
-</template>
-
-<kata-toggle-group></kata-toggle-group>
-```
-
-## エラー条件
-
-- 対応する `<template>` が見つからない場合、初期化時にエラーを送出する
-- デフォルト骨格へのフォールバックは提供しない
-## Shadow DOM・slot・属性契約
-
-- Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
-- 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
-- Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
-- 任意件数の`button[data-toggle-item]`をdefault slotへ渡し、選択状態は`aria-pressed`で表す。
-- `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
-- サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。
+対応するtemplateがない場合は初期化時にエラーを送出します。

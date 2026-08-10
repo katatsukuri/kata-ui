@@ -1,575 +1,159 @@
+# Facility／WinFormsテーマ検討記録
+
 ## 結論
 
-可能です。
-添付いただいた2種類のCSSは、**同じコンポーネント構造を維持したまま、別テーマとして切り替える設計にできます。**
-
-今回のアーキテクチャ方針では、以下のように整理するのが適しています。
+公共施設検索プロトタイプ風とWinForms風の見た目は、共通コンポーネントを維持したまま選択可能なテーマとして提供できます。ただし、参照画面に含まれる固有レイアウトまでCSSテーマへ押し込まず、次の三層へ分離します。
 
 ```text
-Component HTML
-      ↓
-Design Token（CSS変数）
-      ↓
-Theme CSS
-      ↓
-利用者選択
+ページ固有レイアウト
+  ↓
+kata-ui共通コンポーネント
+  ↓
+Facility／WinFormsテーマトークン
 ```
 
-つまり、
+この記録は判断背景と移行指針を残す補足資料です。現在のテーマ契約と利用方法は[テーマ設計](./theming.md)を正本とします。
 
-- 「公共施設検索プロトタイプ風」
-- 「WinForms風」
+## 検討した見た目
 
-を**テーマ差し替え**として扱えます。
+### Facility
 
-添付ファイルを見る限り、両者は単なる色違いではなく、UI思想が異なります。
+- 青系の背景と境界
+- 平面的で情報密度の高いフォーム
+- 検索、明細、帳票を中心とする業務画面
 
-- `search-feature-prototype.html`
-  - 青系背景
-  - 旧来業務システム風
-  - 平面的なフォーム
-  - 明細・帳票系画面向き
+### WinForms
 
-- `winforms-components-sample.html`
-  - Windowsデスクトップアプリ風
-  - タイトルバー、メニュー、グループボックス
-  - DataGridView風コンポーネント
-  - 業務クライアント移行向き
+- Windowsデスクトップアプリケーションを想起させる配色
+- 小さな文字、行高、余白による高密度表示
+- ボタン、グループ、表を明確に区切る境界表現
 
-したがって「CSSテーマ」というより、**UIスキン（Visual Theme）**として扱う方が適切です。
+両者は配色だけでなく密度と視覚的階層が異なります。そのため、色トークンだけでなく、フォント、行高、余白、角丸、影もテーマ対象に含めました。
 
----
+## なぜCSSの差し替えだけでは不十分か
 
-# 推奨アーキテクチャ
+参照元CSSには、見た目と画面構造が混在していました。
 
-## 現状
+```text
+見た目
+├─ 色
+├─ 境界
+├─ 余白
+├─ 書体
+└─ 影
 
-現在はCSS内に直接値があります。
-
-例：
-
-```css
-background: #dbe6f8;
-border: 1px solid #535b63;
+画面構造
+├─ title bar
+├─ menu bar
+├─ search panel
+├─ group box
+└─ data grid layout
 ```
 
-これではテーマ切替が困難です。
+前者はテーマトークンへ移せます。後者はページまたはコンポーネントのHTML構造であり、テーマだけでは同じDOMのまま安全に切り替えられません。
 
----
+## 採用した分離
 
-## 改善後
+### 共通コンポーネント
 
-### Component CSS
+button、input、checkbox、table、dialog、cardなど、意味と操作が共通するUIを`kata-*`コンポーネントとして保持します。
 
-役割：
+### テーマ
 
-- レイアウト
-- 構造
-- 状態
+`theme-facility.css`と`theme-winforms.css`は、`--kata-*`トークンの値だけを定義します。コンポーネント内部のclassへ直接依存しません。
 
-だけを書く。
+### ページレイアウト
 
-例：
+検索条件の配置、タイトルバー、メニュー、詳細領域の分割は利用アプリケーションCSSとサーバーHTMLが担当します。
+
+この分離により、同じコンポーネント契約を保ったまま見た目を切り替えられます。一方、参照元画面を完全に再現するには、テーマ以外のページレイアウト実装も必要です。
+
+## トークン化の考え方
+
+直接値を持つCSSを、意味に基づくトークン参照へ置き換えます。
 
 ```css
+/* 移行前 */
+.button {
+  color: #111111;
+  background: linear-gradient(#fffef2, #f3ebc7);
+  border: 1px solid #535b63;
+}
+
+/* 移行後 */
 .kata-button {
-
-  height: var(--button-height);
-
-  color: var(--button-text-color);
-
-  background:
-    var(--button-background);
-
-  border:
-    var(--button-border);
-
+  color: var(--kata-color-text);
+  background: var(--kata-button-background, var(--kata-color-primary));
+  border: 1px solid var(--kata-button-border-color, var(--kata-color-border));
 }
 ```
 
----
-
-### Theme CSS
-
-見た目だけ定義する。
-
-例：
+テーマ側は値だけを与えます。
 
 ```css
-[data-theme="facility"] {
+:root[data-theme="facility"] {
+  --kata-color-background: #dbe6f8;
+  --kata-color-surface: #ffffff;
+}
 
-  --surface-color:#ffffff;
-
-  --background-color:#dbe6f8;
-
-  --button-background:
-    linear-gradient(
-      #fffef2,
-      #f3ebc7
-    );
-
+:root[data-theme="winforms"] {
+  --kata-color-background: #b9c1c8;
+  --kata-color-surface: #f0f0f0;
 }
 ```
 
----
+実際の値とトークン一覧は`src/styles/tokens.css`と`src/styles/themes/`を正本とします。
 
-```css
-[data-theme="winforms"] {
+## Shadow DOMへの適用
 
-  --surface-color:#f0f0f0;
-
-  --background-color:#b9c1c8;
-
-  --button-background:
-    linear-gradient(
-      #f8f8f8,
-      #d0d0d0
-    );
-
-}
-```
-
----
-
-# テーマ適用方法
-
-## 方法1：HTML属性（推奨）
-
-一番単純です。
-
-```html
-<html data-theme="winforms">
-```
-
-変更：
-
-```javascript
-document.documentElement
-  .dataset.theme = "facility";
-```
-
-CSS：
-
-```css
-[data-theme="facility"] {
-
-}
-
-[data-theme="winforms"] {
-
-}
-```
-
----
-
-# 利用者選択の場合
-
-## 個人設定
-
-DB:
-
-```
-UserPreference
-
-UserId
-Theme
-```
-
-例：
-
-| User | Theme |
-|-|-|
-| tanaka | winforms |
-| yamada | facility |
-
-ログイン後：
-
-ASP.NET Razor:
-
-```cshtml
-<html data-theme="@Model.Theme">
-```
-
----
-
-# テナント別
-
-公共施設管理システムならこちらも有効です。
-
-例：
-
-```
-自治体A
- ↓
-facility-theme
-
-自治体B
- ↓
-winforms-theme
-```
-
----
-
-# 2つのCSSをそのままテーマ化する場合の問題
-
-現状のCSSは、テーマだけではなく構造も含んでいます。
-
-例えばWinForms版：
-
-```css
-.desktop-window
-
-.title-bar
-
-.menu-bar
-
-.group-box
-```
-
-
-
-一方、公共施設版：
-
-```css
-.app
-
-.search-panel
-
-.fragment-shell
-```
-
-
-
-これは同じコンポーネントではありません。
-
-つまり、
+通常の外部CSSセレクタはShadow DOM内部へ届きません。テーマは継承可能なCSSカスタムプロパティをhost経由で内部へ伝えます。
 
 ```text
-テーマ差替え
+html[data-theme]
+  → --kata-*トークン
+  → kata-* host
+  → Shadow DOM内のコンポーネントCSS
 ```
 
-だけでは完全には表現できません。
+この方式では、テーマCSSが内部class名を知る必要がありません。外部から個別装飾が必要な箇所だけ、仕様化した`part`を公開します。
 
----
+## テーマ選択の責務
 
-# 正しい分離
+| 処理 | 担当 |
+| --- | --- |
+| 初期テーマの決定 | 利用アプリケーション |
+| DBやCookieへの保存 | 利用アプリケーション |
+| 完全HTMLへの初期反映 | サーバーHTML |
+| 実行時の切り替え | `ThemeManager` |
+| 見た目の適用 | Theme CSS |
 
-## 共通コンポーネント層
+テーマはHTMXの部分HTMLごとに設定しません。完全HTMLの`html[data-theme]`を維持し、部分更新後も同じトークンを継承します。
 
-例：
+## 移行手順
 
-```
-button
-textbox
-checkbox
-table
-dialog
-card
-form-field
-```
+1. 参照元CSSを「見た目」と「画面構造」に分類する
+2. button、input、tableなど共通部品へ対応付ける
+3. 直接値を既存の`--kata-*`セマンティックトークンへ置き換える
+4. 共通化できない画面構造を利用アプリケーションCSSへ残す
+5. Facility／WinFormsのテーマ値を定義する
+6. Component Catalogと実画面で密度、コントラスト、フォーカスを確認する
 
-↓
+## トレードオフ
 
-## テーマ層
+### 利点
 
-```
-facility-theme
+- コンポーネントHTMLとJavaScriptを変えずにテーマを切り替えられる
+- Shadow DOMのカプセル化を維持できる
+- テナントまたはユーザー設定を利用アプリケーション側で追加できる
+- 直接値の重複を減らせる
 
-winforms-theme
-```
+### 制約
 
-↓
+- DOM構造が異なる画面をテーマだけで同一化できない
+- 高密度テーマは可読性と操作対象サイズの確認が必要になる
+- すべてを汎用トークン化すると意味が曖昧になるため、コンポーネント固有トークンが必要な場合がある
+- 参照元の完全再現と、共通コンポーネントの保守性は両立しないことがある
 
-## 画面構造
+## 採用判断
 
-```
-FacilitySearchPage
-
-UserManagementPage
-```
-
----
-
-イメージ：
-
-```text
-                 Page
-
-        ┌───────────────┐
-        │               │
- FacilitySearch     UserSearch
-        │               │
-        └───────┬───────┘
-                │
-          kata-ui Components
-                │
-        ┌───────┴────────┐
-        │                │
- facility-theme    winforms-theme
-```
-
----
-
-# 添付CSSを移行する場合
-
-## Step1：共通部品抽出
-
-例えば：
-
-### Button
-
-現在：
-
-```css
-button {
- background:linear-gradient(...)
-}
-```
-
-↓
-
-変更：
-
-```css
-.kata-button {
-
- background:
- var(--button-bg);
-
- border:
- var(--button-border);
-
-}
-```
-
----
-
-### TextBox
-
-現在：
-
-```css
-.winforms-textbox
-```
-
-↓
-
-共通化：
-
-```css
-.kata-input
-```
-
----
-
-### Table
-
-現在：
-
-```css
-.winforms-datagrid
-```
-
-↓
-
-共通化：
-
-```css
-.kata-table
-```
-
----
-
-# Component設計との対応
-
-前回整理したkata-ui型にすると：
-
-```
-kata-ui/
-
-button/
- ├ button.js
- ├ button.css
- └ button-spec.md
-
-
-input/
- ├ input.js
- ├ input.css
- └ input-spec.md
-
-
-table/
- ├ table.js
- ├ table.css
- └ table-spec.md
-```
-
-CSSは：
-
-```
-component.css
-
-+
-
-theme.css
-```
-
-になります。
-
----
-
-# さらに発展：テーマ選択UI
-
-Theme Managerで一貫して制御します。
-
-```html
-<select id="theme-select">
-<option value="facility">
-公共施設
-</option>
-
-<option value="winforms">
-Windows
-</option>
-
-</select>
-
-<script type="module">
-  import { ThemeManager } from '../src/runtime/index.js';
-  const manager = new ThemeManager(document);
-  document.querySelector('#theme-select').addEventListener('change', (event) => {
-    manager.set(event.target.value);
-  });
-</script>
-```
-
-変更即時反映できます。
-
----
-
-# HTMXとの関係
-
-テーマ切替はHTMXでは扱いません。
-
-理由：
-
-テーマはサーバーデータではなく、UI設定だからです。
-
-責務：
-
-| 処理 | 技術 |
-|-|-|
-| テーマ選択 | Theme Manager |
-| 保存 | ASP.NET |
-| 初期反映 | Razor |
-| UI変更 | CSS |
-
----
-
-# 注意点：Web Component
-
-今回の方針では、利用者の表示データだけをLight DOMのslotとして保持します。
-
-```html
-<kata-button>
-```
-
-Shadow DOM内部：
-
-```html
-<button class="kata-button">
-```
-
-CSS：
-
-```css
-[data-theme="winforms"]
-.kata-button {
-
-}
-```
-
-で切替できます。
-
-Shadow DOMの場合はテーマCSS設計が複雑になります。
-
----
-
-# 提案するテーマ体系
-
-今回なら以下の3階層がよいです。
-
-## 1. Base Theme
-
-Pico CSS＋共通変数
-
-```text
-theme-base.css
-```
-
----
-
-## 2. Product Theme
-
-業務システム標準
-
-```text
-theme-facility.css
-theme-office.css
-```
-
----
-
-## 3. User Preference
-
-個人設定
-
-```text
-compact
-dark
-large-font
-```
-
----
-
-最終形：
-
-```text
-CSS Architecture
-
-pico.css
-    |
-component.css
-    |
-design-token.css
-    |
-+----------------+
-|                |
-facility-theme   winforms-theme
-|                |
-利用者設定       利用者設定
-```
-
----
-
-## 判断
-
-添付2パターンは、**同一コンポーネントのテーマとして完全変換するには粒度が違います。**
-
-しかし、
-
-- UIコンポーネントを共通化
-- CSS変数化
-- Theme CSS化
-- Razorで利用者別テーマ指定
-
-という形に整理すれば、今回検討しているアーキテクチャへ非常に自然に組み込めます。
-
-特に、公共施設系・行政系業務システムでは、
-
-- 標準Webテーマ
-- 既存Windows業務端末移行テーマ
-- 高密度帳票テーマ
-
-のような複数テーマを持てる設計は実用性があります。
+Facility／WinFormsは、同一コンポーネントの選択可能なテーマとして提供します。ページ固有構造はテーマから分離し、利用アプリケーションが所有します。この境界を守ることで、業務画面らしい密度を提供しながら、コンポーネント契約とShadow DOMのカプセル化を維持できます。

@@ -1,58 +1,38 @@
-# kata-dropdown-menu contract
+# kata-dropdown-menu
 
-`<kata-dropdown-menu>` は、`<template id="kata-dropdown-menu-template">` を既定骨格として open Shadow DOM に展開する Custom Element です。
+`<kata-dropdown-menu>`は、操作項目の一覧を開閉するopen Shadow DOM Custom Elementです。
 
-## 必須条件
+## 利用例
 
-1. 画面内に `id="kata-dropdown-menu-template"` を持つ `<template>` が1つ存在すること
-2. `data-dropdown-trigger` 属性を持つ要素がトリガーとなること
-3. `data-dropdown-content` 属性を持つ要素がメニューコンテンツエリアとなること
+```html
+<kata-dropdown-menu>
+  <span slot="trigger">アカウント</span>
+  <button type="button" role="menuitem">プロフィール</button>
+  <button type="button" role="menuitem">ログアウト</button>
+</kata-dropdown-menu>
+```
 
-## 属性
+## 必須要件
 
-| 属性 | 説明 |
-|---|---|
-| `template` | 使用するテンプレートの `id`（省略時は `kata-dropdown-menu-template`）|
+- `kata-dropdown-menu-template`がある
+- template内に`data-dropdown-trigger`と`data-dropdown-content`がある
+- contentに`role="menu"`、各項目に`role="menuitem"`がある
 
-## 動作
+## slot
 
-- トリガーをクリックするとメニューが開く
-- 開いているときにトリガーを再度クリックするとメニューが閉じる
-- メニュー外をクリックするとメニューが閉じる
-- `Escape` キーを押すとメニューが閉じる
-- 開閉状態はホスト要素の `data-state` 属性（`"open"` / `"closed"`）に反映される
+`trigger` slotへ開く操作の表示名、default slotへ任意件数のmenuitemを渡します。
+
+## 状態と動作
+
+- triggerクリックで開閉する
+- 外側クリックまたはEscapeで閉じる
+- hostの`data-state`、triggerの`aria-expanded`、contentの`hidden`を同期する
+- 外側判定はShadow DOMを越えるイベント経路を考慮する
 
 ## アクセシビリティ
 
-- `data-dropdown-trigger` には `aria-expanded` および `aria-haspopup="menu"` を設定すること
-- `data-dropdown-content` には `role="menu"` を設定すること
-- メニュー項目には `role="menuitem"` を設定すること
+triggerには`aria-haspopup="menu"`と`aria-expanded`を設定します。現在の実装は矢印キーによる項目移動とフォーカス管理を提供しないため、必要な利用場面では追加実装と検証が必要です。
 
-## 例
+## 初期化エラー
 
-```html
-<template id="kata-dropdown-menu-template">
-  <button type="button" data-dropdown-trigger
-          aria-haspopup="menu" aria-expanded="false">メニューを開く</button>
-  <div data-dropdown-content role="menu" hidden>
-    <button type="button" role="menuitem">プロフィール</button>
-    <button type="button" role="menuitem">設定</button>
-    <button type="button" role="menuitem">ログアウト</button>
-  </div>
-</template>
-
-<kata-dropdown-menu></kata-dropdown-menu>
-```
-
-## エラー条件
-
-- 対応する `<template>` が見つからない場合、初期化時にエラーを送出する
-- デフォルト骨格へのフォールバックは提供しない
-## Shadow DOM・slot・属性契約
-
-- Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
-- 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
-- Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
-- trigger表示は`trigger` slot、任意件数の操作項目はdefault slotへ`[role="menuitem"]`として渡す。
-- `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
-- サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。
+対応するtemplateがない場合は初期化時にエラーを送出します。

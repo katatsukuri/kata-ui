@@ -1,55 +1,40 @@
-# kata-tooltip contract
+# kata-tooltip
 
-`<kata-tooltip>` は、`<template id="kata-tooltip-template">` を既定骨格として open Shadow DOM に展開する Custom Element です。ホスト要素へのホバー／フォーカスでツールチップを表示します。
+`<kata-tooltip>`は、triggerへのhoverまたはfocus中に短い補足文を表示するopen Shadow DOM Custom Elementです。
 
-## 必須条件
-
-1. 画面内に `id="kata-tooltip-template"` を持つ `<template>` が1つ存在すること
-2. `<template>` の内容は `.kata-tooltip__trigger` クラスを持つトリガー要素と `.kata-tooltip__content` クラスを持つコンテンツ要素を含むこと
-3. トリガー要素は `aria-describedby` でコンテンツ要素を参照すること
-4. コンテンツ要素は `role="tooltip"` を持つこと
-
-## 動作
-
-- トリガーへの `mouseenter` / `focusin` でツールチップを表示する（`data-state="open"`）
-- トリガーからの `mouseleave` / `focusout` でツールチップを非表示にする（`data-state="closed"`）
-- 配置方向はホストの`data-side`属性を正規template内へ反映し、コンポーネントCSSで制御する
-
-## 配置
-
-`data-side` 属性でツールチップの表示方向を制御できます（CSS アニメーションのヒントとして使用）。
-
-| 値 | 説明 |
-|---|---|
-| `top`（省略時） | トリガーの上に表示 |
-| `bottom` | トリガーの下に表示 |
-| `left` | トリガーの左に表示 |
-| `right` | トリガーの右に表示 |
-
-## 例
+## 利用例
 
 ```html
-<template id="kata-tooltip-template">
-  <span class="kata-tooltip__trigger" aria-describedby="kata-tooltip__content">
-    ホバーしてください
-  </span>
-  <div class="kata-tooltip__content" id="kata-tooltip__content" role="tooltip" data-side="top">
-    ツールチップのテキスト
-  </div>
-</template>
-
-<kata-tooltip></kata-tooltip>
+<kata-tooltip side="top">
+  <span slot="trigger">保存</span>
+  入力内容を保存します
+</kata-tooltip>
 ```
 
-## エラー条件
+## 必須要件
 
-- 対応する `<template>` が見つからない場合、初期化時にエラーを送出する
-- デフォルト骨格へのフォールバックは提供しない
-## Shadow DOM・slot・属性契約
+- `kata-tooltip-template`がある
+- template内に`.kata-tooltip__trigger`と`.kata-tooltip__content[role="tooltip"]`がある
+- triggerの`aria-describedby`がcontentのIDを参照する
 
-- Componentはopen Shadow DOMを生成し、内部スタイルとDOM構造を利用ページから隔離する。
-- 利用者に見える表示データはslotで渡し、値、URL、フォーム名、状態などの構成値だけを属性で渡す。
-- Light DOMの有無にかかわらず正規`template`を必ず複製し、UI構造、CSSおよびARIAをShadow DOM内に保持する。
-- 表示データは次のslotへ投影し、未指定時だけtemplateのフォールバック内容を表示する: `trigger`、default
-- `name`、`value`、`href`、状態などネイティブ要素の設定値は属性で渡せるが、表示文言を属性から内部DOMへ転記しない。
-- サイトテーマは継承可能な`--kata-*` CSSカスタムプロパティで渡す。内部クラス名は外部CSS APIとしない。
+## 属性とslot
+
+| 契約 | 説明 |
+| --- | --- |
+| `side` | `top`／`bottom`／`left`／`right`。省略時はtop |
+| `trigger` slot | triggerの表示内容 |
+| default slot | tooltip本文 |
+
+旧`kata-tooltip-*-template`は対応する`side`へ変換する互換aliasです。
+
+## 状態と動作
+
+`mouseenter`／`focusin`で開き、`mouseleave`／`focusout`で閉じます。hostとcontentの`data-state`を同期し、contentの`data-side`へ配置を反映します。
+
+## アクセシビリティ
+
+tooltipは補助説明に限定し、操作要素を入れません。trigger自体の意味が伝わる表示またはアクセシブル名を用意してください。
+
+## 初期化エラー
+
+対応するtemplateがない場合は初期化時にエラーを送出します。
