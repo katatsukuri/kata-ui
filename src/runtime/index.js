@@ -1,5 +1,5 @@
 export { KataComponent, isComponentActive, isComponentMounted } from './component-base.js';
-export { emitComponentEvent } from './event-manager.js';
+export { emitComponentEvent } from './component-event.js';
 export {
   ensureComponent,
   registerComponentLoader,
