@@ -4,7 +4,9 @@
 param(
     [string]$PolicyPath = (Join-Path $PSScriptRoot 'policy.json'),
     [switch]$ValidateOnly,
-    [switch]$ManagedOnly
+    [switch]$ManagedOnly,
+    [ValidateSet('All', 'Organization', 'Repository', 'Ruleset', 'Manual')]
+    [string[]]$Scope = @('All')
 )
 
 Set-StrictMode -Version Latest
@@ -73,6 +75,11 @@ function Write-Fail {
 function Write-Info {
     param([string]$Message)
     Write-Host "[INFO] $Message" -ForegroundColor Cyan
+}
+
+function Test-Scope {
+    param([string]$Name)
+    return ($Scope -contains 'All' -or $Scope -contains $Name)
 }
 
 function Read-JsonDocument {
@@ -263,17 +270,72 @@ function Invoke-GhApiLines {
     return @($raw -split '\r?\n' | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
 }
 
+function Get-ApiProperty {
+    param(
+        [AllowNull()][object]$Actual,
+        [string]$Endpoint,
+        [string]$Name
+    )
+
+    if ($null -ne $Actual) {
+        $property = $Actual.PSObject.Properties[$Name]
+        if ($null -ne $property) {
+            return [pscustomobject]@{
+                Available = $true
+                Value = $property.Value
+                Source = 'bulk'
+                Error = $null
+            }
+        }
+    }
+
+    try {
+        $selection = "{available: has(`"$Name`"), value: .$Name}"
+        $raw = Invoke-GhCommand @(
+            'api',
+            '-H', 'Accept: application/vnd.github+json',
+            '-H', "X-GitHub-Api-Version: $ApiVersion",
+            '--jq', $selection,
+            $Endpoint
+        )
+        $result = $raw | ConvertFrom-Json -Depth 20
+        return [pscustomobject]@{
+            Available = [bool]$result.available
+            Value = $result.value
+            Source = 'field-fallback'
+            Error = $null
+        }
+    }
+    catch {
+        return [pscustomobject]@{
+            Available = $false
+            Value = $null
+            Source = 'unavailable'
+            Error = $_.Exception.Message
+        }
+    }
+}
+
 function Test-Settings {
-    param([object]$Actual, [object]$Expected, [string]$Label)
+    param(
+        [AllowNull()][object]$Actual,
+        [object]$Expected,
+        [string]$Label,
+        [string]$Endpoint
+    )
 
     foreach ($property in $Expected.PSObject.Properties) {
-        $actualProperty = $Actual.PSObject.Properties[$property.Name]
-        if ($null -eq $actualProperty) {
-            Write-Fail "$Label.$($property.Name) をAPI結果から取得できません"
+        $resolved = Get-ApiProperty $Actual $Endpoint $property.Name
+        if (-not $resolved.Available) {
+            $detail = if ($resolved.Error) { ": $($resolved.Error)" } else { '' }
+            Write-Warn "$Label.$($property.Name) をAPI結果から取得できません$detail; 手動確認してください"
             continue
         }
 
-        $actualJson = ConvertTo-Json $actualProperty.Value -Compress -Depth 20
+        if ($resolved.Source -eq 'field-fallback') {
+            Write-Info "$Label.$($property.Name) はfield fallbackで取得しました"
+        }
+        $actualJson = ConvertTo-Json $resolved.Value -Compress -Depth 20
         $expectedJson = ConvertTo-Json $property.Value -Compress -Depth 20
         if ($actualJson -ceq $expectedJson) {
             Write-Pass "$Label.$($property.Name) = $expectedJson"
@@ -325,62 +387,114 @@ try {
 
     $organization = [string]$policy.organization
     $repository = [string]$policy.repository
-    $organizationState = Invoke-GhApiJson "orgs/$organization"
-    $repositoryState = Invoke-GhApiJson "repos/$organization/$repository"
+    $organizationEndpoint = "orgs/$organization"
+    $repositoryEndpoint = "repos/$organization/$repository"
+    $organizationState = $null
+    $repositoryState = $null
 
-    Write-Host "`n## Organization settings"
-    Test-Settings $organizationState $policy.organizationSettings 'organization'
-
-    Write-Host "`n## Repository settings"
-    Test-Settings $repositoryState $policy.repositorySettings 'repository'
-
-    Write-Host "`n## Repository rulesets"
-    $rulesetSummaries = @(Invoke-GhApiJson "repos/$organization/$repository/rulesets?includes_parents=false&per_page=100")
-    foreach ($rulesetPolicy in $validated.Rulesets) {
-        $expected = $rulesetPolicy.Document
-        $matches = @($rulesetSummaries | Where-Object { $_.name -ceq $expected.name })
-        if ($matches.Count -eq 0) {
-            Write-Fail "ruleset missing: $($expected.name)"
-            continue
+    if ((Test-Scope 'Organization') -or (Test-Scope 'Manual')) {
+        try {
+            $organizationState = Invoke-GhApiJson $organizationEndpoint
         }
-        if ($matches.Count -gt 1) {
-            Write-Fail "ruleset name duplicated: $($expected.name)"
-            continue
+        catch {
+            Write-Warn "Organization APIを取得できません: $($_.Exception.Message)"
         }
-
-        $actual = Invoke-GhApiJson "repos/$organization/$repository/rulesets/$($matches[0].id)"
-        $drift = @(Get-RulesetDrift $actual $expected)
-        if ($drift.Count -eq 0) {
-            Write-Pass "ruleset $($expected.name)"
+    }
+    if ((Test-Scope 'Repository') -or (Test-Scope 'Manual')) {
+        try {
+            $repositoryState = Invoke-GhApiJson $repositoryEndpoint
         }
-        else {
-            Write-Fail "ruleset $($expected.name): $($drift -join ', ')"
+        catch {
+            Write-Warn "Repository APIを取得できません: $($_.Exception.Message)"
         }
     }
 
-    if (-not $ManagedOnly) {
+    if (Test-Scope 'Organization') {
+        Write-Host "`n## Organization settings"
+        if ($null -eq $organizationState) {
+            Write-Warn 'Organization設定は取得できないため手動確認対象です'
+        }
+        else {
+            Test-Settings $organizationState $policy.organizationSettings 'organization' $organizationEndpoint
+        }
+    }
+
+    if (Test-Scope 'Repository') {
+        Write-Host "`n## Repository settings"
+        if ($null -eq $repositoryState) {
+            Write-Warn 'Repository設定は取得できないため手動確認対象です'
+        }
+        else {
+            Test-Settings $repositoryState $policy.repositorySettings 'repository' $repositoryEndpoint
+        }
+    }
+
+    if (Test-Scope 'Ruleset') {
+        Write-Host "`n## Repository rulesets"
+        try {
+            $rulesetSummaries = @(Invoke-GhApiJson "$repositoryEndpoint/rulesets?includes_parents=false&per_page=100")
+            foreach ($rulesetPolicy in $validated.Rulesets) {
+                $expected = $rulesetPolicy.Document
+                $matches = @($rulesetSummaries | Where-Object { $_.name -ceq $expected.name })
+                if ($matches.Count -eq 0) {
+                    Write-Fail "ruleset missing: $($expected.name)"
+                    continue
+                }
+                if ($matches.Count -gt 1) {
+                    Write-Fail "ruleset name duplicated: $($expected.name)"
+                    continue
+                }
+
+                $actual = Invoke-GhApiJson "$repositoryEndpoint/rulesets/$($matches[0].id)"
+                $drift = @(Get-RulesetDrift $actual $expected)
+                if ($drift.Count -eq 0) {
+                    Write-Pass "ruleset $($expected.name)"
+                }
+                else {
+                    Write-Fail "ruleset $($expected.name): $($drift -join ', ')"
+                }
+            }
+        }
+        catch {
+            Write-Warn "Ruleset APIを取得できません: $($_.Exception.Message)"
+        }
+    }
+
+    if (-not $ManagedOnly -and (Test-Scope 'Manual')) {
         Write-Host "`n## Manual security checks"
         $manual = $policy.manualChecks
 
-        if ([bool]$organizationState.two_factor_requirement_enabled -eq [bool]$manual.requireTwoFactorAuthentication) {
+        $twoFactor = Get-ApiProperty $organizationState $organizationEndpoint 'two_factor_requirement_enabled'
+        if (-not $twoFactor.Available) {
+            Write-Warn '2FA requirementをAPI結果から取得できません; Organization Owner権限とGitHub UIで手動確認してください'
+        }
+        elseif ([bool]$twoFactor.Value -eq [bool]$manual.requireTwoFactorAuthentication) {
             Write-Pass "2FA requirement = $($manual.requireTwoFactorAuthentication)"
         }
         else {
-            Write-Fail "2FA requirement: actual=$($organizationState.two_factor_requirement_enabled) expected=$($manual.requireTwoFactorAuthentication); GitHub UIで変更してください"
+            Write-Fail "2FA requirement: actual=$($twoFactor.Value) expected=$($manual.requireTwoFactorAuthentication); GitHub UIで変更してください"
         }
 
-        if ([string]$repositoryState.visibility -ceq [string]$manual.expectedVisibility) {
+        $visibility = Get-ApiProperty $repositoryState $repositoryEndpoint 'visibility'
+        if (-not $visibility.Available) {
+            Write-Warn 'repository visibilityをAPI結果から取得できません; 手動確認してください'
+        }
+        elseif ([string]$visibility.Value -ceq [string]$manual.expectedVisibility) {
             Write-Pass "repository visibility = $($manual.expectedVisibility)"
         }
         else {
-            Write-Fail "repository visibility: actual=$($repositoryState.visibility) expected=$($manual.expectedVisibility); 自動変更しません"
+            Write-Fail "repository visibility: actual=$($visibility.Value) expected=$($manual.expectedVisibility); 自動変更しません"
         }
 
-        if ([string]$repositoryState.default_branch -ceq [string]$manual.expectedDefaultBranch) {
+        $defaultBranch = Get-ApiProperty $repositoryState $repositoryEndpoint 'default_branch'
+        if (-not $defaultBranch.Available) {
+            Write-Warn 'default branchをAPI結果から取得できません; 手動確認してください'
+        }
+        elseif ([string]$defaultBranch.Value -ceq [string]$manual.expectedDefaultBranch) {
             Write-Pass "default branch = $($manual.expectedDefaultBranch)"
         }
         else {
-            Write-Fail "default branch: actual=$($repositoryState.default_branch) expected=$($manual.expectedDefaultBranch); 自動変更しません"
+            Write-Fail "default branch: actual=$($defaultBranch.Value) expected=$($manual.expectedDefaultBranch); 自動変更しません"
         }
 
         try {

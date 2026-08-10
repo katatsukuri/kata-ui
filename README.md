@@ -285,9 +285,15 @@ pwsh -NoProfile -File ./github-admin/apply.ps1
 
 # 許可リスト内の設定とRulesetだけを適用
 pwsh -NoProfile -File ./github-admin/apply.ps1 -Execute
+
+# Rulesetだけを確認してから適用
+pwsh -NoProfile -File ./github-admin/apply.ps1 -Scope Ruleset
+pwsh -NoProfile -File ./github-admin/apply.ps1 -Scope Ruleset -Execute
 ```
 
-`apply.ps1`は、Organizationの既定権限とメンバー権限、RepositoryのIssues／Wiki／Projects／merge方式、および`main`の削除・force push禁止Rulesetだけを変更します。2FA、Owner、GitHub Apps、visibility、default branch、Repository削除・transfer、Organization削除、ライセンス、Contributor権限は監査または表示だけに限定し、自動変更しません。
+`-Scope`には`Organization`、`Repository`、`Ruleset`を複数指定できます。省略時はすべてが対象です。`check.ps1`は、APIから取得できた値がポリシーと異なる場合を`FAIL`、権限やレスポンス差により値を取得できない場合を`WARN`として手動確認へ回します。Ruleset一覧を取得できたうえで対象が存在しない場合は、適用が必要なドリフトとして`FAIL`にします。
+
+`apply.ps1`は、Organizationの既定権限とメンバー権限、RepositoryのIssues／Wiki／Projects／merge方式、および`main`の削除・force push禁止Rulesetだけを変更します。取得できない値を推測して更新することはありません。2FA、Owner、GitHub Apps、visibility、default branch、Repository削除・transfer、Organization削除、ライセンス、Contributor権限は監査または表示だけに限定し、自動変更しません。
 
 ## License
 

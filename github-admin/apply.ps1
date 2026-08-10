@@ -4,7 +4,9 @@
 param(
     [string]$PolicyPath = (Join-Path $PSScriptRoot 'policy.json'),
     [switch]$ValidateOnly,
-    [switch]$Execute
+    [switch]$Execute,
+    [ValidateSet('All', 'Organization', 'Repository', 'Ruleset')]
+    [string[]]$Scope = @('All')
 )
 
 Set-StrictMode -Version Latest
@@ -36,6 +38,11 @@ $AllowedRepositorySettings = @(
     'allow_auto_merge',
     'allow_update_branch'
 )
+
+function Test-Scope {
+    param([string]$Name)
+    return ($Scope -contains 'All' -or $Scope -contains $Name)
+}
 
 function Invoke-PolicyValidation {
     $powerShellExecutable = (Get-Process -Id $PID).Path
@@ -83,6 +90,46 @@ function Invoke-GhApiJson {
     return $raw | ConvertFrom-Json -Depth 100
 }
 
+function Get-ApiProperty {
+    param(
+        [AllowNull()][object]$Actual,
+        [string]$Endpoint,
+        [string]$Name
+    )
+
+    if ($null -ne $Actual) {
+        $property = $Actual.PSObject.Properties[$Name]
+        if ($null -ne $property) {
+            return [pscustomobject]@{
+                Available = $true
+                Value = $property.Value
+            }
+        }
+    }
+
+    try {
+        $selection = "{available: has(`"$Name`"), value: .$Name}"
+        $raw = Invoke-GhCommand @(
+            'api',
+            '-H', 'Accept: application/vnd.github+json',
+            '-H', "X-GitHub-Api-Version: $ApiVersion",
+            '--jq', $selection,
+            $Endpoint
+        )
+        $result = $raw | ConvertFrom-Json -Depth 20
+        return [pscustomobject]@{
+            Available = [bool]$result.available
+            Value = $result.value
+        }
+    }
+    catch {
+        return [pscustomobject]@{
+            Available = $false
+            Value = $null
+        }
+    }
+}
+
 function Invoke-GhMutation {
     param(
         [ValidateSet('POST', 'PATCH', 'PUT')]
@@ -117,7 +164,8 @@ function Get-SettingsPatch {
         [object]$Actual,
         [object]$Expected,
         [string[]]$Allowed,
-        [string]$Label
+        [string]$Label,
+        [string]$Endpoint
     )
 
     $patch = [ordered]@{}
@@ -125,12 +173,12 @@ function Get-SettingsPatch {
         if ($Allowed -notcontains $property.Name) {
             throw "$Label.$($property.Name) はapply許可リスト外です。"
         }
-        $actualProperty = $Actual.PSObject.Properties[$property.Name]
-        if ($null -eq $actualProperty) {
+        $resolved = Get-ApiProperty $Actual $Endpoint $property.Name
+        if (-not $resolved.Available) {
             throw "$Label.$($property.Name) をAPI結果から取得できません。権限または契約を確認してください。"
         }
 
-        $actualJson = ConvertTo-Json $actualProperty.Value -Compress -Depth 20
+        $actualJson = ConvertTo-Json $resolved.Value -Compress -Depth 20
         $expectedJson = ConvertTo-Json $property.Value -Compress -Depth 20
         if ($actualJson -cne $expectedJson) {
             $patch[$property.Name] = $property.Value
@@ -174,7 +222,7 @@ function Get-RulesetDrift {
 function Invoke-ManagedVerification {
     $powerShellExecutable = (Get-Process -Id $PID).Path
     & $powerShellExecutable -NoProfile -File (Join-Path $PSScriptRoot 'check.ps1') `
-        -PolicyPath ([IO.Path]::GetFullPath($PolicyPath)) -ManagedOnly
+        -PolicyPath ([IO.Path]::GetFullPath($PolicyPath)) -ManagedOnly -Scope $Scope
     if ($LASTEXITCODE -ne 0) {
         throw '適用後のmanaged設定検証に失敗しました。'
     }
@@ -195,79 +243,87 @@ $organization = [string]$policy.organization
 $repository = [string]$policy.repository
 $repositoryEndpoint = "repos/$organization/$repository"
 
-$organizationState = Invoke-GhApiJson "orgs/$organization"
-$repositoryState = Invoke-GhApiJson $repositoryEndpoint
-$organizationPatch = Get-SettingsPatch $organizationState $policy.organizationSettings `
-    $AllowedOrganizationSettings 'organization'
-$repositoryPatch = Get-SettingsPatch $repositoryState $policy.repositorySettings `
-    $AllowedRepositorySettings 'repository'
-
 $plannedChanges = 0
 $appliedMutation = $false
 
-if ($organizationPatch.Count -gt 0) {
-    $plannedChanges += $organizationPatch.Count
-    if ($Execute -and $PSCmdlet.ShouldProcess("organization $organization", 'PATCH safe organization settings')) {
-        Invoke-GhMutation PATCH "orgs/$organization" $organizationPatch | Out-Null
-        $appliedMutation = $true
-        Write-Host '[APPLIED] Organization settings' -ForegroundColor Green
-    }
-    else {
-        Write-Host '[DRY-RUN] Organization settingsを変更しません。' -ForegroundColor Cyan
+if (Test-Scope 'Organization') {
+    $organizationEndpoint = "orgs/$organization"
+    $organizationState = Invoke-GhApiJson $organizationEndpoint
+    $organizationPatch = Get-SettingsPatch $organizationState $policy.organizationSettings `
+        $AllowedOrganizationSettings 'organization' $organizationEndpoint
+
+    if ($organizationPatch.Count -gt 0) {
+        $plannedChanges += $organizationPatch.Count
+        if ($Execute -and $PSCmdlet.ShouldProcess("organization $organization", 'PATCH safe organization settings')) {
+            Invoke-GhMutation PATCH $organizationEndpoint $organizationPatch | Out-Null
+            $appliedMutation = $true
+            Write-Host '[APPLIED] Organization settings' -ForegroundColor Green
+        }
+        else {
+            Write-Host '[DRY-RUN] Organization settingsを変更しません。' -ForegroundColor Cyan
+        }
     }
 }
 
-if ($repositoryPatch.Count -gt 0) {
-    $plannedChanges += $repositoryPatch.Count
-    if ($Execute -and $PSCmdlet.ShouldProcess("repository $organization/$repository", 'PATCH safe repository settings')) {
-        Invoke-GhMutation PATCH $repositoryEndpoint $repositoryPatch | Out-Null
-        $appliedMutation = $true
-        Write-Host '[APPLIED] Repository settings' -ForegroundColor Green
-    }
-    else {
-        Write-Host '[DRY-RUN] Repository settingsを変更しません。' -ForegroundColor Cyan
+if (Test-Scope 'Repository') {
+    $repositoryState = Invoke-GhApiJson $repositoryEndpoint
+    $repositoryPatch = Get-SettingsPatch $repositoryState $policy.repositorySettings `
+        $AllowedRepositorySettings 'repository' $repositoryEndpoint
+
+    if ($repositoryPatch.Count -gt 0) {
+        $plannedChanges += $repositoryPatch.Count
+        if ($Execute -and $PSCmdlet.ShouldProcess("repository $organization/$repository", 'PATCH safe repository settings')) {
+            Invoke-GhMutation PATCH $repositoryEndpoint $repositoryPatch | Out-Null
+            $appliedMutation = $true
+            Write-Host '[APPLIED] Repository settings' -ForegroundColor Green
+        }
+        else {
+            Write-Host '[DRY-RUN] Repository settingsを変更しません。' -ForegroundColor Cyan
+        }
     }
 }
 
-$rulesetSummaries = @(Invoke-GhApiJson "$repositoryEndpoint/rulesets?includes_parents=false&per_page=100")
-foreach ($relativePath in @($policy.rulesets)) {
-    $rulesetPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ([string]$relativePath)))
-    $expected = Read-JsonDocument $rulesetPath
-    $matches = @($rulesetSummaries | Where-Object { $_.name -ceq $expected.name })
-    if ($matches.Count -gt 1) {
-        throw "同名Rulesetが複数あります。自動変更を停止します: $($expected.name)"
-    }
+if (Test-Scope 'Ruleset') {
+    $rulesetSummaries = @(Invoke-GhApiJson "$repositoryEndpoint/rulesets?includes_parents=false&per_page=100")
+    foreach ($relativePath in @($policy.rulesets)) {
+        $rulesetPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ([string]$relativePath)))
+        $expected = Read-JsonDocument $rulesetPath
+        $matches = @($rulesetSummaries | Where-Object { $_.name -ceq $expected.name })
+        if ($matches.Count -gt 1) {
+            throw "同名Rulesetが複数あります。自動変更を停止します: $($expected.name)"
+        }
 
-    if ($matches.Count -eq 0) {
-        $plannedChanges++
-        Write-Host "[DRIFT] Ruleset missing: $($expected.name)" -ForegroundColor Yellow
-        if ($Execute -and $PSCmdlet.ShouldProcess("ruleset $($expected.name)", 'CREATE repository ruleset')) {
-            Invoke-GhMutation POST "$repositoryEndpoint/rulesets" $expected | Out-Null
-            $appliedMutation = $true
-            Write-Host "[APPLIED] Ruleset created: $($expected.name)" -ForegroundColor Green
+        if ($matches.Count -eq 0) {
+            $plannedChanges++
+            Write-Host "[DRIFT] Ruleset missing: $($expected.name)" -ForegroundColor Yellow
+            if ($Execute -and $PSCmdlet.ShouldProcess("ruleset $($expected.name)", 'CREATE repository ruleset')) {
+                Invoke-GhMutation POST "$repositoryEndpoint/rulesets" $expected | Out-Null
+                $appliedMutation = $true
+                Write-Host "[APPLIED] Ruleset created: $($expected.name)" -ForegroundColor Green
+            }
+            else {
+                Write-Host "[DRY-RUN] Rulesetを作成しません: $($expected.name)" -ForegroundColor Cyan
+            }
+            continue
+        }
+
+        $actual = Invoke-GhApiJson "$repositoryEndpoint/rulesets/$($matches[0].id)"
+        $drift = @(Get-RulesetDrift $actual $expected)
+        if ($drift.Count -gt 0) {
+            $plannedChanges++
+            Write-Host "[DRIFT] Ruleset $($expected.name): $($drift -join ', ')" -ForegroundColor Yellow
+            if ($Execute -and $PSCmdlet.ShouldProcess("ruleset $($expected.name)", 'UPDATE repository ruleset')) {
+                Invoke-GhMutation PUT "$repositoryEndpoint/rulesets/$($matches[0].id)" $expected | Out-Null
+                $appliedMutation = $true
+                Write-Host "[APPLIED] Ruleset updated: $($expected.name)" -ForegroundColor Green
+            }
+            else {
+                Write-Host "[DRY-RUN] Rulesetを更新しません: $($expected.name)" -ForegroundColor Cyan
+            }
         }
         else {
-            Write-Host "[DRY-RUN] Rulesetを作成しません: $($expected.name)" -ForegroundColor Cyan
+            Write-Host "[OK] Ruleset $($expected.name)" -ForegroundColor Green
         }
-        continue
-    }
-
-    $actual = Invoke-GhApiJson "$repositoryEndpoint/rulesets/$($matches[0].id)"
-    $drift = @(Get-RulesetDrift $actual $expected)
-    if ($drift.Count -gt 0) {
-        $plannedChanges++
-        Write-Host "[DRIFT] Ruleset $($expected.name): $($drift -join ', ')" -ForegroundColor Yellow
-        if ($Execute -and $PSCmdlet.ShouldProcess("ruleset $($expected.name)", 'UPDATE repository ruleset')) {
-            Invoke-GhMutation PUT "$repositoryEndpoint/rulesets/$($matches[0].id)" $expected | Out-Null
-            $appliedMutation = $true
-            Write-Host "[APPLIED] Ruleset updated: $($expected.name)" -ForegroundColor Green
-        }
-        else {
-            Write-Host "[DRY-RUN] Rulesetを更新しません: $($expected.name)" -ForegroundColor Cyan
-        }
-    }
-    else {
-        Write-Host "[OK] Ruleset $($expected.name)" -ForegroundColor Green
     }
 }
 
