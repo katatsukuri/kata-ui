@@ -1,0 +1,27 @@
+<title>kata-pagination example - 1ページ目</title>
+
+<div class="pagination-page" data-page="1">
+  <h2>コンポーネント一覧 1 / 3</h2>
+  <ul>
+    <li><strong>Accordion</strong><span>関連する内容を展開・折りたたみします。</span></li>
+    <li><strong>Breadcrumb</strong><span>現在位置までの階層を示します。</span></li>
+    <li><strong>Pagination</strong><span>分割された一覧のページ間を移動します。</span></li>
+    <li><strong>Table</strong><span>行と列でデータを表示します。</span></li>
+  </ul>
+</div>
+
+<template data-pagination-items>
+  <li><a href="./index.html" aria-label="前のページへ" aria-disabled="true" tabindex="-1">前</a></li>
+  <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html" aria-current="page">1</a></li>
+  <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html">2</a></li>
+  <li><a href="./page-3.html" hx-get="./fragments/page-3.html" hx-push-url="./page-3.html">3</a></li>
+  <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html" aria-label="次のページへ">次</a></li>
+</template>
+
+<kata-pagination id="results-pagination" hx-swap-oob="innerHTML">
+  <li><a href="./index.html" aria-label="前のページへ" aria-disabled="true" tabindex="-1">前</a></li>
+  <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html" aria-current="page">1</a></li>
+  <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html">2</a></li>
+  <li><a href="./page-3.html" hx-get="./fragments/page-3.html" hx-push-url="./page-3.html">3</a></li>
+  <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html" aria-label="次のページへ">次</a></li>
+</kata-pagination>

@@ -99,6 +99,33 @@ test('docs server preserves kata-table example APIs', async (t) => {
   );
 });
 
+test('docs server serves a progressively enhanced pagination example', async (t) => {
+  const origin = await startTestServer(t);
+
+  const exampleResponse = await fetch(`${origin}/src/components/kata-pagination/examples/index.html`);
+  assert.equal(exampleResponse.status, 200);
+  const example = await exampleResponse.text();
+  assert.match(example, /id="results-pagination"/);
+  assert.match(example, /hx-target="#pagination-results"/);
+  assert.match(example, /id="pagination-results"[^>]*hx-history-elt/);
+  assert.match(example, /<template data-pagination-items>/);
+  assert.match(example, /src="\.\/example\.js"/);
+  assert.match(example, /hx-get="\.\/fragments\/page-2\.html"/);
+  assert.match(example, /href="\.\/page-2\.html"/);
+
+  const fragmentResponse = await fetch(`${origin}/src/components/kata-pagination/examples/fragments/page-2.html`);
+  assert.equal(fragmentResponse.status, 200);
+  const fragment = await fragmentResponse.text();
+  assert.match(fragment, /<title>kata-pagination example - 2ページ目<\/title>/);
+  assert.match(fragment, /data-page="2"/);
+  assert.match(fragment, /id="results-pagination" hx-swap-oob="innerHTML"/);
+  assert.match(fragment, /aria-current="page">2<\/a>/);
+
+  const directPageResponse = await fetch(`${origin}/src/components/kata-pagination/examples/page-2.html`);
+  assert.equal(directPageResponse.status, 200);
+  assert.match(await directPageResponse.text(), /data-page="2"/);
+});
+
 test('docs server rejects unsupported methods', async (t) => {
   const origin = await startTestServer(t);
   const response = await fetch(`${origin}/`, { method: 'POST' });

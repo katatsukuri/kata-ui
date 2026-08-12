@@ -1,0 +1,31 @@
+.pagination-results {
+  min-block-size: 15rem;
+}
+
+.pagination-page h2 {
+  margin-block-end: var(--kata-space-md);
+}
+
+.pagination-page ul {
+  display: grid;
+  gap: var(--kata-space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pagination-page li {
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.35fr) 1fr;
+  gap: var(--kata-space-md);
+  padding: var(--kata-space-sm) var(--kata-space-md);
+  border: 1px solid var(--kata-color-border);
+  border-radius: var(--kata-radius-md);
+}
+
+@media (max-width: 30rem) {
+  .pagination-page li {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
