@@ -67,6 +67,7 @@ a:hover { color: var(--accent-strong); }
 
 .site-header::after {
   position: absolute;
+  pointer-events: none;
   right: -5rem;
   bottom: -8rem;
   width: 22rem;
