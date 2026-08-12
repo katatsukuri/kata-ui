@@ -184,7 +184,7 @@ export function startDocsServer({
   server.listen(port, host, () => {
     const address = server.address();
     const listeningPort = typeof address === 'object' && address ? address.port : port;
-    console.log(`kata-ui docs server running at http://${host}:${listeningPort}/`);
+    console.log(`Katatsukuri UI docs server running at http://${host}:${listeningPort}/`);
   });
   return server;
 }

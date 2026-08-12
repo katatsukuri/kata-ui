@@ -1,8 +1,8 @@
-# kata-ui テーマ設計
+# Katatsukuri UI テーマ設計
 
 ## 目的
 
-`kata-ui`のテーマは、コンポーネントのHTMLやCSSファイルを差し替えず、`--kata-*`セマンティックトークンの値を`data-theme`で切り替えます。
+Katatsukuri UIのテーマは、コンポーネントのHTMLやCSSファイルを差し替えず、`--kata-*`セマンティックトークンの値を`data-theme`で切り替えます。
 
 ```text
 Pico CSS（任意）

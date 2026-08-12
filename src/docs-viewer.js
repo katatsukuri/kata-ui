@@ -127,7 +127,7 @@ async function renderDocument() {
     statusElement.hidden = true;
 
     const heading = contentElement.querySelector('h1');
-    document.title = `${heading?.textContent ?? documentPath} | kata-ui`;
+    document.title = `${heading?.textContent ?? documentPath} | Katatsukuri UI`;
 
     if (location.hash) {
       document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();

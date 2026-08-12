@@ -1,8 +1,8 @@
-# kata-ui コンポーネント設計
+# Katatsukuri UI コンポーネント設計
 
 ## 目的
 
-`kata-ui`のコンポーネントは、サーバー生成HTMLと協調する標準化されたUI境界です。JavaScriptでページ全体を構築するのではなく、UIの骨格、ARIA、内部状態、イベント、ライフサイクルを再利用可能な単位へ閉じ込めます。
+Katatsukuri UIのコンポーネントは、サーバー生成HTMLと協調する標準化されたUI境界です。JavaScriptでページ全体を構築するのではなく、UIの骨格、ARIA、内部状態、イベント、ライフサイクルを再利用可能な単位へ閉じ込めます。
 
 利用側の入力契約は、属性とslotです。
 
@@ -217,9 +217,9 @@ this.dispatchEvent(new CustomEvent('user-selected', {
 
 入力に近いコンポーネントは、標準イベントとの互換性を優先します。独自イベントを追加する場合も、標準`change`や`input`との関係を明示します。
 
-## HTMX連携
+## 任意のHTML更新手段との連携
 
-HTMXはCustom Element全体、またはslotへ渡したLight DOMを更新します。Shadow DOM内部の深い要素を外部から交換しません。
+Katatsukuri UIは特定のHTML更新ライブラリを必須としません。利用アプリケーションが部分更新を行う場合は、Custom Element全体、またはslotへ渡したLight DOMを更新し、Shadow DOM内部の深い要素を外部から交換しません。
 
 ```html
 <div
@@ -230,7 +230,9 @@ HTMXはCustom Element全体、またはslotへ渡したLight DOMを更新しま�
 ></div>
 ```
 
-Shadow Root内に`hx-*`がある場合は、構築後にそのShadow Rootを`htmx.process()`へ渡します。切断・再接続時にHTMX処理やイベントが重複しないことをテストします。
+### HTMX integration
+
+HTMXを利用し、Shadow Root内に`hx-*`がある場合は、構築後にそのShadow Rootを`htmx.process()`へ渡します。切断・再接続時にHTMX処理やイベントが重複しないことをテストします。
 
 ## CSSとテーマ
 

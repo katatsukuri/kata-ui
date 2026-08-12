@@ -1,22 +1,27 @@
-# kata-ui 全体アーキテクチャ
+# Katatsukuri UI 全体アーキテクチャ
 
 ## 目的
 
-`kata-ui`は、サーバー主導型MPAに再利用UIを追加するためのコンポーネント境界です。ブラウザへ業務状態の正本や独自ルーターを移さず、HTMX、Page Runtime、Web Componentsの責務を狭く保つことを設計目標とします。
+Katatsukuri UI（技術識別子: `kata-ui`）は、server-driven applicationに再利用UIを追加するためのframework-agnosticなコンポーネント境界です。ブラウザへ業務状態の正本や独自ルーターを移さず、HTML更新手段、Page Runtime、Web Componentsの責務を狭く保つことを設計目標とします。
 
 ```text
-Server-driven MPA
-  + HTMXによるページ遷移と部分HTML更新
-  + Page Runtimeによる通信不要の画面状態
-  + Shadow DOM Web Componentsによる再利用UI
-  + Pico CSSと--kata-*トークンによるテーマ
+Server-driven Application
+  + Server-rendered HTML
+  + Optional HTML update mechanism
+      + HTMX integration
+  + Optional Page Runtime
+  + Katatsukuri UI
+      + Shadow DOM Web Components
+      + Pico CSS（任意）と--kata-*トークンによるテーマ
 ```
+
+Katatsukuri UI本体はHTMXを必須依存としません。HTMX固有の処理は任意のintegration境界に閉じ込め、コンポーネントの基本契約はCustom Elements、Shadow DOM、属性、slot、イベントで定義します。
 
 この文書はリポジトリ全体の責務、境界、セキュリティ、検証方針を定義します。個別コンポーネントの実装規約は[コンポーネント設計](./components.md)、公開契約は各`*.spec.md`を参照してください。
 
 ## 業務システムの前提
 
-`kata-ui`が主に想定するのは、次の性質を持つ業務Webシステムです。
+Katatsukuri UIが主に想定するのは、次の性質を持つ業務Webシステムです。静的HTMLや、HTMX以外のHTML更新手段を採用するserver-driven applicationにも、同じコンポーネント契約を適用できます。
 
 - 検索、一覧、登録、編集、詳細、承認など、定型的な画面が多数ある
 - 業務ルール、認証、認可、入力検証、排他制御、永続化がサーバーに実装されている
@@ -49,16 +54,16 @@ HTMXなどでDOMを差し替える画面では、初回ロード時だけを想�
 
 UIの利用契約、状態の所有者、破棄方法、アクセシビリティ要件が明文化されていないと、担当交代時に実装から推測し直す必要があります。コードが動くことと、変更してよい境界が分かることは別の問題です。
 
-## OSSとしてのkata-uiが提供する価値
+## OSSとしてのKatatsukuri UIが提供する価値
 
-`kata-ui`は、これらの課題を一つの大規模フレームワークで覆うのではなく、共通化すべきUI境界をWeb標準で揃えます。
+Katatsukuri UIは、これらの課題を一つの大規模フレームワークで覆うのではなく、共通化すべきUI境界をWeb標準で揃えます。
 
 | 課題 | 採用する仕組み | 意図 |
 | --- | --- | --- |
 | UI構造と操作の分岐 | Shadow DOM内の正規`template` | HTML、CSS、ARIA、内部操作を一か所で保守する |
 | 利用画面との密結合 | 属性とdefault／named slot | 表示データと構成値だけを小さな公開契約にする |
 | 再接続時の不具合 | `mount()`、`connect()`、`disconnect()` | 初回構築と接続中の資源管理を分離する |
-| 状態とDOMの二重所有 | Server、HTMX、Page Runtime、Web Componentの責務分離 | 一つの状態・領域の所有者を一つにする |
+| 状態とDOMの二重所有 | Server、HTML更新手段、Page Runtime、Web Componentの責務分離 | 一つの状態・領域の所有者を一つにする |
 | 既存画面へ導入しにくい | ビルドレスなCustom Elements | 利用する画面とコンポーネントから段階導入する |
 | 仕様が暗黙になる | co-locatedなspec、template、実装、CSS、テスト、example | 契約、実装、検証を同じ変更単位で追跡する |
 
@@ -75,7 +80,7 @@ OSSとしてソース、仕様、テスト、制約を同じ場所で公開す�
 
 検索、一覧、登録、編集、詳細表示を中心とする画面では、URLとサーバールーティングを維持したまま、必要な部分だけHTMLを更新できれば、多くの操作要件を満たせます。
 
-クライアント側に同じ業務状態、APIキャッシュ、ルーティングを重ねると、状態の正本とDOMの所有者が分散します。`kata-ui`はこの重複を避け、ブラウザ側の責務をUIに限定します。
+クライアント側に同じ業務状態、APIキャッシュ、ルーティングを重ねると、状態の正本とDOMの所有者が分散します。Katatsukuri UIはこの重複を避け、ブラウザ側の責務をUIに限定します。
 
 次が主要要件になる場合は、別のアーキテクチャを再検討します。
 
@@ -98,7 +103,7 @@ OSSとしてソース、仕様、テスト、制約を同じ場所で公開す�
 - 業務固有の画面構造、認可、入力検証、エラー処理は利用アプリケーションに残る
 - 高度なSPA要件を無理にこの構成へ押し込むべきではない
 
-したがって、`kata-ui`の有用性は「すべてをコンポーネント化できること」ではなく、「複数画面で繰り返すUIだけを、責務と契約が明確な形で共有できること」にあります。
+したがって、Katatsukuri UIの有用性は「すべてをコンポーネント化できること」ではなく、「複数画面で繰り返すUIだけを、責務と契約が明確な形で共有できること」にあります。
 
 ## アーキテクチャの全体像
 
@@ -107,18 +112,20 @@ OSSとしてソース、仕様、テスト、制約を同じ場所で公開す�
 │ Browser                                      │
 │                                              │
 │ Application shell                            │
-│ ├─ HTMX: 通信、HTML差し替え、URL・履歴       │
-│ ├─ Page Runtime: 通信不要の画面状態           │
-│ ├─ Web Components: 独立UIの状態と操作         │
-│ │  └─ Shadow DOM: template、slot、ARIA、CSS   │
-│ └─ Theme: 継承可能な--kata-*トークン          │
+│ ├─ HTML update mechanism（任意）              │
+│ │  └─ HTMX integration: 通信、HTML差し替え    │
+│ ├─ Page Runtime（任意）: 通信不要の画面状態   │
+│ └─ Katatsukuri UI                             │
+│    ├─ Web Components: 独立UIの状態と操作      │
+│    │  └─ Shadow DOM: template、slot、ARIA、CSS│
+│    └─ Theme: 継承可能な--kata-*トークン       │
 └───────────────────┬──────────────────────────┘
                     │ HTTP / HTML / Form Data
 ┌───────────────────▼──────────────────────────┐
 │ Server                                       │
 │ ├─ URL、認証、認可、業務ルール、入力検証     │
 │ ├─ 排他制御、永続化、監査ログ                 │
-│ └─ 完全HTMLとHTMX用部分HTMLの生成             │
+│ └─ 完全HTMLと必要に応じた部分HTMLの生成       │
 └──────────────────────────────────────────────┘
 ```
 
@@ -135,9 +142,13 @@ OSSとしてソース、仕様、テスト、制約を同じ場所で公開す�
 
 ブラウザ側の表示状態や入力制御だけを、認可や業務判断の根拠にしてはいけません。
 
-### HTMX
+### HTML更新手段
 
-HTMXはサーバー通信とHTML差し替えを担当します。
+HTML更新は利用アプリケーションの責務です。Katatsukuri UIは、Custom Element全体またはslotへ渡すLight DOMを更新境界とし、特定の通信ライブラリを必須にしません。
+
+### HTMX integration
+
+HTMXを採用する利用アプリケーションでは、HTMXがサーバー通信とHTML差し替えを担当します。
 
 - ページ遷移、検索、ページング、並べ替え
 - フォーム送信と入力エラーの再表示
@@ -156,7 +167,7 @@ Page Runtimeは、通信を必要としない画面単位の一時状態を担�
 | `hidden`など表示属性の反映 | `LayoutController` |
 | 画面単位の購読解除 | `PageController` |
 
-対象は開閉、選択件数、入力連動、ローディング表示などです。DBデータ、認可情報、ワークフロー状態、独自APIキャッシュ、大規模なグローバルストアは持ちません。通信はHTMXへ統一し、Page Runtimeからの直接`fetch()`はアーキテクチャ例外とします。
+対象は開閉、選択件数、入力連動、ローディング表示などです。DBデータ、認可情報、ワークフロー状態、独自APIキャッシュ、大規模なグローバルストアは持ちません。通信は利用アプリケーションが選択したHTML更新手段へ統一し、Page Runtimeからの直接`fetch()`はアーキテクチャ例外とします。
 
 `PageState.snapshot()`はトップレベルだけを凍結する浅いsnapshotです。ネスト値は直接変更せず、新しい値へ置き換えて`set()`または`update()`します。
 
@@ -194,13 +205,13 @@ Light DOMはUI構造の正本ではなく、slotへ投影する利用者デー�
 | 領域 | 所有者 |
 | --- | --- |
 | 完全ページ | サーバー |
-| ページ本体、一覧、検索結果 | サーバーとHTMX |
+| ページ本体、一覧、検索結果 | サーバーと利用アプリケーションのHTML更新手段 |
 | Web Component内部 | Web Component |
 | slotへ渡す利用者データ | 利用側HTML |
 | 通信不要の画面状態 | Page Runtime |
 | 独立部品の内部状態 | Web Component |
 
-同じ一覧をHTMXとPage Runtimeの両方で再描画したり、HTMXでShadow DOM内部だけを交換したりしません。Web Componentから外部へ通知するときは`CustomEvent`を発行し、外部DOMを直接変更しません。
+同じ一覧をHTML更新手段とPage Runtimeの両方で再描画したり、外部からShadow DOM内部だけを交換したりしません。Web Componentから外部へ通知するときは`CustomEvent`を発行し、外部DOMを直接変更しません。
 
 ## ライフサイクルとRuntime
 
@@ -216,9 +227,9 @@ Light DOMはUI構造の正本ではなく、slotへ投影する利用者デー�
 
 イベントリスナー、timer、observer、外部購読は`disconnect()`で解除できる構造にします。slot由来イベントの対象判定には`event.composedPath()`を使用します。内部制御要素の検索はShadow Rootへ限定し、利用者データを内部要素として誤認しないようにします。
 
-## HTMX連携
+## HTMX integration
 
-各画面URLは直接アクセス可能な完全HTMLを返し、HTMXリクエストには交換対象の部分HTMLを返します。
+この節はHTMXを採用する場合だけ適用します。各画面URLは直接アクセス可能な完全HTMLを返し、HTMXリクエストには交換対象の部分HTMLを返します。
 
 ```text
 通常リクエスト  → レイアウトを含む完全HTML
@@ -423,10 +434,10 @@ business result / exception category
 ### SHOULD
 
 1. Web Componentsは独立した再利用UIに限定する
-2. 通信はHTMXへ統一する
+2. 通信は利用アプリケーションが選択した一つのHTML更新手段へ統一する
 3. Page Runtimeは画面単位の一時状態に限定する
 4. 内部制御要素はShadow Rootから検索する
-5. HTMXは業務上意味のある単位で差し替える
+5. HTML更新手段は業務上意味のある単位で差し替える
 6. 標準HTML入力要素を優先する
 7. 静的ファイルを自ホストする
 
@@ -437,7 +448,7 @@ business result / exception category
 本アーキテクチャの成功条件は、技術の数ではなく、それぞれの適用範囲を狭く維持できることです。
 
 1. サーバーが業務状態の正本である
-2. HTMXが通信とHTML更新を所有する
+2. 利用アプリケーションが選択したHTML更新手段が通信とHTML更新を所有する
 3. Page Runtimeが通信不要の画面状態だけを持つ
 4. Web Componentsが独立UIの内部だけを所有する
 5. templateとslotの契約が実装・仕様・テストで一致する
@@ -447,7 +458,7 @@ business result / exception category
 ## 導入順序
 
 1. Pico CSS、トークン、共通レイアウト、CSP、CSRF、エラー処理を整える
-2. 完全HTMLと部分HTMLの応答契約、HTMX遷移、履歴、フォーカスを確立する
+2. 完全HTMLと部分HTMLの応答契約、採用したHTML更新手段の遷移、履歴、フォーカスを確立する
 3. Page Runtimeと必要最小限のWeb Componentsを導入する
 4. アーキテクチャLint、レスポンス契約テスト、ブラウザE2E、アクセシビリティ検査をCIへ追加する
 5. ブラウザ更新、CSP違反、依存更新、例外ADRを継続的に棚卸しする
