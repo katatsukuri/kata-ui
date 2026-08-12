@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="kata-uiの全コンポーネントと動作例を確認できるカタログ">
-  <title>kata-ui Component Catalog</title>
+  <meta name="description" content="Katatsukuri UI - server-driven applications向けのframework-agnostic Web Components">
+  <title>Katatsukuri UI Component Catalog</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
   <link rel="stylesheet" href="./src/styles/kata-ui.css">
   <link rel="stylesheet" href="./docs.css">
@@ -16,11 +16,12 @@
 
   <header class="site-header">
     <div class="site-header__content">
-      <p class="eyebrow">Shadow DOM Web Components</p>
-      <h1>kata-ui Component Catalog</h1>
+      <p class="eyebrow">Component Catalog</p>
+      <h1>Katatsukuri UI</h1>
       <p class="lead">
-        長期保守する業務システムで生じるUIの重複と実装差を、サーバー主導の責務を保ったまま減らすための、
-        ビルドレスなWeb Component集です。各項目を開くと、その場で実際のexampleを操作できます。
+        長期保守するWebアプリケーションで生じるUIの重複と実装差を、サーバー主導の責務を保ったまま減らすための、
+        framework-agnosticなWeb Components UIライブラリです。特に業務システムや既存MPAへの段階導入を想定しています。
+        各項目を開くと、その場で実際のexampleを操作できます。
       </p>
       <nav class="header-links" aria-label="関連ドキュメント">
         <a href="./README.md">はじめに</a>
@@ -84,7 +85,7 @@
         <article class="component-card component-card--wide" id="table">
           <details>
             <summary><span>Table</span><code>&lt;kata-table&gt;</code></summary>
-            <p>templateで表の骨格を切り替え、HTMXで行データを取得する一覧です。</p>
+            <p>templateで表の骨格を切り替え、サーバーから提供された行データを表示する一覧です。HTMXによる部分更新にも対応します。</p>
             <div class="component-links"><a href="./src/components/kata-table/examples/index.html">別タブで開く</a><a
                 href="./src/components/kata-table/kata-table.spec.md">契約を見る</a></div>
             <iframe class="component-frame--tall" loading="lazy" src="./src/components/kata-table/examples/index.html"
@@ -343,7 +344,7 @@
   </main>
 
   <footer>
-    <p>kata-ui — Web標準を中心にした、長期保守向けのUI境界。</p>
+    <p>Katatsukuri UI — Web標準を中心にした、長期保守向けのUI境界。</p>
   </footer>
   <script type="module" src="./src/theme-switcher.js"></script>
   <script type="module" src="./src/docs-navigation.js"></script>

@@ -7,8 +7,8 @@
 ```html
 <kata-accordion>
   <kata-accordion-item data-state="open">
-    <span slot="title">kata-uiとは何ですか？</span>
-    <p>サーバー主導型MPA向けのWeb Component集です。</p>
+    <span slot="title">Katatsukuri UIとは何ですか？</span>
+    <p>server-driven applicationsを主対象とする、framework-agnosticなWeb Components UIライブラリです。</p>
   </kata-accordion-item>
   <kata-accordion-item>
     <span slot="title">複数項目を開けますか？</span>

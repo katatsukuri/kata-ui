@@ -22,7 +22,7 @@ test('docs server serves the repository index and component assets', async (t) =
   const indexResponse = await fetch(`${origin}/`);
   assert.equal(indexResponse.status, 200);
   assert.match(indexResponse.headers.get('content-type'), /^text\/html/);
-  assert.match(await indexResponse.text(), /kata-ui Component Catalog/);
+  assert.match(await indexResponse.text(), /Katatsukuri UI/);
 
   const docsResponse = await fetch(`${origin}/docs.html?doc=./README.md`);
   assert.equal(docsResponse.status, 200);
