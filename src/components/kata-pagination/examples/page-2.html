@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="htmx-config" content='{"selfRequestsOnly":true,"allowScriptTags":false,"allowEval":false}'>
-    <title>kata-pagination example - 1ページ目</title>
+    <title>kata-pagination example - 2ページ目</title>
     <link rel="icon" href="data:,">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
     <link rel="stylesheet" href="../../../styles/kata-ui.css">
@@ -28,21 +28,21 @@
       </template>
 
       <section id="pagination-results" class="pagination-results" aria-live="polite" aria-atomic="true" hx-history-elt>
-        <div class="pagination-page" data-page="1">
-          <h2>コンポーネント一覧 1 / 3</h2>
+        <div class="pagination-page" data-page="2">
+          <h2>コンポーネント一覧 2 / 3</h2>
           <ul>
-            <li><strong>Accordion</strong><span>関連する内容を展開・折りたたみします。</span></li>
-            <li><strong>Breadcrumb</strong><span>現在位置までの階層を示します。</span></li>
-            <li><strong>Pagination</strong><span>分割された一覧のページ間を移動します。</span></li>
-            <li><strong>Table</strong><span>行と列でデータを表示します。</span></li>
+            <li><strong>Button</strong><span>用途別の操作ボタンを表示します。</span></li>
+            <li><strong>Checkbox</strong><span>複数選択や真偽値を入力します。</span></li>
+            <li><strong>Input</strong><span>基本的なテキストを入力します。</span></li>
+            <li><strong>Select</strong><span>候補一覧から値を選択します。</span></li>
           </ul>
         </div>
         <template data-pagination-items>
-          <li><a href="./index.html" aria-label="前のページへ" aria-disabled="true" tabindex="-1">前</a></li>
-          <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html" aria-current="page">1</a></li>
-          <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html">2</a></li>
+          <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html" aria-label="前のページへ">前</a></li>
+          <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html">1</a></li>
+          <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html" aria-current="page">2</a></li>
           <li><a href="./page-3.html" hx-get="./fragments/page-3.html" hx-push-url="./page-3.html">3</a></li>
-          <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html" aria-label="次のページへ">次</a></li>
+          <li><a href="./page-3.html" hx-get="./fragments/page-3.html" hx-push-url="./page-3.html" aria-label="次のページへ">次</a></li>
         </template>
       </section>
 
@@ -51,11 +51,11 @@
         hx-target="#pagination-results"
         hx-swap="innerHTML"
         hx-sync="#results-pagination:replace">
-        <li><a href="./index.html" aria-label="前のページへ" aria-disabled="true" tabindex="-1">前</a></li>
-        <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html" aria-current="page">1</a></li>
-        <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html">2</a></li>
+        <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html" aria-label="前のページへ">前</a></li>
+        <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html">1</a></li>
+        <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html" aria-current="page">2</a></li>
         <li><a href="./page-3.html" hx-get="./fragments/page-3.html" hx-push-url="./page-3.html">3</a></li>
-        <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html" aria-label="次のページへ">次</a></li>
+        <li><a href="./page-3.html" hx-get="./fragments/page-3.html" hx-push-url="./page-3.html" aria-label="次のページへ">次</a></li>
       </kata-pagination>
     </main>
   </body>

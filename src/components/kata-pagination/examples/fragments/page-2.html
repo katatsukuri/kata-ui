@@ -1,0 +1,27 @@
+<title>kata-pagination example - 2ページ目</title>
+
+<div class="pagination-page" data-page="2">
+  <h2>コンポーネント一覧 2 / 3</h2>
+  <ul>
+    <li><strong>Button</strong><span>用途別の操作ボタンを表示します。</span></li>
+    <li><strong>Checkbox</strong><span>複数選択や真偽値を入力します。</span></li>
+    <li><strong>Input</strong><span>基本的なテキストを入力します。</span></li>
+    <li><strong>Select</strong><span>候補一覧から値を選択します。</span></li>
+  </ul>
+</div>
+
+<template data-pagination-items>
+  <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html" aria-label="前のページへ">前</a></li>
+  <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html">1</a></li>
+  <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html" aria-current="page">2</a></li>
+  <li><a href="./page-3.html" hx-get="./fragments/page-3.html" hx-push-url="./page-3.html">3</a></li>
+  <li><a href="./page-3.html" hx-get="./fragments/page-3.html" hx-push-url="./page-3.html" aria-label="次のページへ">次</a></li>
+</template>
+
+<kata-pagination id="results-pagination" hx-swap-oob="innerHTML">
+  <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html" aria-label="前のページへ">前</a></li>
+  <li><a href="./index.html" hx-get="./fragments/page-1.html" hx-push-url="./index.html">1</a></li>
+  <li><a href="./page-2.html" hx-get="./fragments/page-2.html" hx-push-url="./page-2.html" aria-current="page">2</a></li>
+  <li><a href="./page-3.html" hx-get="./fragments/page-3.html" hx-push-url="./page-3.html">3</a></li>
+  <li><a href="./page-3.html" hx-get="./fragments/page-3.html" hx-push-url="./page-3.html" aria-label="次のページへ">次</a></li>
+</kata-pagination>
