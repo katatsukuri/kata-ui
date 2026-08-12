@@ -2,6 +2,17 @@ kata-pagination {
   display: block;
 }
 
+/* Match the final Shadow DOM layout before the Custom Element upgrades. */
+kata-pagination:not(:defined) {
+  display: flex;
+  align-items: center;
+  gap: var(--kata-space-sm);
+}
+
+kata-pagination:not(:defined) > li {
+  list-style: none;
+}
+
 kata-pagination nav ol,
 kata-pagination nav ul {
   display: flex;
